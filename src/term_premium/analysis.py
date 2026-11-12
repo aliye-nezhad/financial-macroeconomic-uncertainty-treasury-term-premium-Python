@@ -347,7 +347,7 @@ def clark_west_tests(
             cov_kwds={"maxlags": hac_lags},
             use_t=False,
         )
-        statistic = float(test.tvalues[0])
+        statistic = float(test.tvalues.iloc[0])
         rows.append(
             {
                 "restricted_model": restricted,
