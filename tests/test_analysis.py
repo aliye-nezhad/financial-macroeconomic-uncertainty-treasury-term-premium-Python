@@ -266,3 +266,43 @@ def test_forecast_accuracy_and_clark_west_outputs():
     ].iloc[0]
     assert benchmark_r_squared == pytest.approx(0.0)
     assert 0 <= cw.loc[0, "p_value_one_sided"] <= 1
+
+
+def test_clark_west_hac_bandwidth_changes_inference_not_adjusted_loss_mean():
+    rng = np.random.default_rng(20261112)
+    n = 240
+    actual = rng.normal(size=n)
+    restricted = 0.25 * actual + rng.normal(scale=0.9, size=n)
+    unrestricted = 0.30 * actual + rng.normal(scale=0.8, size=n)
+    forecasts = pd.DataFrame(
+        {
+            "actual": actual,
+            "restricted": restricted,
+            "unrestricted": unrestricted,
+        }
+    )
+
+    results = pd.concat(
+        [
+            clark_west_tests(
+                forecasts,
+                nested_pairs=[("restricted", "unrestricted")],
+                hac_lags=bandwidth,
+            )
+            for bandwidth in (3, 6, 12, 18)
+        ],
+        ignore_index=True,
+    )
+
+    assert results["hac_maxlags"].tolist() == [3, 6, 12, 18]
+    assert results["n_forecasts"].nunique() == 1
+    np.testing.assert_allclose(
+        results["mean_adjusted_loss_difference"].to_numpy(),
+        results["mean_adjusted_loss_difference"].iloc[0],
+        rtol=0,
+        atol=1e-12,
+    )
+    assert np.isfinite(
+        results[["clark_west_statistic", "p_value_one_sided"]]
+    ).all().all()
+    assert results["p_value_one_sided"].between(0, 1).all()
