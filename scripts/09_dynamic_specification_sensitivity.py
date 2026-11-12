@@ -182,6 +182,13 @@ def main() -> None:
             ]
         ].to_string(index=False)
     )
+    print("\nLJUNG-BOX RESIDUAL TESTS")
+    lb_report = residuals[residuals["lag"].isin([6, 12])]
+    print(
+        lb_report[
+            ["model", "lag", "residual_acf", "ljung_box_q_stat", "ljung_box_pvalue"]
+        ].to_string(index=False)
+    )
     print("\nBREUSCH-GODFREY TESTS")
     print(bg[["model", "lag", "lm_pvalue", "f_pvalue"]].to_string(index=False))
     print("\nFORECAST ACCURACY")
