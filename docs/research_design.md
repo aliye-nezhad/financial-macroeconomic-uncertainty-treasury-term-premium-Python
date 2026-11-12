@@ -77,6 +77,10 @@ The 12-month uncertainty measures replace the 1-month measures in a separate hie
 - Report coefficients, standard errors, confidence intervals, p-values, sample sizes, R-squared, adjusted R-squared, Durbin-Watson statistics and Ljung-Box residual diagnostics.
 - HAC inference affects standard errors and tests, not OLS point estimates or causal interpretation.
 
+
+## Residual autocorrelation diagnostics
+For each pre-specified regression hierarchy, inspect residual autocorrelations at lags 1-12 and report Ljung-Box Q-statistics and p-values at lags 1, 3, 6 and 12. Approximate pointwise 95% white-noise bands of plus/minus 1.96 divided by the square root of the sample size are included as a screening aid. These bands are not simultaneous confidence bands, and flagged autocorrelations are diagnostic evidence rather than an automatic instruction to add regressors or change the model. HAC standard errors do not remove residual serial correlation or repair forecast misspecification.
+
 ## Pseudo-out-of-sample forecast design
 The primary exercise is a recursive expanding-window, one-month-ahead forecast:
 1. Use the first 120 complete monthly observations as the initial estimation window.
