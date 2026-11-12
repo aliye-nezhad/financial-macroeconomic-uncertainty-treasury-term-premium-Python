@@ -61,24 +61,35 @@ def _run_forecast_set(
     accuracy.to_csv(output_dir / f"forecast_accuracy_{suffix}.csv", index=False)
     cw.to_csv(output_dir / f"clark_west_{suffix}.csv", index=False)
 
-    fig, ax = plt.subplots(figsize=(10, 5.5))
-    ax.plot(forecasts.index.to_timestamp(), forecasts["actual"],
-            label="Actual", linewidth=1.2)
-    ax.plot(forecasts.index.to_timestamp(), forecasts["M0_AR1"],
-            label="AR(1) benchmark", linewidth=1.0, alpha=0.85)
+    fig, ax = plt.subplots(figsize=(10, 5.5), facecolor="white")
+    ax.set_facecolor("white")
+    dates = forecasts.index.to_timestamp()
+    ax.plot(dates, forecasts["actual"], label="Actual", color="black",
+            linestyle="-", linewidth=1.15)
+    ax.plot(dates, forecasts["M0_AR1"], label="AR(1) benchmark",
+            color="0.40", linestyle="--", linewidth=0.95)
     final_model = model_ids[-1]
-    ax.plot(forecasts.index.to_timestamp(), forecasts[final_model],
-            label=final_model, linewidth=1.0, alpha=0.85)
-    ax.axhline(0, linewidth=0.7, alpha=0.5)
-    ax.set_title(f"One-month-ahead forecasts: {label.replace('_', ' ')}")
-    ax.set_ylabel("Monthly change (percentage points)")
-    ax.set_xlabel("Forecast target month")
-    ax.legend(frameon=False)
+    ax.plot(dates, forecasts[final_model], label=final_model,
+            color="0.68", linestyle="-.", linewidth=0.95)
+    ax.axhline(0, color="0.25", linewidth=0.7, linestyle=":")
+    ax.set_title(
+        f"One-month-ahead forecasts: {label.replace('_', ' ')}",
+        fontsize=11, fontweight="normal", loc="left", pad=10,
+    )
+    ax.set_ylabel("Monthly change (percentage points)", fontsize=9)
+    ax.set_xlabel("Forecast target month", fontsize=9)
+    ax.grid(axis="y", color="0.88", linestyle=":", linewidth=0.6)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color("0.25")
+    ax.spines["bottom"].set_color("0.25")
+    ax.tick_params(axis="both", colors="0.20", direction="out",
+                   length=3, width=0.6, labelsize=8)
+    ax.legend(frameon=False, fontsize=8)
     fig.tight_layout()
     fig.savefig(
         output_dir / f"forecast_plot_{suffix}.png",
-        dpi=300,
-        bbox_inches="tight",
+        dpi=300, bbox_inches="tight", facecolor="white",
     )
     plt.close(fig)
 
