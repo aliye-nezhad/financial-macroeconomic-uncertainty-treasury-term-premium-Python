@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from term_premium.analysis import (
+    adjust_clark_west_pvalues_by_bandwidth,
     build_model_specs,
     breusch_godfrey_diagnostic_table,
     common_complete_sample,
@@ -102,6 +103,7 @@ def main() -> None:
         nested_pairs=nested_pairs,
         hac_lags=3,
     )
+    cw = adjust_clark_west_pvalues_by_bandwidth(cw)
 
     diagnostic_dir = Path("outputs/diagnostics")
     forecast_dir = Path("outputs/forecasting")
@@ -177,7 +179,6 @@ def main() -> None:
         summary[
             [
                 "model", "nobs", "adjusted_r_squared", "aic", "bic",
-                "ljung_box_pvalue",
             ]
         ].to_string(index=False)
     )
@@ -195,7 +196,7 @@ def main() -> None:
             [
                 "restricted_model", "unrestricted_model", "n_forecasts",
                 "mean_adjusted_loss_difference", "clark_west_statistic",
-                "p_value_one_sided",
+                "p_value_one_sided", "p_value_holm", "p_value_bonferroni",
             ]
         ].to_string(index=False)
     )
