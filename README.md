@@ -8,7 +8,7 @@ Does financial-sector uncertainty contain incremental predictive information for
 ## Research status
 The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box and Breusch-Godfrey LM/F diagnostics are implemented. The initial empirical outputs have been generated and reviewed by the project author. The focused literature review has been expanded to cover the closest related uncertainty/term-structure studies.
 
-The project is in empirical validation and robustness review. The original M0-M4 hierarchy remains the pre-specified baseline. Additional autoregressive-lag experiments are exploratory and do not replace that hierarchy.
+The project is in empirical validation and robustness review. The original M0-M4 hierarchy remains the pre-specified baseline. Additional autoregressive-lag experiments are exploratory and do not replace that hierarchy. Rolling stability and observation-influence scripts are implemented and covered by automated tests; their new empirical outputs still need to be generated from the project author's local raw-data snapshots.
 
 This is a predictive project, not a causal identification design. The first forecasting exercise uses currently available revised uncertainty-index data and must be described as pseudo-out-of-sample, not genuine real-time forecasting.
 
