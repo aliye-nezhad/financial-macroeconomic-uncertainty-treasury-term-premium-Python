@@ -176,6 +176,6 @@ The next research tasks are to complete the pre-specified robustness and stabili
 
 ## Remaining literature-review work
 
-This focused review is not exhaustive. Before making a formal originality claim, the project should also inspect the related term-structure and monetary-policy uncertainty literature cited by Cross, Poon, and Zhu, including Creal and Wu (2017), Tillmann (2020), Leippold and Matthys (2022), Shang (2022), and relevant work on monetary-policy uncertainty and term premia.
+This focused review is not exhaustive. Creal and Wu (2017), Tillmann (2020), Leippold and Matthys (2022), and Shang (2022) have now been screened at the abstract and bibliographic level and their broad designs have been compared provisionally above. This is not a substitute for full-text review. Before making a formal originality claim, read the relevant sections of these papers and inspect additional work on monetary-policy uncertainty, term premia, and forecast evaluation cited in their references and in Cross, Poon, and Zhu (2026).
 
 The final review should compare exact outcomes, uncertainty measures, samples, identification or forecasting designs, and evaluation methods. A title or abstract match alone is not enough to establish either overlap or novelty.
