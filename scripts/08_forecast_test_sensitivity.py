@@ -14,7 +14,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from term_premium.analysis import (\n    adjust_clark_west_pvalues_by_bandwidth,\n    clark_west_tests,\n)
+from term_premium.analysis import (
+    adjust_clark_west_pvalues_by_bandwidth,
+    clark_west_tests,
+)
 
 
 HAC_LAGS = (3, 6, 12, 18)
