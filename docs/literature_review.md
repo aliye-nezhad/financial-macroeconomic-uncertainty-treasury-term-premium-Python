@@ -109,6 +109,7 @@ Tillmann uses interacted local projections to estimate yield-curve responses to 
 **Difference:** The uncertainty concept is monetary-policy uncertainty, and the design studies conditional responses to identified policy shocks rather than the monthly forecast contribution of LMN financial uncertainty. Because Tillmann already uses both ACM and Kim-Wright term-premium measurements, this project must not present the use of those two measurement families itself as novel; the distinction must rest on the LMN-versus-JLN incremental forecasting question and its evaluation design.
 
 - Article: https://doi.org/10.1111/jmcb.12657
+- Earlier working-paper version: https://www.cb.cityu.edu.hk/ef/doc/GRU/WPS/GRU%232018-004%20Tillmann(1).pdf
 
 **Leippold, Markus, and Felix Matthys (2022). "Economic Policy Uncertainty and the Yield Curve." Review of Finance, 26(4), 751–797.**
 
@@ -119,6 +120,7 @@ The paper combines a general-equilibrium model with empirical analysis of econom
 **Difference:** Its focus is economic-policy uncertainty and a structural/theoretical term-structure framework, not LMN-versus-JLN incremental forecast evaluation for monthly changes in the ACM 10-year term premium.
 
 - Article: https://doi.org/10.1093/rof/rfac031
+- Earlier working-paper version (2015): https://www.frbsf.org/economic-research/wp-content/uploads/sites/4/S02_P1_Felix-Matthys.pdf
 
 **Shang, Fei (2022). "The Effect of Uncertainty on the Sensitivity of the Yield Curve to Monetary Policy Surprises." Journal of Economic Dynamics and Control, 137, 104355.**
 
@@ -176,6 +178,6 @@ The next research tasks are to complete the pre-specified robustness and stabili
 
 ## Remaining literature-review work
 
-This focused review is not exhaustive. Creal and Wu (2017), Tillmann (2020), Leippold and Matthys (2022), and Shang (2022) have now been screened at the abstract and bibliographic level and their broad designs have been compared provisionally above. This is not a substitute for full-text review. Before making a formal originality claim, read the relevant sections of these papers and inspect additional work on monetary-policy uncertainty, term premia, and forecast evaluation cited in their references and in Cross, Poon, and Zhu (2026).
+This focused review is not exhaustive. The four studies above have been screened and their broad designs compared. Publicly accessible earlier working-paper text was also inspected for Creal and Wu, Tillmann, and Leippold and Matthys; the accessible Shang article preview includes its introduction, model description, data overview, and conclusion. Earlier drafts and article previews are not substitutes for checking the final published versions, and differences across versions may matter. Before making a formal originality claim, compare the final published versions and inspect additional work on monetary-policy uncertainty, term premia, and forecast evaluation cited in their references and in Cross, Poon, and Zhu (2026).
 
 The final review should compare exact outcomes, uncertainty measures, samples, identification or forecasting designs, and evaluation methods. A title or abstract match alone is not enough to establish either overlap or novelty.
