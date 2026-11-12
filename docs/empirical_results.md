@@ -51,7 +51,7 @@ Five specifications were compared on one identical 602-observation estimation sa
 | M3 AR(1), AR(2), AR(12) | 0.040809 | 56.94 | 96.54 | 0.240830 | -0.036793 |
 | M3 AR(1)-AR(12) | 0.045259 | 62.93 | 142.14 | 0.245278 | -0.075441 |
 
-Adding AR(2) produces a small reduction in RMSE (about 0.7%) and an OOS R-squared of 0.0142. The one-sided Clark-West p-value is 0.078953 before adjustment across the five exploratory comparisons. The Holm-adjusted p-value across those five comparisons is approximately 0.3469. This is suggestive at most, not confirmatory evidence.
+Adding AR(2) produces a small reduction in RMSE (about 0.7%) and an OOS R-squared of 0.0142. The one-sided Clark-West p-value is 0.078953 before adjustment across the five exploratory comparisons. The Holm-adjusted p-value across those five comparisons is approximately 0.3469. This is suggestive at most, not confirmatory evidence. A descriptive decade split also shows that the AR(2) RMSE improvement is not uniform: it is marginally worse than AR(1) in the 1980s, 1990s and 2010s, and better in the 2000s and 2020s. These decade-specific comparisons are descriptive and were not separately tested.
 
 Adding AR(12), alone or alongside AR(2), does not improve out-of-sample accuracy. The full AR(1)-through-AR(12) model has the lowest AIC among some alternatives only in a limited sense, but its BIC is much higher because of the parameter count and its RMSE is the worst of the five specifications. In-sample fit is not a sufficient selection criterion.
 
