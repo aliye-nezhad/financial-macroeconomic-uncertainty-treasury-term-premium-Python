@@ -15,6 +15,8 @@ from typing import Any
 
 import pandas as pd
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 FRED_GRAPH_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 ACM_WORKBOOK_URL = (
@@ -52,14 +54,47 @@ def sha256_bytes(payload: bytes) -> str:
 
 
 def _request_bytes(url: str, *, params: dict[str, str] | None = None) -> bytes:
-    response = requests.get(
-        url,
-        params=params,
-        timeout=(15, 90),
-        headers={"User-Agent": "us-treasury-uncertainty-research/0.1"},
+    """Retrieve a source payload with a tested User-Agent and transient retries.
+
+    The curl-style User-Agent is used because it succeeded in a direct
+    comparison against FRED from the project's Windows environment, whereas
+    the previous project-specific User-Agent repeatedly timed out. This is an
+    operational compatibility choice, not a claim that FRED requires curl.
+    """
+    retry = Retry(
+        total=4,
+        connect=4,
+        read=4,
+        status=4,
+        backoff_factor=1.0,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=frozenset({"GET"}),
+        respect_retry_after_header=True,
     )
-    response.raise_for_status()
-    return response.content
+    adapter = HTTPAdapter(max_retries=retry)
+
+    with requests.Session() as session:
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+        response = session.get(
+            url,
+            params=params,
+            timeout=(20, 45),
+            headers={
+                "User-Agent": "curl/8.10.1",
+                "Accept": "text/csv,application/vnd.ms-excel,application/octet-stream,*/*;q=0.8",
+            },
+        )
+        response.raise_for_status()
+        return response.content
+
+
+def _write_bytes_atomically(destination: Path, payload: bytes) -> None:
+    """Write a completed payload to disk without exposing partial files."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path = destination.with_name(destination.name + ".part")
+    temporary_path.write_bytes(payload)
+    temporary_path.replace(destination)
 
 
 def _fred_payload_is_valid(payload: bytes, series_id: str) -> None:
@@ -92,7 +127,7 @@ def _download_fred_series(
     else:
         payload = _request_bytes(FRED_GRAPH_URL, params={"id": series_id})
         _fred_payload_is_valid(payload, series_id)
-        destination.write_bytes(payload)
+        _write_bytes_atomically(destination, payload)
         retrieval = "downloaded"
 
     return {
@@ -119,7 +154,6 @@ def _download_acm_workbook(
         retrieval = "cached"
     else:
         payload = _request_bytes(ACM_WORKBOOK_URL)
-        destination.write_bytes(payload)
         retrieval = "downloaded"
 
     # The official endpoint currently distributes an Excel .xls workbook.
@@ -140,6 +174,9 @@ def _download_acm_workbook(
             f"ACM workbook is missing the expected sheet {required_sheet!r}. "
             f"Available sheets: {workbook.sheet_names}"
         )
+
+    if retrieval == "downloaded":
+        _write_bytes_atomically(destination, payload)
 
     return {
         "source": "Federal Reserve Bank of New York ACM workbook",
