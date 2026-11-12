@@ -21,6 +21,9 @@ data/processed/*
 outputs/tables/*
 outputs/figures/*
 outputs/diagnostics/*
+outputs/estimation/*
+outputs/forecasting/*
+
 !outputs/tables/.gitkeep
 !outputs/figures/.gitkeep
 !outputs/diagnostics/.gitkeep
