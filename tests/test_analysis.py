@@ -42,6 +42,18 @@ def test_model_hierarchy_is_nested_and_horizon_specific():
     assert set(specs[ids[2]]).issubset(specs[ids[3]])
 
 
+def test_12m_model_hierarchy_retains_ar1_benchmark():
+    specs = build_model_specs(ar_lag="y_lag1", uncertainty_horizon="12m")
+    ids = list(specs)
+    assert ids == [
+        "M0_AR1",
+        "M1_MONETARY",
+        "M2_PLUS_JLN_12M",
+        "M3_PLUS_LMN_12M",
+    ]
+    assert specs["M0_AR1"] == ["y_lag1"]
+
+
 def test_common_sample_rejects_internal_missing_month():
     panel = _synthetic_panel()
     panel = panel.drop(pd.Period("2005-01", freq="M"))
