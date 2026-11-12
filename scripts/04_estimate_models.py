@@ -37,6 +37,18 @@ def _run_outcome(
         hac_lags=6,
     )
 
+    # Fail loudly if any pre-specified model (especially the AR(1) benchmark)
+    # is missing from the estimation output or uses a different sample.
+    expected_models = list(specs)
+    estimated_models = summary["model"].tolist()
+    if estimated_models != expected_models:
+        raise RuntimeError(
+            f"Model output mismatch: expected {expected_models}, "
+            f"received {estimated_models}."
+        )
+    if summary["nobs"].nunique() != 1 or int(summary["nobs"].iloc[0]) != len(sample):
+        raise RuntimeError("Nested regression models do not share the same sample.")
+
     suffix = f"{outcome_label}_{horizon}"
     if include_vix:
         suffix += "_vix_common"
