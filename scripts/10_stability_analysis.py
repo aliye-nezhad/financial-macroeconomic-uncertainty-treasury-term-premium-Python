@@ -32,6 +32,24 @@ FOCAL_PREDICTOR = "lmnuf1m_lag2"
 RESTRICTED_MODEL = "M2_PLUS_JLN_1M"
 UNRESTRICTED_MODEL = "M3_PLUS_LMN_1M"
 
+def _validate_monthly_index(index: pd.Index, *, label: str) -> None:
+    """Require a unique, sorted, consecutive monthly PeriodIndex."""
+    if not isinstance(index, pd.PeriodIndex):
+        raise TypeError(f"{label} must use a monthly PeriodIndex.")
+    if index.freqstr not in {"M", "ME"}:
+        raise ValueError(f"{label} must have monthly frequency.")
+    if len(index) == 0:
+        raise ValueError(f"{label} cannot be empty.")
+    if not index.is_unique or not index.is_monotonic_increasing:
+        raise ValueError(f"{label} must be unique and sorted.")
+    expected = pd.period_range(index.min(), index.max(), freq="M")
+    if not index.equals(expected):
+        raise ValueError(
+            f"{label} must contain consecutive months; gaps cannot be "
+            "treated as rolling monthly windows."
+        )
+
+
 
 def rolling_lmn_coefficients(
     sample: pd.DataFrame,
@@ -62,8 +80,19 @@ def rolling_lmn_coefficients(
         raise ValueError("hac_lags must be non-negative and smaller than window_size.")
     if len(sample) < window_size:
         raise ValueError("The sample is shorter than the requested rolling window.")
-    if not isinstance(sample.index, pd.PeriodIndex):
-        raise TypeError("The estimation sample must use a monthly PeriodIndex.")
+    _validate_monthly_index(sample.index, label="The estimation sample")
+    required_columns = [outcome, *predictors]
+    missing_columns = [
+        column for column in required_columns if column not in sample.columns
+    ]
+    if missing_columns:
+        raise KeyError(f"Estimation sample is missing columns: {missing_columns}.")
+    numeric_sample = sample[required_columns].apply(
+        pd.to_numeric,
+        errors="coerce",
+    )
+    if not np.isfinite(numeric_sample.to_numpy(dtype=float)).all():
+        raise ValueError("The estimation sample contains missing or non-finite values.")
 
     rows: list[dict[str, object]] = []
     for end_position in range(window_size, len(sample) + 1):
@@ -72,6 +101,11 @@ def rolling_lmn_coefficients(
             window[predictors].astype(float),
             has_constant="add",
         )
+        if np.linalg.matrix_rank(X.to_numpy(dtype=float)) < X.shape[1]:
+            raise ValueError(
+                "Rolling estimation design is rank deficient for window "
+                f"{window.index.min()} to {window.index.max()}."
+            )
         fitted = sm.OLS(
             window[outcome].astype(float),
             X,
@@ -147,10 +181,7 @@ def rolling_forecast_performance(
     missing = sorted(required.difference(forecasts.columns))
     if missing:
         raise KeyError(f"Forecast table is missing columns: {missing}.")
-    if not isinstance(forecasts.index, pd.PeriodIndex):
-        raise TypeError("Forecasts must use a monthly PeriodIndex.")
-    if not forecasts.index.is_unique or not forecasts.index.is_monotonic_increasing:
-        raise ValueError("Forecast months must be unique and sorted.")
+    _validate_monthly_index(forecasts.index, label="Forecasts")
     if window_size < 2 or len(forecasts) < window_size:
         raise ValueError("At least window_size forecast observations are required.")
 
@@ -192,8 +223,7 @@ def forecast_performance_by_decade(
     missing = sorted(required.difference(forecasts.columns))
     if missing:
         raise KeyError(f"Forecast table is missing columns: {missing}.")
-    if not isinstance(forecasts.index, pd.PeriodIndex):
-        raise TypeError("Forecasts must use a monthly PeriodIndex.")
+    _validate_monthly_index(forecasts.index, label="Forecasts")
 
     rows: list[dict[str, object]] = []
     decade_labels = (forecasts.index.year // 10) * 10
