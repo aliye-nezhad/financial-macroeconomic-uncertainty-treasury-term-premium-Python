@@ -328,3 +328,24 @@ def test_clark_west_multiple_testing_adjustments_are_grouped_by_hac_bandwidth():
         [0.02, 0.08, 0.02, 0.08],
     )
     assert adjusted["multiple_test_family_size"].tolist() == [2, 2, 2, 2]
+
+
+def test_forecast_test_sensitivity_script_is_importable():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "08_forecast_test_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "forecast_test_sensitivity",
+        script_path,
+    )
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    assert module.HAC_LAGS == (3, 6, 12, 18)
