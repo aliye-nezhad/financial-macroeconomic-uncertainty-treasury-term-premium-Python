@@ -106,7 +106,7 @@ Tillmann uses interacted local projections to estimate yield-curve responses to 
 
 **Overlap:** It directly examines the term-premium component and shows that uncertainty conditions can alter the yield-curve response to monetary-policy shocks.
 
-**Difference:** The uncertainty concept is monetary-policy uncertainty, and the design studies conditional responses to identified policy shocks rather than the monthly forecast contribution of LMN financial uncertainty.
+**Difference:** The uncertainty concept is monetary-policy uncertainty, and the design studies conditional responses to identified policy shocks rather than the monthly forecast contribution of LMN financial uncertainty. Because Tillmann already uses both ACM and Kim-Wright term-premium measurements, this project must not present the use of those two measurement families itself as novel; the distinction must rest on the LMN-versus-JLN incremental forecasting question and its evaluation design.
 
 - Article: https://doi.org/10.1111/jmcb.12657
 
