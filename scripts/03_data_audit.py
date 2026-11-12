@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from term_premium.data import build_monthly_panel
+from term_premium.diagnostics import missingness_profile, extreme_observation_table
 
 
 def _pairwise_observation_counts(frame: pd.DataFrame) -> pd.DataFrame:
@@ -95,6 +96,47 @@ def main() -> None:
         }
     )
     coverage.to_csv(out / "source_coverage.csv")
+
+    # Separate expected source-history gaps from missing values inside
+    # each series' observed span. No values are imputed or removed.
+    missingness = pd.DataFrame({
+        variable: missingness_profile(panel[variable])
+        for variable in source_available
+    }).T
+    missingness.to_csv(out / "missingness_profile.csv")
+
+    expected_index = pd.period_range(
+        panel.index.min(), panel.index.max(), freq="M"
+    )
+    index_audit = pd.DataFrame([{
+        "n_rows": len(panel),
+        "index_is_monthly_period": isinstance(panel.index, pd.PeriodIndex),
+        "index_is_unique": bool(panel.index.is_unique),
+        "index_is_monotonic": bool(panel.index.is_monotonic_increasing),
+        "expected_months": len(expected_index),
+        "observed_months": len(panel.index),
+        "missing_calendar_months": len(expected_index.difference(panel.index)),
+        "duplicate_months": int(panel.index.duplicated().sum()),
+    }])
+    index_audit.to_csv(out / "monthly_index_audit.csv", index=False)
+
+    # Robust modified-z flags are for manual review, never automatic deletion.
+    level_variables = [
+        "acm_term_premium_10y", "acm_expected_short_rate_10y",
+        "THREEFYTP10", "LMNUF1M", "JLNUM1M", "VIXCLS",
+        "DFF", "DGS2", "DGS10",
+    ]
+    change_variables = [
+        "acm_term_premium_change", "acm_expected_short_rate_change",
+        "kim_wright_term_premium_change", "dff_change",
+    ]
+    extremes = extreme_observation_table(
+        panel,
+        level_variables=level_variables,
+        change_variables=change_variables,
+    )
+    extremes.to_csv(out / "extreme_observation_flags.csv", index=False)
+
 
     uncertainty = ["LMNUF1M", "LMNUF12M", "JLNUM1M", "JLNUM12M", "VIXCLS"]
     uncertainty_available = [
