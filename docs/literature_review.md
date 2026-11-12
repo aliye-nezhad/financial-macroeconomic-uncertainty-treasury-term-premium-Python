@@ -87,6 +87,23 @@ The distinction is methodological and empirical, not a claim that the underlying
 - Open-access publisher PDF in the University of Kent repository: https://kar.kent.ac.uk/113848/19/1-s2.0-S0014292126000966-main.pdf
 - Repository record: https://kar.kent.ac.uk/113848/
 
+## Forecast comparison under instability
+
+**Giacomini, Raffaella, and Barbara Rossi (2010). "Forecast Comparisons in Unstable Environments." Journal of Applied Econometrics, 25(4), 595–620.**
+
+This paper develops formal procedures for evaluating how the relative forecasting performance of two models evolves over time. Its Fluctuation test examines local relative forecast performance across rolling windows; its One-Time Reversal test is designed for a large change in which model forecasts better. The central motivation is that a full-sample average can conceal time variation in relative forecast performance.
+
+- Article: https://doi.org/10.1002/jae.1177
+
+**Rossi, Barbara (2021). "Forecasting in the Presence of Instabilities: How We Know Whether Models Predict Well and How to Improve Them." Journal of Economic Literature, 59(4), 1135–1190.**
+
+This review emphasizes robust evaluation of forecasting performance under instability. An important distinction is that parameter breaks are neither necessary nor sufficient for time variation in forecast performance. The researcher should therefore assess forecast performance directly, with local measures where appropriate, rather than automatically treating a parameter-break test as the answer to a forecasting-instability question.
+
+- Article: https://doi.org/10.1257/jel.20201479
+- AEA article page: https://www.aeaweb.org/articles?id=10.1257/jel.20201479
+
+**Implication for this project:** The 120-month rolling M3-versus-M2 results in `scripts/10_stability_analysis.py` are descriptive diagnostics, not a formal instability test. If they show a substantively meaningful change in relative forecast performance, a Giacomini-Rossi-style test is a candidate for further study. Its assumptions and implementation must first be checked against this project's recursive expanding-window forecasts and nested M2/M3 comparison; the published procedure should not be transplanted mechanically. An Andrews or Bai-Perron parameter-break test is not the default next step because the primary research question concerns forecast performance, not structural parameter breaks.
+
 ## Research positioning and claims
 
 The following claims are **not defensible**:
