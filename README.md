@@ -96,4 +96,4 @@ Use `python scripts/01_download_data.py --refresh` to refresh cached source snap
 
 **Verification status:** The code has been committed, but it has not yet been executed against live source downloads or run through pytest in this environment. The first local run is a data-source and parser validation step, not a reproduction of empirical results.
 
-The primary one-month-ahead forecasting predictors are shifted by one month in the constructed panel. This is a conservative timing convention, but the use of currently revised uncertainty-index observations means the exercise remains pseudo-out-of-sample rather than real-time.
+The constructed panel uses one-month lags for daily market predictors and two-month lags for monthly JLN/LMN uncertainty indexes. This is a conservative publication-delay convention, not an exact historical release calendar. The use of currently revised uncertainty-index observations means the exercise remains pseudo-out-of-sample rather than real-time.
