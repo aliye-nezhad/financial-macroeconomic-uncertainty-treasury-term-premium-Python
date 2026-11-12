@@ -46,7 +46,7 @@ For alignment with ACM month-end data, use the last valid observation in each ca
 FRED graph CSV endpoints can be used without a FRED API key for initial acquisition, subject to endpoint stability and series terms. The official FRED API may be added later with a key stored in an environment variable, never committed to the repository.
 
 ## Initial sample
-The preferred common sample begins in January 1990 because the Kim-Wright daily 10-year term-premium series begins in 1990. The final start date and end date must be determined from actual downloaded data and complete-case availability. ACM-only analysis can use a longer sample as a separate robustness exercise.
+The preferred common sample begins in January 1990 because the Kim-Wright daily 10-year term-premium series begins in 1990. FRED metadata confirms that JLNUM1M and JLNUM12M are monthly JLN measures, while LMNUF1M and LMNUF12M are monthly LMN financial-uncertainty measures; the latter series is valid and is not a typo. The final start date and end date must be determined from actual downloaded data and complete-case availability. ACM-only analysis can use a longer sample as a separate robustness exercise.
 
 ## Frequency and timing rules
 1. Parse all dates explicitly and use a month-end PeriodIndex internally.
