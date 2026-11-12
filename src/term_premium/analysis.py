@@ -15,6 +15,7 @@ import statsmodels.api as sm
 from scipy.stats import norm
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.stats.stattools import durbin_watson
+from statsmodels.tsa.stattools import acf
 
 
 MONETARY_CONTROLS = [
@@ -201,6 +202,100 @@ def fit_hac_model_set(
 
     return pd.DataFrame(summary_rows), pd.DataFrame(coefficient_rows)
 
+
+
+def residual_diagnostic_table(
+    sample: pd.DataFrame,
+    *,
+    outcome: str,
+    model_specs: Mapping[str, Sequence[str]],
+    ljung_box_lags: Sequence[int] = (1, 3, 6, 12),
+    acf_max_lag: int = 12,
+) -> pd.DataFrame:
+    """Report residual ACFs and Ljung-Box tests for a common model sample.
+
+    The OLS residuals are used for diagnostics; HAC covariance estimation
+    does not change fitted values or residuals. The ACF bands are approximate
+    pointwise white-noise screening bands, not simultaneous confidence bands.
+    """
+    if not model_specs:
+        raise ValueError("At least one model specification is required.")
+    if acf_max_lag < 1:
+        raise ValueError("acf_max_lag must be at least 1.")
+
+    requested_lags = sorted({int(lag) for lag in ljung_box_lags})
+    if not requested_lags or any(lag < 1 for lag in requested_lags):
+        raise ValueError("Ljung-Box lags must be positive integers.")
+    if max(requested_lags) > acf_max_lag:
+        raise ValueError("acf_max_lag must cover every requested Ljung-Box lag.")
+
+    validated = common_complete_sample(
+        sample,
+        outcome=outcome,
+        model_specs=model_specs,
+    )
+    if len(validated) <= acf_max_lag:
+        raise ValueError(
+            "The sample must contain more observations than acf_max_lag."
+        )
+
+    band = 1.96 / np.sqrt(len(validated))
+    rows: list[dict[str, object]] = []
+
+    for model_id, predictors_sequence in model_specs.items():
+        predictors = list(predictors_sequence)
+        if not predictors:
+            raise ValueError(f"{model_id} has no regressors.")
+
+        X = sm.add_constant(
+            validated[predictors].astype(float),
+            has_constant="add",
+        )
+        fitted = sm.OLS(
+            validated[outcome].astype(float),
+            X,
+            missing="raise",
+        ).fit()
+        residuals = np.asarray(fitted.resid, dtype=float)
+
+        acf_values = acf(
+            residuals,
+            nlags=acf_max_lag,
+            fft=False,
+            missing="raise",
+        )
+        lb = acorr_ljungbox(
+            residuals,
+            lags=requested_lags,
+            return_df=True,
+        )
+        lb_lookup = {
+            int(lag): (
+                float(lb.loc[lag, "lb_stat"]),
+                float(lb.loc[lag, "lb_pvalue"]),
+            )
+            for lag in requested_lags
+        }
+
+        for lag in range(1, acf_max_lag + 1):
+            q_stat, q_pvalue = lb_lookup.get(lag, (np.nan, np.nan))
+            rho = float(acf_values[lag])
+            rows.append(
+                {
+                    "model": model_id,
+                    "outcome": outcome,
+                    "nobs": int(fitted.nobs),
+                    "lag": lag,
+                    "residual_acf": rho,
+                    "acf_95pct_lower": -float(band),
+                    "acf_95pct_upper": float(band),
+                    "acf_outside_95pct_band": bool(abs(rho) > band),
+                    "ljung_box_q_stat": q_stat,
+                    "ljung_box_pvalue": q_pvalue,
+                }
+            )
+
+    return pd.DataFrame(rows)
 
 def expanding_window_forecasts(
     panel: pd.DataFrame,
