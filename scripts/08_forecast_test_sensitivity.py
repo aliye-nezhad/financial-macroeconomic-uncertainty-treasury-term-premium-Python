@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from term_premium.analysis import clark_west_tests
+from term_premium.analysis import (\n    adjust_clark_west_pvalues_by_bandwidth,\n    clark_west_tests,\n)
 
 
 HAC_LAGS = (3, 6, 12, 18)
@@ -229,6 +229,7 @@ def main() -> None:
         )
 
     combined = pd.concat(all_results, ignore_index=True)
+    combined = adjust_clark_west_pvalues_by_bandwidth(combined)
     columns = [
         "forecast_set",
         "restricted_model",
@@ -239,6 +240,9 @@ def main() -> None:
         "mean_adjusted_loss_difference",
         "clark_west_statistic",
         "p_value_one_sided",
+        "p_value_holm",
+        "p_value_bonferroni",
+        "multiple_test_family_size",
         "hac_maxlags",
         "baseline_3lag_verified",
     ]
@@ -258,6 +262,7 @@ def main() -> None:
                 "mean_adjusted_loss_difference",
                 "clark_west_statistic",
                 "p_value_one_sided",
+                "p_value_holm",
             ]
         ].to_string(index=False)
     )
