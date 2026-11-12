@@ -189,30 +189,74 @@ def _download_acm_workbook(
     }
 
 
+def _snapshot_timestamp_for_entry(
+    current_entry: dict[str, Any],
+    previous_entry: dict[str, Any],
+    previous_manifest: dict[str, Any],
+    current_timestamp: str,
+) -> str | None:
+    """Preserve the acquisition time of the exact cached source snapshot."""
+    if current_entry.get("retrieval") == "downloaded":
+        return current_timestamp
+    if current_entry.get("retrieval") != "cached":
+        return None
+    if current_entry.get("sha256") != previous_entry.get("sha256"):
+        return None
+
+    previous_timestamp = previous_entry.get("snapshot_retrieved_at_utc")
+    if previous_timestamp is None and previous_entry.get("retrieval") == "downloaded":
+        # Backward compatibility with manifests created before per-source
+        # snapshot timestamps were recorded.
+        previous_timestamp = previous_manifest.get("retrieved_at_utc")
+    return previous_timestamp
+
+
 def download_all(
     raw_dir: str | Path = "data/raw",
     *,
     refresh: bool = False,
 ) -> dict[str, Any]:
-    """Download/cache all FRED series and the official New York Fed ACM file."""
+    """Download/cache source files and preserve each snapshot's retrieval time."""
     raw_dir = Path(raw_dir)
+    manifest_path = raw_dir / "download_manifest.json"
+    previous_manifest: dict[str, Any] = {}
+    if manifest_path.exists():
+        previous_manifest = json.loads(
+            manifest_path.read_text(encoding="utf-8")
+        )
+
+    current_timestamp = datetime.now(timezone.utc).isoformat()
     manifest: dict[str, Any] = {
-        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+        "retrieved_at_utc": current_timestamp,
         "refresh_requested": refresh,
         "fred": {},
     }
 
     for series_id in FRED_SERIES:
         path = raw_dir / "fred" / f"{series_id}.csv"
-        manifest["fred"][series_id] = _download_fred_series(
+        entry = _download_fred_series(
             series_id, path, refresh=refresh
         )
+        previous_entry = previous_manifest.get("fred", {}).get(series_id, {})
+        entry["snapshot_retrieved_at_utc"] = _snapshot_timestamp_for_entry(
+            entry,
+            previous_entry,
+            previous_manifest,
+            current_timestamp,
+        )
+        manifest["fred"][series_id] = entry
 
     acm_path = raw_dir / "acm" / "ACMTermPremium.xls"
-    manifest["acm"] = _download_acm_workbook(acm_path, refresh=refresh)
+    acm_entry = _download_acm_workbook(acm_path, refresh=refresh)
+    acm_entry["snapshot_retrieved_at_utc"] = _snapshot_timestamp_for_entry(
+        acm_entry,
+        previous_manifest.get("acm", {}),
+        previous_manifest,
+        current_timestamp,
+    )
+    manifest["acm"] = acm_entry
 
     raw_dir.mkdir(parents=True, exist_ok=True)
-    manifest_path = raw_dir / "download_manifest.json"
     manifest_path.write_text(
         json.dumps(manifest, indent=2),
         encoding="utf-8",
@@ -249,13 +293,17 @@ def monthly_period_series(
     series: pd.Series,
     *,
     source_frequency: str,
+    incomplete_month: pd.Period | str | None = None,
 ) -> pd.Series:
-    """Map a monthly or daily series to a PeriodIndex at calendar-month level.
+    """Map source observations to a monthly PeriodIndex.
 
-    Monthly FRED observations are labelled by the first day of the month;
-    daily observations are reduced to the last non-missing observation in
-    each month. The returned index is a monthly PeriodIndex.
+    Daily observations are reduced to the last non-missing observation in
+    each calendar month. When supplied, the incomplete month is excluded
+    from daily data while remaining untouched in the raw source snapshot.
     """
+    if incomplete_month is not None and source_frequency != "daily":
+        raise ValueError("incomplete_month can only be applied to daily series.")
+
     series = series.dropna().sort_index()
     if source_frequency == "daily":
         # Group by calendar month directly. Reindex the full span so months
@@ -266,6 +314,11 @@ def monthly_period_series(
                 result.index.min(), result.index.max(), freq="M"
             )
             result = result.reindex(expected_months)
+        if incomplete_month is not None:
+            result = result.drop(
+                index=pd.Period(str(incomplete_month), freq="M"),
+                errors="ignore",
+            )
     elif source_frequency == "monthly":
         result = series.copy()
         result.index = result.index.to_period("M")
@@ -369,10 +422,55 @@ def read_acm_monthly(path: str | Path) -> pd.DataFrame:
     return _parse_acm_monthly_frame(frame)
 
 
+def _source_snapshot_timestamp(
+    manifest: dict[str, Any],
+    series_id: str,
+) -> str | None:
+    """Return a source file's original retrieval time from the download manifest."""
+    entry = manifest.get("fred", {}).get(series_id, {})
+    timestamp = entry.get("snapshot_retrieved_at_utc")
+    if timestamp is None and entry.get("retrieval") == "downloaded":
+        # Read manifests written before per-source timestamps were introduced.
+        timestamp = manifest.get("retrieved_at_utc")
+    return timestamp
+
+
+def _incomplete_month_for_daily_source(
+    series: pd.Series,
+    snapshot_retrieved_at_utc: str | pd.Timestamp,
+) -> pd.Period | None:
+    """Identify a final daily-data month observed during its source snapshot month."""
+    valid = series.dropna()
+    if valid.empty:
+        return None
+
+    snapshot = pd.Timestamp(snapshot_retrieved_at_utc)
+    if snapshot.tzinfo is None:
+        snapshot = snapshot.tz_localize("UTC")
+    else:
+        snapshot = snapshot.tz_convert("UTC")
+    snapshot_local = snapshot.tz_convert("America/New_York").tz_localize(None)
+    snapshot_month = snapshot_local.to_period("M")
+    last_observation_month = valid.index.max().to_period("M")
+
+    if last_observation_month == snapshot_month:
+        return last_observation_month
+    return None
+
+
 def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
-    """Build a month-end panel from cached ACM and FRED source snapshots."""
+    """Build a panel using completed daily-source months and published monthly data."""
     raw_dir = Path(raw_dir)
+    manifest_path = raw_dir / "download_manifest.json"
+    if not manifest_path.exists():
+        raise FileNotFoundError(
+            f"Missing {manifest_path}. Run scripts/01_download_data.py first "
+            "to create source-snapshot metadata."
+        )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
     series: list[pd.Series] = []
+    excluded_partial_months: dict[str, str] = {}
 
     for series_id in FRED_SERIES:
         path = raw_dir / "fred" / f"{series_id}.csv"
@@ -384,9 +482,27 @@ def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
         frequency = (
             "monthly" if series_id in MONTHLY_FRED_SERIES else "daily"
         )
+        incomplete_month = None
+        if frequency == "daily":
+            snapshot_timestamp = _source_snapshot_timestamp(
+                manifest, series_id
+            )
+            if snapshot_timestamp is None:
+                raise ValueError(
+                    f"Missing snapshot retrieval timestamp for {series_id}. "
+                    "Run python scripts/01_download_data.py --refresh to "
+                    "establish source-snapshot provenance."
+                )
+            incomplete_month = _incomplete_month_for_daily_source(
+                raw_series, snapshot_timestamp
+            )
+            if incomplete_month is not None:
+                excluded_partial_months[series_id] = str(incomplete_month)
+
         monthly = monthly_period_series(
             raw_series,
             source_frequency=frequency,
+            incomplete_month=incomplete_month,
         )
         series.append(monthly)
 
@@ -441,6 +557,7 @@ def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
     panel["target_kim_wright_tp_change"] = (
         panel["kim_wright_term_premium_change"]
     )
+    panel.attrs["excluded_partial_months"] = excluded_partial_months
 
     return panel
 
