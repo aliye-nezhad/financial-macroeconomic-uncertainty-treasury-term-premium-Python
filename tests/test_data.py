@@ -36,6 +36,21 @@ def test_daily_series_uses_last_non_missing_observation_of_month():
     assert result.loc[pd.Period("2020-02", freq="M")] == 3.0
 
 
+def test_daily_series_preserves_calendar_months_without_observations():
+    source = pd.Series(
+        [1.0, 3.0],
+        index=pd.to_datetime(["2020-01-31", "2020-03-02"]),
+        name="VIXCLS",
+    )
+
+    result = monthly_period_series(source, source_frequency="daily")
+
+    assert list(result.index.astype(str)) == ["2020-01", "2020-02", "2020-03"]
+    assert result.loc[pd.Period("2020-01", freq="M")] == 1.0
+    assert pd.isna(result.loc[pd.Period("2020-02", freq="M")])
+    assert result.loc[pd.Period("2020-03", freq="M")] == 3.0
+
+
 def test_fred_csv_parser_handles_dot_missing_values(tmp_path):
     csv = (
         "observation_date,TESTSERIES\n"
