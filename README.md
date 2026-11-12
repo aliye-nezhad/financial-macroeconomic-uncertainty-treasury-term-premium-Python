@@ -6,7 +6,9 @@
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators? Does predictive information differ between the term-premium and expected-short-rate components?
 
 ## Research status
-The raw-data acquisition, monthly panel construction, source diagnostics, initial HAC regression pipeline, and expanding-window forecast pipeline are implemented. Empirical results have not yet been generated and validated by the project author.
+The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box diagnostics are implemented. The initial empirical outputs have been generated and reviewed by the project author. The focused literature review has been expanded to cover the closest related uncertainty/term-structure studies.
+
+The project is in empirical validation and robustness review. The original M0-M4 hierarchy remains the pre-specified baseline. Additional autoregressive-lag experiments are exploratory and do not replace that hierarchy.
 
 This is a predictive project, not a causal identification design. The first forecasting exercise uses currently available revised uncertainty-index data and must be described as pseudo-out-of-sample, not genuine real-time forecasting.
 
