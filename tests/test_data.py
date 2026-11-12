@@ -1,8 +1,13 @@
 from io import StringIO
 
 import pandas as pd
+import pytest
 
-from term_premium.data import monthly_period_series, read_fred_csv
+from term_premium.data import (
+    _parse_acm_monthly_frame,
+    monthly_period_series,
+    read_fred_csv,
+)
 
 
 def test_monthly_fred_series_preserves_month_identity():
@@ -46,3 +51,50 @@ def test_fred_csv_parser_handles_dot_missing_values(tmp_path):
     assert result.loc[pd.Timestamp("2020-01-01")] == 1.25
     assert pd.isna(result.loc[pd.Timestamp("2020-02-01")])
     assert result.loc[pd.Timestamp("2020-03-01")] == 2.50
+
+
+def test_acm_parser_pairs_values_positionally_with_dates():
+    frame = pd.DataFrame(
+        {
+            "date": ["30-Jun-1961", "31-Jul-1961"],
+            "acmy10": [3.8, 3.9],
+            "acmtp10": [0.2, 0.3],
+            "acmrny10": [3.6, 3.6],
+        }
+    )
+
+    result = _parse_acm_monthly_frame(frame)
+
+    june = pd.Period("1961-06", freq="M")
+    july = pd.Period("1961-07", freq="M")
+    assert result.loc[june, "acm_term_premium_10y"] == pytest.approx(0.2)
+    assert result.loc[july, "acm_term_premium_10y"] == pytest.approx(0.3)
+    assert result.loc[june, "acm_fitted_yield_10y"] == pytest.approx(3.8)
+
+
+def test_acm_parser_rejects_entirely_missing_series():
+    frame = pd.DataFrame(
+        {
+            "DATE": ["30-Jun-1961", "31-Jul-1961"],
+            "ACMY10": [3.8, 3.9],
+            "ACMTP10": [float("nan"), float("nan")],
+            "ACMRNY10": [3.6, 3.6],
+        }
+    )
+
+    with pytest.raises(ValueError, match="no numeric observations"):
+        _parse_acm_monthly_frame(frame)
+
+
+def test_acm_parser_rejects_failed_yield_decomposition():
+    frame = pd.DataFrame(
+        {
+            "DATE": ["30-Jun-1961", "31-Jul-1961"],
+            "ACMY10": [3.8, 3.9],
+            "ACMTP10": [0.2, 0.3],
+            "ACMRNY10": [3.2, 3.2],
+        }
+    )
+
+    with pytest.raises(ValueError, match="decomposition identity failed"):
+        _parse_acm_monthly_frame(frame)
