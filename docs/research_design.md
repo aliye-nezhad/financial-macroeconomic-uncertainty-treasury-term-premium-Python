@@ -3,12 +3,12 @@
 ## Project identity
 **Title:** Financial Uncertainty and the U.S. Treasury Term Premium: An Out-of-Sample Forecasting Assessment  
 **Field:** Macro-finance, monetary economics, fixed-income markets, uncertainty, time-series econometrics.  
-**Status:** Proposed design, subject to the data audit. No results or originality claims are made.
+**Status:** Data pipeline and initial estimation/forecasting implementation. Empirical results remain to be generated and validated.
 
 ## Main research question
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators?
 
-A secondary question is whether the predictive content is concentrated in the term-premium component of long-term yields rather than the expected-average-short-rate component.
+A secondary question is whether predictive information differs between the term-premium component and the expected-average-short-rate component of long-term yields.
 
 ## Economic motivation
 A long-term nominal Treasury yield can be decomposed, approximately and model-dependently, into an expected average future short-rate component and a term premium. The expected-rate component is closely connected to the expected path of monetary policy. The term premium captures compensation for bearing interest-rate risk and other model-dependent components.
@@ -28,16 +28,15 @@ The sign is therefore an empirical question. We will not impose a directional hy
 These are forecasting hypotheses, not causal hypotheses.
 
 ## Variables and measurement
-
 ### Primary dependent variable
 One-month-ahead change in the 10-year ACM term premium:
-  
-    ΔTP_ACM,t = TP_ACM,t - TP_ACM,t-1
-
-The forecast is formed using information dated no later than t-1 and predicts the change during month t.
+\[
+\Delta TP^{ACM}_{t}=TP^{ACM}_{t}-TP^{ACM}_{t-1}.
+\]
+The forecast is formed using information dated no later than the end of month t-1, and predicts the change realised during month t.
 
 ### Secondary dependent variable
-Change in the ACM expected-average-short-rate component. This is used to assess whether predictive information differs across the two components of the 10-year yield decomposition.
+Change in the ACM expected-average-short-rate component. This assesses whether predictive information differs across the two components of the 10-year yield decomposition.
 
 ### Alternative dependent variable
 Change in the 10-year Kim-Wright term premium (FRED: THREEFYTP10), aggregated to month-end. This is a robustness check, not an interchangeable measure: ACM and Kim-Wright use different model specifications and definitions.
@@ -46,64 +45,71 @@ Change in the 10-year Kim-Wright term premium (FRED: THREEFYTP10), aggregated to
 - **Primary financial uncertainty:** LMN 1-month-ahead financial uncertainty (FRED: LMNUF1M).
 - **Macroeconomic uncertainty comparator:** JLN 1-month-ahead macroeconomic uncertainty (FRED: JLNUM1M).
 - **Market-based proxy:** VIX (VIXCLS), used as a secondary proxy/robustness measure, not as a comprehensive uncertainty measure.
+- **Alternative horizon:** LMN and JLN 12-month-ahead indexes, estimated in a separate model hierarchy.
 
-The LMN financial and JLN macroeconomic measures are produced in related but distinct research frameworks. Their levels should not be treated as directly comparable. The empirical question concerns incremental predictive content conditional on each measure's own variation. Standardization within the estimation sample may be used for coefficient comparability, without implying common construction.
+The LMN financial and JLN macroeconomic measures are produced in related but distinct research frameworks. Their levels should not be treated as directly comparable. The empirical question concerns incremental predictive content conditional on each measure's own variation.
 
-### Conventional controls
-Initial candidates:
-- Lagged term-premium changes.
-- Change in the effective federal funds rate (DFF).
-- Treasury yield-curve slope, constructed from 10-year less 2-year Treasury yields (DGS10 minus DGS2).
-- Lagged macroeconomic uncertainty.
+### Monetary and market controls
+- Lagged effective federal funds rate level.
+- Lagged change in the effective federal funds rate.
+- Lagged 10-year less 2-year Treasury yield spread.
 
-Controls will be reduced if collinearity, timing, or sample constraints make the specification unstable. We will not add predictors mechanically.
+The lagged dependent variable captures autoregressive dynamics. Additional controls will not be added mechanically.
 
-## Forecasting design
-The primary exercise is a one-month-ahead pseudo-out-of-sample forecast using an expanding estimation window.
+## Nested model hierarchy
+All models within a given comparison use the same complete-case sample.
 
-Three nested model groups:
-1. **Benchmark:** autoregressive dynamics of the term-premium change.
-2. **Macro-monetary benchmark:** benchmark plus macroeconomic uncertainty and selected monetary/yield-curve controls.
-3. **Financial-uncertainty model:** macro-monetary benchmark plus financial uncertainty.
+Let y_t be the change in the ACM term premium, y_(t-1) its one-month lag, J_(t-2) lagged JLN macroeconomic uncertainty, L_(t-2) lagged LMN financial uncertainty, and X_(t-1) the monetary/yield-curve controls.
 
-VIX enters a separate proxy specification. It is not added automatically to the primary model because VIX and the broad LMN financial uncertainty measure may capture overlapping information.
+- **M0:** y_t = constant + AR(1) term-premium change.
+- **M1:** M0 plus lagged federal funds rate, lagged change in the federal funds rate, and lagged 10y-2y yield spread.
+- **M2:** M1 plus lagged JLN macroeconomic uncertainty.
+- **M3:** M2 plus lagged LMN financial uncertainty.
+- **M4:** M3 plus lagged VIX, estimated on a separate VIX-available common sample.
 
-The main comparison is whether the financial-uncertainty model improves forecast performance over the macro-monetary benchmark.
+M0-M3 form the primary hierarchy. M0-M4 are re-estimated on the VIX-available common sample for the M3/M4 comparison. This avoids confusing a change in sample composition with the effect of adding VIX.
 
-Evaluation metrics:
-- RMSE.
-- MAE.
-- Out-of-sample R-squared relative to the benchmark.
-- A forecast comparison test appropriate for nested models, with its assumptions and implementation documented.
+The 12-month uncertainty measures replace the 1-month measures in a separate hierarchy; the two horizons are not entered simultaneously.
 
-A one-month horizon is chosen for the initial project to keep timing transparent. Longer horizons may be considered only after the one-month design is validated.
+## Estimation and inference
+- Estimate predictive regressions by OLS.
+- Report Newey-West/HAC standard errors with six monthly lags initially.
+- Report coefficients, standard errors, confidence intervals, p-values, sample sizes, R-squared, adjusted R-squared, Durbin-Watson statistics and Ljung-Box residual diagnostics.
+- HAC inference affects standard errors and tests, not OLS point estimates or causal interpretation.
+
+## Pseudo-out-of-sample forecast design
+The primary exercise is a recursive expanding-window, one-month-ahead forecast:
+1. Use the first 120 complete monthly observations as the initial estimation window.
+2. Estimate each model using data strictly before the forecast target month.
+3. Produce a one-month-ahead forecast.
+4. Expand the estimation window by one observation and repeat.
+5. Keep each model comparison on an identical target-month sample.
+
+Report RMSE, MAE, mean forecast error and out-of-sample R-squared relative to the AR(1) benchmark.
+
+For nested forecast comparisons, report Clark-West adjusted MSPE tests for M0-M1, M1-M2, M2-M3 and, in the VIX common sample, M3-M4. The implementation uses a one-sided asymptotic normal p-value and HAC standard errors for the mean adjusted loss differential. Interpret these tests cautiously given finite-sample uncertainty and recursive estimation.
+
+## Component and measurement robustness
+Repeat the primary hierarchy for the ACM expected-average-short-rate change, the Kim-Wright term-premium change, and the 12-month uncertainty horizon. These are robustness exercises, not pooled estimates.
 
 ## Timing and information set
-The forecast-origin convention must be explicit. The analysis panel records the realised change during month t. Daily market predictors are aggregated to month-end and lagged one month; monthly JLN/LMN uncertainty indexes are lagged two months as a conservative publication-delay convention. This means that at the end of month t-1 the model predicts the term-premium change realised during month t. Daily series are converted to month-end observations, not monthly averages, to align with the New York Fed ACM monthly end-of-month estimates. The two-month uncertainty lag is a conservative convention, not a reconstruction of each historical release date.
+The panel records the change realised during month t. Daily market predictors are aggregated to month-end and lagged one month; monthly JLN/LMN uncertainty indexes are lagged two months as a conservative publication-delay convention. The model predicts the change realised during month t using the specified lagged information set.
 
-Monthly uncertainty series are currently revised and updated periodically. The first implementation uses the latest available vintage and is therefore a **pseudo-out-of-sample exercise**, not a genuine real-time forecasting exercise. We will not claim real-time forecasting unless historical vintages and publication availability are reconstructed.
+The two-month uncertainty lag is not a reconstruction of each historical release date. Monthly uncertainty series are revised periodically. The first implementation uses the latest available vintage and is therefore **pseudo-out-of-sample**, not genuine real-time forecasting. We will not claim real-time forecasting unless historical vintages and publication availability are reconstructed.
 
-For unemployment or other delayed-release macro controls, use an additional lag or exclude them from the baseline unless the information set can be documented.
-
-## Inference and limitations
+## Interpretation and limitations
 - Predictive regressions do not identify causal effects of uncertainty.
 - Uncertainty indexes may be endogenous to financial and macroeconomic conditions.
 - ACM and Kim-Wright term premia are estimated latent components, not directly observed prices.
 - Term-premium estimates can be revised and differ across models.
 - Monthly data and persistent uncertainty measures require careful treatment of serial correlation.
-- Forecast comparison tests must account for nested-model structure and the finite out-of-sample period.
+- Forecast comparison tests must account for nested-model structure and finite out-of-sample periods.
 - Results may be sensitive to crisis episodes and sample endpoints.
 
 ## Literature positioning
 The project does not claim that uncertainty and term premia have not been studied. The contribution at this stage is a transparent independent forecasting comparison of financial versus macroeconomic uncertainty, examining incremental predictive content and the decomposition into expected rates and term premia, with an alternative term-premium estimate as a measurement robustness check.
 
-A stronger novelty claim would require a completed literature review and evidence that the exact comparison is not already covered.
+A stronger novelty claim requires a completed literature review and evidence that the exact forecasting comparison is not already covered.
 
-## Decision gates
-Do not proceed to final estimation until:
-1. All source series download reproducibly.
-2. The ACM workbook structure and variable definitions are verified.
-3. The common sample and missingness are documented.
-4. Daily-to-month-end alignment is tested.
-5. Forecast-origin and outcome timing are tested with a small hand-checked example.
-6. Uncertainty definitions and vintage/revision practices are documented.
+## Reproducibility decision gates
+Before interpreting results, confirm source downloads, ACM definitions, common samples, frequency alignment, forecast timing, vintage practices, test results, and plausibility of generated outputs.
