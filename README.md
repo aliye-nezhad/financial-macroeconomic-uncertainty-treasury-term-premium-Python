@@ -57,13 +57,14 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - src/term_premium/analysis.py: model specifications, common-sample validation, HAC regressions, expanding-window forecasts, forecast metrics, and Clark-West tests.
 - scripts/01_download_data.py: source acquisition.
 - scripts/02_build_dataset.py: processed panel construction.
-- scripts/03_data_audit.py: coverage, missingness, correlations, pairwise counts and matched-sample diagnostics.
+- scripts/03_data_audit.py: source coverage, edge/interior missingness, monthly-index integrity, robust extreme-observation flags, correlations, pairwise counts and matched-sample diagnostics.
+- src/term_premium/diagnostics.py: reusable non-destructive missingness and modified-z outlier screening.
 - scripts/04_estimate_models.py: nested OLS estimation and HAC inference.
 - scripts/05_forecast_evaluation.py: expanding-window forecasts, accuracy metrics, Clark-West tests and forecast plots.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
-- outputs/diagnostics/: data coverage and matched-sample diagnostics.
+- outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts and matched-sample diagnostics.
 - outputs/estimation/: regression summaries, coefficients and estimation samples.
 - outputs/forecasting/: forecast series, forecast accuracy, Clark-West tests and plots.
 
