@@ -121,3 +121,12 @@ Before interpreting results, confirm source downloads, ACM definitions, common s
 
 ## Initial empirical evidence
 The first generated results do not show improved pseudo-out-of-sample accuracy for the primary ACM term-premium outcome when JLN, LMN or VIX is added to the AR/monetary benchmark. The ACM expected-short-rate component contains a secondary LMN association that requires cautious interpretation after multiple-testing adjustment and forecast-accuracy comparison. Exploratory autoregressive extensions are not part of the pre-specified M0-M4 hierarchy. Full results and qualifications are recorded in [empirical_results.md](empirical_results.md).
+
+
+## Stability analysis
+
+The pre-specified M0-M4 hierarchy remains unchanged. Stability checks are supplementary and do not select a replacement model based on observed results.
+
+The first stability exercise estimates the M3 coefficient on lagged LMN financial uncertainty in overlapping 120-month rolling windows, using OLS with six-lag HAC covariance estimates. It also compares already-generated recursive one-month-ahead M2 and M3 forecasts over overlapping 120-target-month windows and reports descriptive performance by non-overlapping calendar decade. Rolling windows overlap and their coefficient intervals are not independent repeated hypothesis tests. Decade-level results are descriptive and no decade-specific significance tests are performed.
+
+The purpose is to assess whether the full-sample coefficient and forecast comparison conceal time variation. The analysis does not identify structural breaks or causal regime effects. Formal break tests or regime-specific claims would require a separately motivated design, treatment of break-date uncertainty and appropriate inference.
