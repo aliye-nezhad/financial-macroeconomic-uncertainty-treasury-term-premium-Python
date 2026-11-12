@@ -14,6 +14,11 @@ def main() -> None:
     print(f"Columns: {len(panel.columns):,}")
     print(f"First month: {panel.index.min()}")
     print(f"Last month: {panel.index.max()}")
+    excluded = panel.attrs.get("excluded_partial_months", {})
+    if excluded:
+        print("\nExcluded incomplete final-month observations:")
+        for series_id, month in sorted(excluded.items()):
+            print(f"{series_id}: {month} (snapshot retrieved during that month)")
     print("\nMissing observations by variable:")
     print(panel.isna().sum().to_string())
 
