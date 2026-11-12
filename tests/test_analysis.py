@@ -469,3 +469,98 @@ def test_rolling_forecast_performance_and_decade_summaries():
             ]
         ]
     ).all().all()
+
+
+def test_stability_functions_reject_gapped_monthly_indexes():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "10_stability_analysis.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "stability_analysis_validation",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    panel = _synthetic_panel(n=180)
+    specs = {"M2": ["y_lag1", "x"], "M3": ["y_lag1", "x", "z"]}
+    sample = common_complete_sample(panel, outcome="y", model_specs=specs)
+    gapped_sample = sample.drop(sample.index[70])
+
+    with pytest.raises(ValueError, match="consecutive months"):
+        module.rolling_lmn_coefficients(
+            gapped_sample,
+            outcome="y",
+            model_specs=specs,
+            model_id="M3",
+            focal_predictor="z",
+            window_size=60,
+            hac_lags=3,
+        )
+
+    index = pd.period_range("1980-01", periods=150, freq="M")
+    rng = np.random.default_rng(456)
+    actual = rng.normal(size=150)
+    forecasts = pd.DataFrame(
+        {
+            "actual": actual,
+            "M2": actual + rng.normal(size=150),
+            "M3": actual + rng.normal(size=150),
+        },
+        index=index,
+    ).drop(index[70])
+
+    with pytest.raises(ValueError, match="consecutive months"):
+        module.rolling_forecast_performance(
+            forecasts,
+            restricted_model="M2",
+            unrestricted_model="M3",
+            window_size=60,
+        )
+
+    with pytest.raises(ValueError, match="consecutive months"):
+        module.forecast_performance_by_decade(
+            forecasts,
+            restricted_model="M2",
+            unrestricted_model="M3",
+        )
+
+
+def test_rolling_lmn_coefficients_reject_rank_deficient_windows():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "10_stability_analysis.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "stability_analysis_rank",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    panel = _synthetic_panel(n=100)
+    panel["z"] = 1.0
+    specs = {"M3": ["y_lag1", "x", "z"]}
+    sample = common_complete_sample(panel, outcome="y", model_specs=specs)
+
+    with pytest.raises(ValueError, match="rank deficient"):
+        module.rolling_lmn_coefficients(
+            sample,
+            outcome="y",
+            model_specs=specs,
+            model_id="M3",
+            focal_predictor="z",
+            window_size=60,
+            hac_lags=3,
+        )
