@@ -83,7 +83,7 @@ def main() -> None:
             coefficient_results.append(coefficients)
 
         print(
-            f"\\n{label}: {len(sample)} observations, "
+            f"\n{label}: {len(sample)} observations, "
             f"{sample.index.min()} to {sample.index.max()}"
         )
 
@@ -95,9 +95,9 @@ def main() -> None:
     summaries.to_csv(summary_path, index=False)
     coefficients.to_csv(coefficient_path, index=False)
 
-    print(f"\\nSaved: {summary_path}")
+    print(f"\nSaved: {summary_path}")
     print(f"Saved: {coefficient_path}")
-    print("\\nCoefficient inference by HAC bandwidth:")
+    print("\nCoefficient inference by HAC bandwidth:")
     print(
         coefficients[
             [
