@@ -258,8 +258,14 @@ def monthly_period_series(
     """
     series = series.dropna().sort_index()
     if source_frequency == "daily":
-        result = series.resample("ME").last()
-        result.index = result.index.to_period("M")
+        # Group by calendar month directly. Reindex the full span so months
+        # with no source observations remain explicit NaNs, as with resample.
+        result = series.groupby(series.index.to_period("M")).last()
+        if not result.empty:
+            expected_months = pd.period_range(
+                result.index.min(), result.index.max(), freq="M"
+            )
+            result = result.reindex(expected_months)
     elif source_frequency == "monthly":
         result = series.copy()
         result.index = result.index.to_period("M")
