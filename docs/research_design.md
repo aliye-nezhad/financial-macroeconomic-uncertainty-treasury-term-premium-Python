@@ -130,3 +130,14 @@ The pre-specified M0-M4 hierarchy remains unchanged. Stability checks are supple
 The first stability exercise estimates the M3 coefficient on lagged LMN financial uncertainty in overlapping 120-month rolling windows, using OLS with six-lag HAC covariance estimates. It also compares already-generated recursive one-month-ahead M2 and M3 forecasts over overlapping 120-target-month windows and reports descriptive performance by non-overlapping calendar decade. Rolling windows overlap and their coefficient intervals are not independent repeated hypothesis tests. Decade-level results are descriptive and no decade-specific significance tests are performed.
 
 The purpose is to assess whether the full-sample coefficient and forecast comparison conceal time variation. The analysis does not identify structural breaks or causal regime effects. Formal break tests or regime-specific claims would require a separately motivated design, treatment of break-date uncertainty and appropriate inference.
+
+
+## Observation influence and outlier review
+
+The data audit uses robust modified-z scores to flag unusual levels and first differences. These flags are screening aids only: a large observation may represent a genuine crisis or policy episode rather than a data error, and no value is winsorized or deleted automatically.
+
+The supplementary M3 influence exercise reports conventional OLS leverage, externally studentized residuals, Cook's distance, DFFITS and DFBETAS for the lagged LMN coefficient. Common rule-of-thumb thresholds are used to prioritize manual inspection; they are not formal tests and do not incorporate the HAC covariance estimator.
+
+An exact leave-one-month-out exercise records how the M3 LMN OLS point estimate changes when each month is omitted in turn. This is a coefficient-influence diagnostic only. Omitting an interior month creates an irregular time index, so no HAC standard errors, p-values or forecast comparisons are calculated on these deletion samples. The full-sample model and its HAC inference remain the reference.
+
+A flagged month is not grounds for exclusion. Review must first establish whether the source observation is erroneous, whether its date and transformation are correct, and whether the movement is economically plausible. Genuine extreme episodes remain part of the primary analysis. Any exclusion would require a documented source/data error or a separately justified design decision, not a preferred coefficient or p-value.
