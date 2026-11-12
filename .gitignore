@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+
+# Local data: download through scripts; do not commit source snapshots by default
+data/raw/*
+data/intermediate/*
+data/processed/*
+!data/raw/.gitkeep
+!data/intermediate/.gitkeep
+!data/processed/.gitkeep
+
+# Generated outputs
+outputs/tables/*
+outputs/figures/*
+outputs/diagnostics/*
+!outputs/tables/.gitkeep
+!outputs/figures/.gitkeep
+!outputs/diagnostics/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
