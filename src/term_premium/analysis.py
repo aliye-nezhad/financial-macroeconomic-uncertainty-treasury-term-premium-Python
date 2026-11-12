@@ -20,6 +20,7 @@ from statsmodels.stats.diagnostic import (
     acorr_ljungbox,
 )
 from statsmodels.stats.stattools import durbin_watson
+from statsmodels.stats.multitest import multipletests
 from statsmodels.tsa.stattools import acf
 
 
@@ -535,3 +536,54 @@ def clark_west_tests(
         )
 
     return pd.DataFrame(rows)
+
+
+def adjust_clark_west_pvalues_by_bandwidth(
+    results: pd.DataFrame,
+) -> pd.DataFrame:
+    """Add Holm and Bonferroni p-values within each HAC-bandwidth family.
+
+    Each HAC bandwidth is a sensitivity analysis of the same family of nested
+    forecast comparisons. Adjustments are therefore performed across model
+    comparisons separately within each bandwidth, not across bandwidths.
+    """
+    required = {"hac_maxlags", "p_value_one_sided"}
+    missing = sorted(required.difference(results.columns))
+    if missing:
+        raise KeyError(
+            f"Clark-West results are missing required columns: {missing}"
+        )
+    if results.empty:
+        raise ValueError("At least one Clark-West result is required.")
+
+    adjusted = results.copy()
+    pvalues = pd.to_numeric(
+        adjusted["p_value_one_sided"],
+        errors="coerce",
+    )
+    if (
+        not np.isfinite(pvalues.to_numpy(dtype=float)).all()
+        or ((pvalues < 0) | (pvalues > 1)).any()
+    ):
+        raise ValueError("Clark-West p-values must be finite and lie in [0, 1].")
+
+    adjusted["p_value_holm"] = np.nan
+    adjusted["p_value_bonferroni"] = np.nan
+    adjusted["multiple_test_family_size"] = 0
+
+    for _, indices in adjusted.groupby("hac_maxlags", sort=False).groups.items():
+        family_pvalues = pvalues.loc[indices].to_numpy(dtype=float)
+        adjusted.loc[indices, "p_value_holm"] = multipletests(
+            family_pvalues,
+            method="holm",
+        )[1]
+        adjusted.loc[indices, "p_value_bonferroni"] = multipletests(
+            family_pvalues,
+            method="bonferroni",
+        )[1]
+        adjusted.loc[indices, "multiple_test_family_size"] = len(indices)
+
+    adjusted["multiple_test_family_size"] = (
+        adjusted["multiple_test_family_size"].astype(int)
+    )
+    return adjusted
