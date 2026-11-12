@@ -4,7 +4,9 @@ import pandas as pd
 import pytest
 
 from term_premium.data import (
+    _incomplete_month_for_daily_source,
     _parse_acm_monthly_frame,
+    _snapshot_timestamp_for_entry,
     monthly_period_series,
     read_fred_csv,
 )
@@ -34,6 +36,94 @@ def test_daily_series_uses_last_non_missing_observation_of_month():
 
     assert result.loc[pd.Period("2020-01", freq="M")] == 2.0
     assert result.loc[pd.Period("2020-02", freq="M")] == 3.0
+
+
+def test_daily_series_excludes_explicitly_incomplete_month():
+    source = pd.Series(
+        [1.0, 2.0, 3.0],
+        index=pd.to_datetime(["2020-01-30", "2020-01-31", "2020-02-10"]),
+        name="VIXCLS",
+    )
+
+    result = monthly_period_series(
+        source,
+        source_frequency="daily",
+        incomplete_month=pd.Period("2020-02", freq="M"),
+    )
+
+    assert list(result.index.astype(str)) == ["2020-01"]
+    assert result.iloc[0] == 2.0
+
+
+def test_daily_source_final_month_is_incomplete_when_snapshot_is_in_same_month():
+    source = pd.Series(
+        [1.0, 2.0],
+        index=pd.to_datetime(["2020-01-31", "2020-02-10"]),
+    )
+
+    result = _incomplete_month_for_daily_source(
+        source,
+        "2020-02-12T15:00:00+00:00",
+    )
+
+    assert result == pd.Period("2020-02", freq="M")
+
+
+def test_daily_source_previous_month_is_complete_for_later_snapshot():
+    source = pd.Series(
+        [1.0, 2.0],
+        index=pd.to_datetime(["2020-01-31", "2020-02-28"]),
+    )
+
+    result = _incomplete_month_for_daily_source(
+        source,
+        "2020-03-02T15:00:00+00:00",
+    )
+
+    assert result is None
+
+
+def test_downloaded_source_uses_current_snapshot_timestamp():
+    timestamp = "2026-11-12T13:34:51+00:00"
+
+    result = _snapshot_timestamp_for_entry(
+        {"retrieval": "downloaded", "sha256": "new"},
+        {"retrieval": "downloaded", "sha256": "old"},
+        {"retrieved_at_utc": "2026-11-01T00:00:00+00:00"},
+        timestamp,
+    )
+
+    assert result == timestamp
+
+
+def test_cached_source_preserves_original_snapshot_timestamp():
+    timestamp = "2026-11-12T13:34:51+00:00"
+
+    result = _snapshot_timestamp_for_entry(
+        {"retrieval": "cached", "sha256": "same"},
+        {"retrieval": "downloaded", "sha256": "same"},
+        {"retrieved_at_utc": timestamp},
+        "2026-12-02T10:00:00+00:00",
+    )
+
+    assert result == timestamp
+
+
+def test_cached_source_preserves_per_source_timestamp_from_new_manifest():
+    original = "2026-11-12T13:34:51+00:00"
+
+    result = _snapshot_timestamp_for_entry(
+        {"retrieval": "cached", "sha256": "same"},
+        {
+            "retrieval": "cached",
+            "sha256": "same",
+            "snapshot_retrieved_at_utc": original,
+        },
+        {"retrieved_at_utc": "2026-12-02T10:00:00+00:00"},
+        "2026-12-02T10:00:00+00:00",
+    )
+
+    assert result == original
 
 
 def test_daily_series_preserves_calendar_months_without_observations():
