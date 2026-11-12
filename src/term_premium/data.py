@@ -328,8 +328,18 @@ def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
     )
     panel["kim_wright_term_premium_change"] = panel["THREEFYTP10"].diff()
 
-    # Explicitly label the one-month-ahead target at forecast origin t:
-    # change from the end of month t to the end of month t+1.
+    # Conservative predictor timing: use information dated at t-1 to predict
+    # the change from month-end t to month-end t+1. This does not reconstruct
+    # historical publication vintages, so forecasts remain pseudo-out-of-sample.
+    predictor_columns = [
+        "LMNUF1M", "LMNUF12M", "JLNUM1M", "JLNUM12M",
+        "VIXCLS", "DFF", "dff_change", "DGS2", "DGS10",
+        "yield_curve_slope_10y2y",
+    ]
+    for column in predictor_columns:
+        panel[f"{column.lower()}_lag1"] = panel[column].shift(1)
+
+    # Outcome at forecast origin t: change from end of t to end of t+1.
     panel["target_acm_tp_change_next_month"] = (
         panel["acm_term_premium_10y"].shift(-1)
         - panel["acm_term_premium_10y"]
