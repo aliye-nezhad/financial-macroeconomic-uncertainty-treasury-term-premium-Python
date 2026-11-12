@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from scipy.stats import norm
-from statsmodels.stats.diagnostic import acorr_ljungbox
+from statsmodels.stats.diagnostic import (\n    acorr_breusch_godfrey,\n    acorr_ljungbox,\n)
 from statsmodels.stats.stattools import durbin_watson
 from statsmodels.tsa.stattools import acf
 
@@ -296,6 +296,78 @@ def residual_diagnostic_table(
             )
 
     return pd.DataFrame(rows)
+
+
+
+def breusch_godfrey_diagnostic_table(
+    sample: pd.DataFrame,
+    *,
+    outcome: str,
+    model_specs: Mapping[str, Sequence[str]],
+    lags: Sequence[int] = (6, 12),
+) -> pd.DataFrame:
+    """Run Breusch-Godfrey LM and F tests on each OLS model.
+
+    The test is applied to the OLS residuals and original regressors. HAC
+    covariance estimation is not used in this auxiliary serial-correlation
+    test. Results are reported separately from the ACF/Ljung-Box screening
+    diagnostics.
+    """
+    if not model_specs:
+        raise ValueError("At least one model specification is required.")
+
+    requested_lags = sorted({int(lag) for lag in lags})
+    if not requested_lags or any(lag < 1 for lag in requested_lags):
+        raise ValueError("Breusch-Godfrey lags must be positive integers.")
+
+    validated = common_complete_sample(
+        sample,
+        outcome=outcome,
+        model_specs=model_specs,
+    )
+    if max(requested_lags) >= len(validated):
+        raise ValueError(
+            "The sample must contain more observations than the largest "
+            "Breusch-Godfrey lag."
+        )
+
+    y = validated[outcome].astype(float)
+    rows: list[dict[str, object]] = []
+
+    for model_id, predictors_sequence in model_specs.items():
+        predictors = list(predictors_sequence)
+        if not predictors:
+            raise ValueError(f"{model_id} has no regressors.")
+
+        X = sm.add_constant(
+            validated[predictors].astype(float),
+            has_constant="add",
+        )
+        fitted = sm.OLS(y, X, missing="raise").fit()
+
+        for lag in requested_lags:
+            lm_stat, lm_pvalue, f_stat, f_pvalue = (
+                acorr_breusch_godfrey(
+                    fitted,
+                    nlags=lag,
+                    result_object=False,
+                )
+            )
+            rows.append(
+                {
+                    "model": model_id,
+                    "outcome": outcome,
+                    "nobs": int(fitted.nobs),
+                    "lag": lag,
+                    "lm_stat": float(lm_stat),
+                    "lm_pvalue": float(lm_pvalue),
+                    "f_stat": float(f_stat),
+                    "f_pvalue": float(f_pvalue),
+                }
+            )
+
+    return pd.DataFrame(rows)
+
 
 def expanding_window_forecasts(
     panel: pd.DataFrame,
