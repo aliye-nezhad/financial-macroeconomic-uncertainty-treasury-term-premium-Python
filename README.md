@@ -64,3 +64,36 @@ Data will be retrieved programmatically where permitted. Raw files will not be c
 9. Research note, reproducibility report, and final repository audit.
 
 See [research_design.md](docs/research_design.md), [literature_review.md](docs/literature_review.md), and [data_plan.md](docs/data_plan.md).
+
+
+## Initial implementation
+
+The first data-pipeline scaffold is now in the repository:
+
+- `src/term_premium/data.py`: FRED and New York Fed downloads, raw-file manifest and hashes, source parsing, month-end alignment, ACM decomposition check, and panel construction.
+- `scripts/01_download_data.py`: downloads/caches all source files.
+- `scripts/02_build_dataset.py`: constructs the monthly panel.
+- `tests/test_data.py`: initial date-alignment and FRED parsing tests.
+- `requirements.txt` and `pyproject.toml`: Python dependencies and package configuration.
+
+### Run locally
+
+```bash
+python -m venv .venv
+# Windows:
+.venv\\Scripts\\activate
+# macOS/Linux:
+source .venv/bin/activate
+
+pip install -r requirements.txt
+pip install -e .
+pytest
+python scripts/01_download_data.py
+python scripts/02_build_dataset.py
+```
+
+Use `python scripts/01_download_data.py --refresh` to refresh cached source snapshots.
+
+**Verification status:** The code has been committed, but it has not yet been executed against live source downloads or run through pytest in this environment. The first local run is a data-source and parser validation step, not a reproduction of empirical results.
+
+The primary one-month-ahead forecasting predictors are shifted by one month in the constructed panel. This is a conservative timing convention, but the use of currently revised uncertainty-index observations means the exercise remains pseudo-out-of-sample rather than real-time.
