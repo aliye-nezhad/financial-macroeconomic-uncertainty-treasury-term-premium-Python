@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from term_premium.analysis import (
+    breusch_godfrey_diagnostic_table,
     build_model_specs,
     common_complete_sample,
     residual_diagnostic_table,
@@ -61,6 +62,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     results: list[pd.DataFrame] = []
+    bg_results: list[pd.DataFrame] = []
     for label, outcome, horizon, include_vix in specifications:
         model_specs = build_model_specs(
             ar_lag=f"{outcome}_lag1",
@@ -84,6 +86,17 @@ def main() -> None:
         diagnostics["last_month"] = str(sample.index.max())
         results.append(diagnostics)
 
+        bg_diagnostics = breusch_godfrey_diagnostic_table(
+            sample,
+            outcome=outcome,
+            model_specs=model_specs,
+            lags=(6, 12),
+        )
+        bg_diagnostics.insert(0, "sample", label)
+        bg_diagnostics["first_month"] = str(sample.index.min())
+        bg_diagnostics["last_month"] = str(sample.index.max())
+        bg_results.append(bg_diagnostics)
+
         print(
             f"\\n{label}: {len(sample)} observations, "
             f"{sample.index.min()} to {sample.index.max()}"
@@ -100,11 +113,19 @@ def main() -> None:
                 ],
             ].to_string(index=False)
         )
+        print("\nBreusch-Godfrey tests:")
+        print(bg_diagnostics.to_string(index=False))
 
     combined = pd.concat(results, ignore_index=True)
     destination = output_dir / "residual_autocorrelation.csv"
     combined.to_csv(destination, index=False)
-    print(f"\\nSaved: {destination}")
+
+    combined_bg = pd.concat(bg_results, ignore_index=True)
+    bg_destination = output_dir / "breusch_godfrey.csv"
+    combined_bg.to_csv(bg_destination, index=False)
+
+    print(f"\nSaved: {destination}")
+    print(f"Saved: {bg_destination}")
 
 
 if __name__ == "__main__":
