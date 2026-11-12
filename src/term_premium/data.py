@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import datetime, timezone
-from io import BytesIO, StringIO
+from io import BytesIO
 from pathlib import Path
 from typing import Any
 
@@ -318,9 +318,7 @@ def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
     panel = pd.concat(series + [acm], axis=1).sort_index()
     panel.index.name = "month"
 
-    panel["yield_curve_slope_10y2y"] = (
-        panel["DGS10"] - panel["DGS2"]
-    )
+    panel["yield_curve_slope_10y2y"] = panel["DGS10"] - panel["DGS2"]
     panel["dff_change"] = panel["DFF"].diff()
     panel["acm_term_premium_change"] = panel["acm_term_premium_10y"].diff()
     panel["acm_expected_short_rate_change"] = (
@@ -328,28 +326,38 @@ def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
     )
     panel["kim_wright_term_premium_change"] = panel["THREEFYTP10"].diff()
 
-    # Conservative predictor timing: use information dated at t-1 to predict
-    # the change from month-end t to month-end t+1. This does not reconstruct
-    # historical publication vintages, so forecasts remain pseudo-out-of-sample.
-    predictor_columns = [
-        "LMNUF1M", "LMNUF12M", "JLNUM1M", "JLNUM12M",
+    # Forecasting information set:
+    # - Market series are observed daily and aggregated to month-end. Use t-1.
+    # - JLN/LMN monthly indexes are lagged by two months as a conservative
+    #   publication-delay convention. This is not a reconstruction of exact
+    #   historical release dates or ALFRED vintages.
+    uncertainty_predictors = [
+        "LMNUF1M", "LMNUF12M", "JLNUM1M", "JLNUM12M"
+    ]
+    market_predictors = [
         "VIXCLS", "DFF", "dff_change", "DGS2", "DGS10",
         "yield_curve_slope_10y2y",
+        "acm_term_premium_change",
+        "acm_expected_short_rate_change",
+        "kim_wright_term_premium_change",
     ]
-    for column in predictor_columns:
+
+    for column in uncertainty_predictors:
+        panel[f"{column.lower()}_lag2"] = panel[column].shift(2)
+
+    for column in market_predictors:
         panel[f"{column.lower()}_lag1"] = panel[column].shift(1)
 
-    # Outcome at forecast origin t: change from end of t to end of t+1.
-    panel["target_acm_tp_change_next_month"] = (
-        panel["acm_term_premium_10y"].shift(-1)
-        - panel["acm_term_premium_10y"]
+    # Row t contains the change realised during month t. Its predictors are
+    # restricted to values dated t-1 (market data) and t-2 (monthly
+    # uncertainty indexes). Thus the row is a one-month-ahead forecast target
+    # relative to the end-of-month t-1 information set.
+    panel["target_acm_tp_change"] = panel["acm_term_premium_change"]
+    panel["target_acm_expected_short_rate_change"] = (
+        panel["acm_expected_short_rate_change"]
     )
-    panel["target_acm_expected_short_rate_change_next_month"] = (
-        panel["acm_expected_short_rate_10y"].shift(-1)
-        - panel["acm_expected_short_rate_10y"]
-    )
-    panel["target_kim_wright_tp_change_next_month"] = (
-        panel["THREEFYTP10"].shift(-1) - panel["THREEFYTP10"]
+    panel["target_kim_wright_tp_change"] = (
+        panel["kim_wright_term_premium_change"]
     )
 
     return panel
