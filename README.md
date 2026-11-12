@@ -55,6 +55,8 @@ Activate the existing environment, then run:
     python scripts/07_hac_sensitivity.py
     python scripts/08_forecast_test_sensitivity.py
     python scripts/09_dynamic_specification_sensitivity.py
+    python scripts/10_stability_analysis.py
+    python scripts/11_influence_sensitivity.py
 
 Use python scripts/01_download_data.py --refresh to request fresh source snapshots.
 
@@ -72,11 +74,13 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - scripts/08_forecast_test_sensitivity.py: reuses saved expanding-window forecasts to test Clark-West sensitivity at HAC bandwidths of 3, 6, 12 and 18 months, verifies the original three-lag baseline, and reports Holm and Bonferroni adjustments across nested comparisons within each bandwidth.
 - scripts/09_dynamic_specification_sensitivity.py: compares exploratory autoregressive specifications using identical samples, residual diagnostics, recursive forecasts and nested Clark-West tests; it does not replace the pre-specified baseline.
 - scripts/10_stability_analysis.py: examines 120-month rolling HAC estimates of the primary M3 LMN coefficient, rolling M3-versus-M2 forecast performance, and descriptive calendar-decade forecast metrics. Overlapping windows are descriptive, not independent hypothesis tests.
+- scripts/11_influence_sensitivity.py: reports OLS leverage, externally studentized residuals, Cook's distance, DFFITS and focal-coefficient DFBETAS, alongside exact leave-one-month-out changes in the M3 LMN point estimate. No observations are automatically removed; deletion-sample HAC inference is not reported because an interior deletion breaks monthly spacing.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
 - outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts, matched-sample diagnostics, residual autocorrelation diagnostics and Breusch-Godfrey test results.
   - HAC sensitivity summaries and coefficient-inference tables.
+  - M3 regression-influence flags, leave-one-month-out coefficient sensitivity and a screening summary.
 - outputs/estimation/: regression summaries, coefficients and estimation samples.
 - outputs/forecasting/: forecast series, forecast accuracy, Clark-West tests, HAC sensitivity results and black-and-white plots.
 
