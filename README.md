@@ -6,7 +6,7 @@
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators? Does predictive information differ between the term-premium and expected-short-rate components?
 
 ## Research status
-The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box diagnostics are implemented. The initial empirical outputs have been generated and reviewed by the project author. The focused literature review has been expanded to cover the closest related uncertainty/term-structure studies.
+The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box and Breusch-Godfrey LM/F diagnostics are implemented. The initial empirical outputs have been generated and reviewed by the project author. The focused literature review has been expanded to cover the closest related uncertainty/term-structure studies.
 
 The project is in empirical validation and robustness review. The original M0-M4 hierarchy remains the pre-specified baseline. Additional autoregressive-lag experiments are exploratory and do not replace that hierarchy.
 
@@ -63,12 +63,12 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - scripts/03_data_audit.py: source coverage, edge/interior missingness, monthly-index integrity, robust extreme-observation flags, correlations, pairwise counts and matched-sample diagnostics.
 - src/term_premium/diagnostics.py: reusable non-destructive missingness and modified-z outlier screening.
 - scripts/04_estimate_models.py: nested OLS estimation and HAC inference.
-- scripts/05_forecast_evaluation.py: expanding-window forecasts, accuracy metrics, Clark-West tests and forecast plots.
-- scripts/06_residual_diagnostics.py: residual ACFs at lags 1-12 and Ljung-Box tests at lags 1, 3, 6 and 12 for every pre-specified regression hierarchy.
+- scripts/05_forecast_evaluation.py: expanding-window forecasts, accuracy metrics, Clark-West tests and black-and-white forecast plots.
+- scripts/06_residual_diagnostics.py: residual ACFs at lags 1-12, Ljung-Box tests at lags 1, 3, 6 and 12, and Breusch-Godfrey LM/F tests at lags 6 and 12 for every pre-specified regression hierarchy.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
-- outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts, matched-sample diagnostics and residual autocorrelation diagnostics.
+- outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts, matched-sample diagnostics, residual autocorrelation diagnostics and Breusch-Godfrey test results.
 - outputs/estimation/: regression summaries, coefficients and estimation samples.
 - outputs/forecasting/: forecast series, forecast accuracy, Clark-West tests and plots.
 
