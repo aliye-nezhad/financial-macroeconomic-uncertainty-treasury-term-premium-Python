@@ -52,6 +52,7 @@ Activate the existing environment, then run:
     python scripts/04_estimate_models.py
     python scripts/05_forecast_evaluation.py
     python scripts/06_residual_diagnostics.py
+    python scripts/07_hac_sensitivity.py
 
 Use python scripts/01_download_data.py --refresh to request fresh source snapshots.
 
@@ -65,10 +66,12 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - scripts/04_estimate_models.py: nested OLS estimation and HAC inference.
 - scripts/05_forecast_evaluation.py: expanding-window forecasts, accuracy metrics, Clark-West tests and black-and-white forecast plots.
 - scripts/06_residual_diagnostics.py: residual ACFs at lags 1-12, Ljung-Box tests at lags 1, 3, 6 and 12, and Breusch-Godfrey LM/F tests at lags 6 and 12 for every pre-specified regression hierarchy.
+- scripts/07_hac_sensitivity.py: re-estimates the same pre-specified models with HAC bandwidths of 6, 12 and 18 months to assess inference sensitivity without changing OLS coefficients.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
 - outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts, matched-sample diagnostics, residual autocorrelation diagnostics and Breusch-Godfrey test results.
+  - HAC sensitivity summaries and coefficient-inference tables.
 - outputs/estimation/: regression summaries, coefficients and estimation samples.
 - outputs/forecasting/: forecast series, forecast accuracy, Clark-West tests and plots.
 
