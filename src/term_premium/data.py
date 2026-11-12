@@ -271,13 +271,15 @@ def monthly_period_series(
     return result.astype(float)
 
 
-def read_acm_monthly(path: str | Path) -> pd.DataFrame:
-    """Read and validate the New York Fed's published ACM monthly workbook."""
-    frame = pd.read_excel(
-        path,
-        sheet_name="ACM Monthly",
-        engine="xlrd",
-    )
+def _parse_acm_monthly_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    """Parse an already-read ACM Monthly worksheet and validate its contents.
+
+    Convert source columns to NumPy arrays before constructing the DataFrame.
+    Passing a Series together with a separate DatetimeIndex makes pandas align
+    by the Series' original integer labels and can silently produce all-NaN
+    columns. The arrays ensure positional pairing with the parsed dates.
+    """
+    frame = frame.copy()
     frame.columns = [str(column).strip().upper() for column in frame.columns]
 
     required = ["DATE", "ACMY10", "ACMTP10", "ACMRNY10"]
@@ -288,40 +290,77 @@ def read_acm_monthly(path: str | Path) -> pd.DataFrame:
             f"Available columns: {list(frame.columns)}"
         )
 
-    dates = pd.to_datetime(frame["DATE"], errors="coerce", format="mixed", dayfirst=True)
-    result = pd.DataFrame(
-        {
-            "acm_fitted_yield_10y": pd.to_numeric(frame["ACMY10"], errors="coerce"),
-            "acm_term_premium_10y": pd.to_numeric(frame["ACMTP10"], errors="coerce"),
-            "acm_expected_short_rate_10y": pd.to_numeric(
-                frame["ACMRNY10"], errors="coerce"
-            ),
-        },
-        index=dates,
+    dates = pd.to_datetime(
+        frame["DATE"].astype(str).str.strip(),
+        format="%d-%b-%Y",
+        errors="coerce",
     )
-    result = result.loc[result.index.notna()].sort_index()
-    result.index = result.index.to_period("M")
+    if dates.isna().any():
+        bad_rows = frame.loc[dates.isna(), "DATE"].head(5).tolist()
+        raise ValueError(
+            "ACM Monthly sheet contains unparseable DATE values. "
+            f"Examples: {bad_rows}"
+        )
+
+    values = {
+        "acm_fitted_yield_10y": pd.to_numeric(
+            frame["ACMY10"], errors="coerce"
+        ).to_numpy(),
+        "acm_term_premium_10y": pd.to_numeric(
+            frame["ACMTP10"], errors="coerce"
+        ).to_numpy(),
+        "acm_expected_short_rate_10y": pd.to_numeric(
+            frame["ACMRNY10"], errors="coerce"
+        ).to_numpy(),
+    }
+    result = pd.DataFrame(
+        values,
+        index=pd.DatetimeIndex(dates).to_period("M"),
+    )
+    result = result.sort_index()
     result = result.groupby(level=0).last()
     result.index.name = "month"
 
     if result.empty:
         raise ValueError("ACM Monthly sheet contains no valid monthly observations.")
 
-    # The decomposition should hold up to workbook rounding.
+    for column in result.columns:
+        if not result[column].notna().any():
+            raise ValueError(
+                f"ACM Monthly variable {column!r} contains no numeric observations."
+            )
+
+    # The published decomposition should hold up to workbook rounding.
     decomposition_error = (
         result["acm_fitted_yield_10y"]
         - result["acm_term_premium_10y"]
         - result["acm_expected_short_rate_10y"]
     ).abs()
-    if decomposition_error.notna().any():
-        max_error = float(decomposition_error.max())
-        if max_error > 0.03:
-            raise ValueError(
-                "ACM yield decomposition identity failed validation: "
-                f"maximum absolute discrepancy is {max_error:.4f} percentage points."
-            )
+    valid_errors = decomposition_error.dropna()
+    if valid_errors.empty:
+        raise ValueError(
+            "ACM yield decomposition cannot be checked because there are "
+            "no overlapping non-missing observations."
+        )
+
+    max_error = float(valid_errors.max())
+    if max_error > 0.03:
+        raise ValueError(
+            "ACM yield decomposition identity failed validation: "
+            f"maximum absolute discrepancy is {max_error:.4f} percentage points."
+        )
 
     return result
+
+
+def read_acm_monthly(path: str | Path) -> pd.DataFrame:
+    """Read and validate the New York Fed's published ACM monthly workbook."""
+    frame = pd.read_excel(
+        path,
+        sheet_name="ACM Monthly",
+        engine="xlrd",
+    )
+    return _parse_acm_monthly_frame(frame)
 
 
 def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
