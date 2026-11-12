@@ -349,3 +349,23 @@ def test_forecast_test_sensitivity_script_is_importable():
     spec.loader.exec_module(module)
 
     assert module.HAC_LAGS == (3, 6, 12, 18)
+
+
+def test_dynamic_specification_sensitivity_script_is_importable():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "09_dynamic_specification_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "dynamic_specification_sensitivity",
+        script_path,
+    )
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert callable(module.main)
