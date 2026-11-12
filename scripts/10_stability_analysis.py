@@ -93,7 +93,6 @@ def rolling_lmn_coefficients(
                 "hac_standard_error": float(fitted.bse[focal_predictor]),
                 "confidence_interval_low": float(confidence_interval.iloc[0]),
                 "confidence_interval_high": float(confidence_interval.iloc[1]),
-                "p_value": float(fitted.pvalues[focal_predictor]),
                 "hac_maxlags": int(hac_lags),
             }
         )
@@ -362,12 +361,12 @@ def main() -> None:
         forecast_dir / "rolling_m3_vs_m2_performance.png",
     )
 
-    significant_share = float(
-        (
-            (rolling_coefficients["confidence_interval_low"] > 0)
-            | (rolling_coefficients["confidence_interval_high"] < 0)
-        ).mean()
+    positive_coefficient_share = float(
+        (rolling_coefficients["coefficient"] > 0).mean()
     )
+    coefficient_median = float(rolling_coefficients["coefficient"].median())
+    coefficient_min = float(rolling_coefficients["coefficient"].min())
+    coefficient_max = float(rolling_coefficients["coefficient"].max())
     positive_forecast_share = float(
         (rolling_performance["oos_r_squared_vs_restricted"] > 0).mean()
     )
@@ -378,8 +377,10 @@ def main() -> None:
     )
     print(
         f"Rolling coefficient windows: {len(rolling_coefficients)}; "
-        f"share of windows with 95% HAC intervals excluding zero: "
-        f"{significant_share:.3f}"
+        f"median coefficient: {coefficient_median:.4f}; "
+        f"range: [{coefficient_min:.4f}, {coefficient_max:.4f}]; "
+        f"share of windows with positive coefficient: "
+        f"{positive_coefficient_share:.3f}"
     )
     print(
         f"Rolling forecast windows: {len(rolling_performance)}; "
