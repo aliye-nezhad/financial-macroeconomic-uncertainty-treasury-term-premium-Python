@@ -13,7 +13,10 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from scipy.stats import norm
-from statsmodels.stats.diagnostic import (\n    acorr_breusch_godfrey,\n    acorr_ljungbox,\n)
+from statsmodels.stats.diagnostic import (
+    acorr_breusch_godfrey,
+    acorr_ljungbox,
+)
 from statsmodels.stats.stattools import durbin_watson
 from statsmodels.tsa.stattools import acf
 
