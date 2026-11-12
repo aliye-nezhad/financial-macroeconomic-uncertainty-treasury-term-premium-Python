@@ -26,7 +26,7 @@ M0-M3 use the longest common sample. M0-M4 are re-estimated on the VIX-available
 
 The primary regressions use OLS with Newey-West/HAC standard errors (six lags initially). Forecast evaluation uses recursive expanding-window one-month-ahead forecasts with a 120-observation initial window, RMSE, MAE, out-of-sample R-squared, and Clark-West tests for nested forecasts.
 
-See docs/research_design.md, docs/literature_review.md, and docs/data_plan.md.
+See docs/research_design.md, docs/literature_review.md, docs/data_plan.md, and docs/empirical_results.md for the initial generated results and their interpretation.
 
 ## Data sources
 - [New York Fed Treasury Term Premia (ACM)](https://www.newyorkfed.org/research/data_indicators/term-premia-tabs)
