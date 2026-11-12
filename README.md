@@ -71,6 +71,7 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - scripts/07_hac_sensitivity.py: re-estimates the same pre-specified models with HAC bandwidths of 6, 12 and 18 months to assess inference sensitivity without changing OLS coefficients.
 - scripts/08_forecast_test_sensitivity.py: reuses saved expanding-window forecasts to test Clark-West sensitivity at HAC bandwidths of 3, 6, 12 and 18 months, verifies the original three-lag baseline, and reports Holm and Bonferroni adjustments across nested comparisons within each bandwidth.
 - scripts/09_dynamic_specification_sensitivity.py: compares exploratory autoregressive specifications using identical samples, residual diagnostics, recursive forecasts and nested Clark-West tests; it does not replace the pre-specified baseline.
+- scripts/10_stability_analysis.py: examines 120-month rolling HAC estimates of the primary M3 LMN coefficient, rolling M3-versus-M2 forecast performance, and descriptive calendar-decade forecast metrics. Overlapping windows are descriptive, not independent hypothesis tests.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
