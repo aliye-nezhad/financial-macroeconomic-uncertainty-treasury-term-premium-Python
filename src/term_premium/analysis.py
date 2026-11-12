@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
+import warnings
+
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
@@ -349,13 +351,13 @@ def breusch_godfrey_diagnostic_table(
         fitted = sm.OLS(y, X, missing="raise").fit()
 
         for lag in requested_lags:
-            lm_stat, lm_pvalue, f_stat, f_pvalue = (
-                acorr_breusch_godfrey(
-                    fitted,
-                    nlags=lag,
-                    result_object=False,
+            # Keep compatibility with the project's full supported
+            # Statsmodels range; older releases do not expose result_object.
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", FutureWarning)
+                lm_stat, lm_pvalue, f_stat, f_pvalue = (
+                    acorr_breusch_godfrey(fitted, nlags=lag)
                 )
-            )
             rows.append(
                 {
                     "model": model_id,
