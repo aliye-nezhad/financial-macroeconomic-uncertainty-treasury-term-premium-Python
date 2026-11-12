@@ -1,7 +1,7 @@
 # Data Plan and Source Registry
 
 ## Data acquisition principle
-Download source data programmatically. Preserve unmodified raw snapshots locally, record retrieval timestamps and SHA-256 hashes, and never silently overwrite a source snapshot. The analysis must be reproducible from saved raw files after the initial download.
+Download source data programmatically. Preserve unmodified raw snapshots locally, record per-source snapshot retrieval timestamps and SHA-256 hashes, and never silently overwrite a source snapshot. The analysis must be reproducible from saved raw files after the initial download.
 
 Do not commit raw data until redistribution and source terms have been checked. The code should support a local raw-data cache and an explicit refresh option.
 
@@ -50,7 +50,7 @@ The preferred common sample begins in January 1990 because the Kim-Wright daily 
 
 ## Frequency and timing rules
 1. Parse all dates explicitly and use a month-end PeriodIndex internally.
-2. For daily series, select the last non-missing observation in each month.
+2. For daily series, select the last non-missing observation in each completed calendar month. If the source snapshot was retrieved during the same month as its latest daily observation, exclude that incomplete month from the processed panel. Preserve the raw observation and its original snapshot timestamp; a later refreshed snapshot can make the month eligible.
 3. For monthly series, preserve the observation month; do not silently shift dates.
 4. Construct the yield-curve slope as month-end DGS10 minus DGS2.
 5. Construct changes only after monthly alignment.
