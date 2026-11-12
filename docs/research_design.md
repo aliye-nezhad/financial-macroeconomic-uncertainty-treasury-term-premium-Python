@@ -91,7 +91,7 @@ The primary exercise is a recursive expanding-window, one-month-ahead forecast:
 
 Report RMSE, MAE, mean forecast error and out-of-sample R-squared relative to the AR(1) benchmark.
 
-For nested forecast comparisons, report Clark-West adjusted MSPE tests for M0-M1, M1-M2, M2-M3 and, in the VIX common sample, M3-M4. The implementation uses a one-sided asymptotic normal p-value and HAC standard errors for the mean adjusted loss differential. Interpret these tests cautiously given finite-sample uncertainty and recursive estimation.
+For nested forecast comparisons, report Clark-West adjusted MSPE tests for M0-M1, M1-M2, M2-M3 and, in the VIX common sample, M3-M4. The implementation uses a one-sided asymptotic normal p-value and HAC standard errors for the mean adjusted loss differential. Interpret these tests cautiously given finite-sample uncertainty and recursive estimation. The sensitivity output also reports Holm and Bonferroni adjusted p-values across the 16 nested model comparisons within each HAC bandwidth. HAC bandwidths are treated as alternative covariance estimates for the same hypotheses, not as additional independent tests. This broad family adjustment is a conservative multiplicity check; interpretation must still distinguish the pre-specified primary ACM term-premium comparison from secondary component and measurement exercises.
 
 ## Component and measurement robustness
 Repeat the primary hierarchy for the ACM expected-average-short-rate change, the Kim-Wright term-premium change, and the 12-month uncertainty horizon. These are robustness exercises, not pooled estimates.
