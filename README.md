@@ -66,7 +66,7 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - scripts/04_estimate_models.py: nested OLS estimation and HAC inference.
 - scripts/05_forecast_evaluation.py: expanding-window forecasts, accuracy metrics, Clark-West tests and black-and-white forecast plots.
 - scripts/06_residual_diagnostics.py: residual ACFs at lags 1-12, Ljung-Box tests at lags 1, 3, 6 and 12, and Breusch-Godfrey LM/F tests at lags 6 and 12 for every pre-specified regression hierarchy.
-- scripts/07_hac_sensitivity.py: re-estimates the same pre-specified models with HAC bandwidths of 6, 12 and 18 months to assess inference sensitivity without changing OLS coefficients.\n- scripts/08_forecast_test_sensitivity.py: reuses saved expanding-window forecasts to test Clark-West sensitivity at HAC bandwidths of 3, 6, 12 and 18 months, verifying that the three-lag results reproduce the original baseline.
+- scripts/07_hac_sensitivity.py: re-estimates the same pre-specified models with HAC bandwidths of 6, 12 and 18 months to assess inference sensitivity without changing OLS coefficients.\n- scripts/08_forecast_test_sensitivity.py: reuses saved expanding-window forecasts to test Clark-West sensitivity at HAC bandwidths of 3, 6, 12 and 18 months, verifies the original three-lag baseline, and reports Holm and Bonferroni adjustments across nested comparisons within each bandwidth.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
