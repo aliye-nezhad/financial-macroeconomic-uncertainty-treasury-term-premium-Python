@@ -9,6 +9,7 @@ from term_premium.analysis import (
     expanding_window_forecasts,
     fit_hac_model_set,
     forecast_accuracy_table,
+    residual_diagnostic_table,
 )
 
 
@@ -75,6 +76,30 @@ def test_hac_model_set_returns_coefficients_and_model_summary():
         coefficients.columns
     )
 
+
+
+def test_residual_diagnostics_report_acf_and_multiple_ljung_box_lags():
+    panel = _synthetic_panel()
+    specs = {"M0": ["y_lag1"], "M1": ["y_lag1", "x", "z"]}
+    sample = common_complete_sample(panel, outcome="y", model_specs=specs)
+
+    diagnostics = residual_diagnostic_table(
+        sample,
+        outcome="y",
+        model_specs=specs,
+        ljung_box_lags=(1, 3, 6, 12),
+        acf_max_lag=12,
+    )
+
+    assert len(diagnostics) == 2 * 12
+    assert set(diagnostics["model"]) == {"M0", "M1"}
+    assert set(diagnostics["lag"]) == set(range(1, 13))
+    tested = diagnostics.loc[diagnostics["lag"].isin([1, 3, 6, 12])]
+    assert tested["ljung_box_q_stat"].notna().all()
+    assert tested["ljung_box_pvalue"].between(0, 1).all()
+    untested = diagnostics.loc[~diagnostics["lag"].isin([1, 3, 6, 12])]
+    assert untested["ljung_box_pvalue"].isna().all()
+    assert np.isfinite(diagnostics["residual_acf"]).all()
 
 def test_expanding_forecasts_are_one_step_ahead_and_complete():
     panel = _synthetic_panel()
