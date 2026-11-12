@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
+import statsmodels.api as sm
 
 from term_premium.analysis import (
     build_model_specs,
@@ -112,6 +113,78 @@ def test_expanding_forecasts_are_one_step_ahead_and_complete():
     assert {"actual", "M0_AR1", "M1"}.issubset(forecasts.columns)
 
 
+def test_first_expanding_forecast_uses_exact_initial_training_window():
+    panel = _synthetic_panel(n=150)
+    specs = {"M0_AR1": ["y_lag1"]}
+    sample = common_complete_sample(panel, outcome="y", model_specs=specs)
+
+    forecasts = expanding_window_forecasts(
+        panel, outcome="y", model_specs=specs, min_train_size=100
+    )
+
+    train = sample.iloc[:100]
+    target = sample.iloc[[100]]
+    X_train = sm.add_constant(train[["y_lag1"]], has_constant="add")
+    fitted = sm.OLS(train["y"], X_train).fit()
+    X_target = sm.add_constant(target[["y_lag1"]], has_constant="add")
+    expected_forecast = float(fitted.predict(X_target).iloc[0])
+
+    assert forecasts.index[0] == sample.index[100]
+    assert forecasts.iloc[0]["M0_AR1"] == pytest.approx(expected_forecast)
+
+
+def test_forecast_at_origin_is_invariant_to_target_and_future_data():
+    panel = _synthetic_panel(n=150)
+    specs = {"M0_AR1": ["y_lag1"], "M1": ["y_lag1", "x"]}
+    baseline = expanding_window_forecasts(
+        panel, outcome="y", model_specs=specs, min_train_size=100
+    )
+
+    target_month = baseline.index[5]
+    altered_panel = panel.copy()
+    altered_panel.loc[target_month:, "y"] += 1_000_000
+    future_months = altered_panel.index[altered_panel.index > target_month]
+    altered_panel.loc[future_months, "x"] += 1_000_000
+
+    altered = expanding_window_forecasts(
+        altered_panel, outcome="y", model_specs=specs, min_train_size=100
+    )
+
+    np.testing.assert_allclose(
+        baseline.loc[target_month, ["M0_AR1", "M1"]].to_numpy(dtype=float),
+        altered.loc[target_month, ["M0_AR1", "M1"]].to_numpy(dtype=float),
+    )
+
+
+def test_clark_west_uses_the_adjusted_loss_differential():
+    forecasts = pd.DataFrame(
+        {
+            "actual": [0.5, -0.2, 1.1, 0.3],
+            "restricted": [0.2, -0.1, 0.4, 0.0],
+            "unrestricted": [0.25, -0.05, 0.6, 0.1],
+        }
+    )
+    result = clark_west_tests(
+        forecasts,
+        nested_pairs=[("restricted", "unrestricted")],
+        hac_lags=0,
+    )
+
+    restricted_error = forecasts["actual"] - forecasts["restricted"]
+    unrestricted_error = forecasts["actual"] - forecasts["unrestricted"]
+    adjusted_difference = (
+        restricted_error.pow(2)
+        - unrestricted_error.pow(2)
+        + (forecasts["restricted"] - forecasts["unrestricted"]).pow(2)
+    )
+
+    assert result.loc[0, "n_forecasts"] == len(forecasts)
+    assert result.loc[0, "mean_adjusted_loss_difference"] == pytest.approx(
+        adjusted_difference.mean()
+    )
+    assert 0 <= result.loc[0, "p_value_one_sided"] <= 1
+
+
 def test_forecast_accuracy_and_clark_west_outputs():
     panel = _synthetic_panel()
     specs = {"M0_AR1": ["y_lag1"], "M1": ["y_lag1", "x"]}
@@ -127,4 +200,8 @@ def test_forecast_accuracy_and_clark_west_outputs():
     assert len(accuracy) == 2
     assert len(cw) == 1
     assert np.isfinite(accuracy["rmse"]).all()
+    benchmark_r_squared = accuracy.loc[
+        accuracy["model"] == "M0_AR1", "oos_r_squared_vs_ar1"
+    ].iloc[0]
+    assert benchmark_r_squared == pytest.approx(0.0)
     assert 0 <= cw.loc[0, "p_value_one_sided"] <= 1
