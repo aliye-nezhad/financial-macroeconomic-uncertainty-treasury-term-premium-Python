@@ -80,6 +80,36 @@ def test_hac_model_set_returns_coefficients_and_model_summary():
 
 
 
+
+def test_hac_bandwidth_changes_inference_not_ols_coefficients():
+    panel = _synthetic_panel()
+    specs = {"M0": ["y_lag1"], "M1": ["y_lag1", "x", "z"]}
+    sample = common_complete_sample(panel, outcome="y", model_specs=specs)
+
+    _, coefficients_6 = fit_hac_model_set(
+        sample, outcome="y", model_specs=specs, hac_lags=6
+    )
+    _, coefficients_12 = fit_hac_model_set(
+        sample, outcome="y", model_specs=specs, hac_lags=12
+    )
+
+    left = coefficients_6.sort_values(["model", "variable"]).reset_index(drop=True)
+    right = coefficients_12.sort_values(["model", "variable"]).reset_index(drop=True)
+
+    assert left[["model", "variable", "nobs"]].equals(
+        right[["model", "variable", "nobs"]]
+    )
+    np.testing.assert_allclose(
+        left["coefficient"].to_numpy(),
+        right["coefficient"].to_numpy(),
+        rtol=0,
+        atol=1e-12,
+    )
+    assert (left["hac_maxlags"] == 6).all()
+    assert (right["hac_maxlags"] == 12).all()
+    assert np.isfinite(left["hac_standard_error"]).all()
+    assert np.isfinite(right["hac_standard_error"]).all()
+
 def test_residual_diagnostics_report_acf_and_multiple_ljung_box_lags():
     panel = _synthetic_panel()
     specs = {"M0": ["y_lag1"], "M1": ["y_lag1", "x", "z"]}
