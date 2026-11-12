@@ -306,3 +306,25 @@ def test_clark_west_hac_bandwidth_changes_inference_not_adjusted_loss_mean():
         results[["clark_west_statistic", "p_value_one_sided"]]
     ).all().all()
     assert results["p_value_one_sided"].between(0, 1).all()
+
+
+def test_clark_west_multiple_testing_adjustments_are_grouped_by_hac_bandwidth():
+    from term_premium.analysis import adjust_clark_west_pvalues_by_bandwidth
+
+    results = pd.DataFrame(
+        {
+            "hac_maxlags": [3, 3, 6, 6],
+            "p_value_one_sided": [0.01, 0.04, 0.01, 0.04],
+        }
+    )
+    adjusted = adjust_clark_west_pvalues_by_bandwidth(results)
+
+    np.testing.assert_allclose(
+        adjusted["p_value_holm"].to_numpy(),
+        [0.02, 0.04, 0.02, 0.04],
+    )
+    np.testing.assert_allclose(
+        adjusted["p_value_bonferroni"].to_numpy(),
+        [0.02, 0.08, 0.02, 0.08],
+    )
+    assert adjusted["multiple_test_family_size"].tolist() == [2, 2, 2, 2]
