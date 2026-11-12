@@ -4,6 +4,7 @@ import pytest
 import statsmodels.api as sm
 
 from term_premium.analysis import (
+    breusch_godfrey_diagnostic_table,
     build_model_specs,
     clark_west_tests,
     common_complete_sample,
@@ -101,6 +102,36 @@ def test_residual_diagnostics_report_acf_and_multiple_ljung_box_lags():
     untested = diagnostics.loc[~diagnostics["lag"].isin([1, 3, 6, 12])]
     assert untested["ljung_box_pvalue"].isna().all()
     assert np.isfinite(diagnostics["residual_acf"]).all()
+
+
+def test_breusch_godfrey_reports_lm_and_f_tests_for_each_model_and_lag():
+    panel = _synthetic_panel()
+    specs = {"M0": ["y_lag1"], "M1": ["y_lag1", "x", "z"]}
+    sample = common_complete_sample(panel, outcome="y", model_specs=specs)
+
+    diagnostics = breusch_godfrey_diagnostic_table(
+        sample, outcome="y", model_specs=specs, lags=(6, 12)
+    )
+
+    assert len(diagnostics) == 4
+    assert set(diagnostics["model"]) == {"M0", "M1"}
+    assert set(diagnostics["lag"]) == {6, 12}
+    assert diagnostics["nobs"].nunique() == 1
+    assert np.isfinite(diagnostics[["lm_stat", "f_stat"]]).all().all()
+    assert diagnostics["lm_pvalue"].between(0, 1).all()
+    assert diagnostics["f_pvalue"].between(0, 1).all()
+
+
+def test_breusch_godfrey_rejects_nonpositive_lags():
+    panel = _synthetic_panel()
+    specs = {"M0": ["y_lag1"]}
+    sample = common_complete_sample(panel, outcome="y", model_specs=specs)
+
+    with pytest.raises(ValueError, match="positive integers"):
+        breusch_godfrey_diagnostic_table(
+            sample, outcome="y", model_specs=specs, lags=(0, 6)
+        )
+
 
 def test_expanding_forecasts_are_one_step_ahead_and_complete():
     panel = _synthetic_panel()
