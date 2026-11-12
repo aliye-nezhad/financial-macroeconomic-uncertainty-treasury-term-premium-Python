@@ -37,7 +37,7 @@ See docs/research_design.md, docs/literature_review.md, and docs/data_plan.md.
 - [FRED DGS2](https://fred.stlouisfed.org/series/DGS2)
 - [FRED DGS10](https://fred.stlouisfed.org/series/DGS10)
 
-Raw source files are downloaded locally and excluded from Git by default. The downloader records source URLs, retrieval times and SHA-256 hashes.
+Raw source files are downloaded locally and excluded from Git by default. The manifest records source URLs, per-source snapshot retrieval timestamps and SHA-256 hashes. Daily observations from an incomplete final month are retained in the raw files but excluded from the processed monthly panel.
 
 ## Repository workflow (Windows PowerShell)
 Activate the existing environment, then run:
