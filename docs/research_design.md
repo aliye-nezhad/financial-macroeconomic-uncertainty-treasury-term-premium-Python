@@ -129,7 +129,9 @@ The pre-specified M0-M4 hierarchy remains unchanged. Stability checks are supple
 
 The first stability exercise estimates the M3 coefficient on lagged LMN financial uncertainty in overlapping 120-month rolling windows, using OLS with six-lag HAC covariance estimates. It also compares already-generated recursive one-month-ahead M2 and M3 forecasts over overlapping 120-target-month windows and reports descriptive performance by non-overlapping calendar decade. Rolling windows overlap and their coefficient intervals are not independent repeated hypothesis tests. Decade-level results are descriptive and no decade-specific significance tests are performed.
 
-The purpose is to assess whether the full-sample coefficient and forecast comparison conceal time variation. The analysis does not identify structural breaks or causal regime effects. Formal break tests or regime-specific claims would require a separately motivated design, treatment of break-date uncertainty and appropriate inference.
+The purpose is to assess whether the full-sample coefficient and forecast comparison conceal time variation. The rolling coefficient intervals and rolling forecast metrics are descriptive; overlapping windows are not independent tests.
+
+The primary instability question is whether M3's relative forecast performance versus M2 changes over time, not whether the regression coefficients exhibit a structural break. Parameter breaks are neither necessary nor sufficient for time variation in forecasting performance (Rossi, 2021). If the rolling forecast results show a substantively meaningful local change, a formal forecast-instability procedure such as the Giacomini-Rossi (2010) Fluctuation or One-Time Reversal test may be considered. Its assumptions must first be checked for this project's recursive expanding-window forecasts and nested M2/M3 comparison; the published procedure must not be transplanted mechanically. An Andrews or Bai-Perron parameter-break test is not the default next step. Any formal test remains supplementary to M0-M4 and must be motivated independently of a favorable result.
 
 
 ## Observation influence and outlier review
