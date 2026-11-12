@@ -3,7 +3,7 @@
 ## Project identity
 **Title:** Financial Uncertainty and the U.S. Treasury Term Premium: An Out-of-Sample Forecasting Assessment  
 **Field:** Macro-finance, monetary economics, fixed-income markets, uncertainty, time-series econometrics.  
-**Status:** Data pipeline and initial estimation/forecasting implementation. Empirical results remain to be generated and validated.
+**Status:** Data acquisition, panel construction, estimation, forecasting and diagnostic pipelines are implemented. Initial empirical outputs have been generated and reviewed; see [empirical_results.md](empirical_results.md). Results remain subject to further timing, data-vintage and stability validation.
 
 ## Main research question
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators?
@@ -117,3 +117,7 @@ A stronger novelty claim requires a completed literature review and evidence tha
 
 ## Reproducibility decision gates
 Before interpreting results, confirm source downloads, ACM definitions, common samples, frequency alignment, forecast timing, vintage practices, test results, and plausibility of generated outputs.
+
+
+## Initial empirical evidence
+The first generated results do not show improved pseudo-out-of-sample accuracy for the primary ACM term-premium outcome when JLN, LMN or VIX is added to the AR/monetary benchmark. The ACM expected-short-rate component contains a secondary LMN association that requires cautious interpretation after multiple-testing adjustment and forecast-accuracy comparison. Exploratory autoregressive extensions are not part of the pre-specified M0-M4 hierarchy. Full results and qualifications are recorded in [empirical_results.md](empirical_results.md).
