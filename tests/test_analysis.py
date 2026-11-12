@@ -369,3 +369,103 @@ def test_dynamic_specification_sensitivity_script_is_importable():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     assert callable(module.main)
+
+
+def test_rolling_lmn_coefficients_use_fixed_monthly_windows():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "10_stability_analysis.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "stability_analysis",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    panel = _synthetic_panel(n=180)
+    panel["y_lag2"] = pd.Series(panel["y"].to_numpy(), index=panel.index).shift(2)
+    specs = {"M2": ["y_lag1", "x"], "M3": ["y_lag1", "x", "z"]}
+    sample = common_complete_sample(panel, outcome="y", model_specs=specs)
+    result = module.rolling_lmn_coefficients(
+        sample,
+        outcome="y",
+        model_specs=specs,
+        model_id="M3",
+        focal_predictor="z",
+        window_size=60,
+        hac_lags=3,
+    )
+    assert len(result) == len(sample) - 60 + 1
+    assert result["nobs"].eq(60).all()
+    assert result["window_start"].iloc[0] == str(sample.index[0])
+    assert result["window_end"].iloc[-1] == str(sample.index[-1])
+    assert np.isfinite(
+        result[
+            [
+                "coefficient",
+                "hac_standard_error",
+                "confidence_interval_low",
+                "confidence_interval_high",
+            ]
+        ]
+    ).all().all()
+
+
+def test_rolling_forecast_performance_and_decade_summaries():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "10_stability_analysis.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "stability_analysis",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    index = pd.period_range("1980-01", periods=150, freq="M")
+    rng = np.random.default_rng(123)
+    actual = rng.normal(size=150)
+    forecasts = pd.DataFrame(
+        {
+            "actual": actual,
+            "M2": actual + rng.normal(scale=1.0, size=150),
+            "M3": actual + rng.normal(scale=0.9, size=150),
+        },
+        index=index,
+    )
+    rolling = module.rolling_forecast_performance(
+        forecasts,
+        restricted_model="M2",
+        unrestricted_model="M3",
+        window_size=60,
+    )
+    decades = module.forecast_performance_by_decade(
+        forecasts,
+        restricted_model="M2",
+        unrestricted_model="M3",
+    )
+    assert len(rolling) == 91
+    assert rolling["n_forecasts"].eq(60).all()
+    assert set(decades["calendar_decade"]) == {"1980s", "1990s"}
+    assert decades["n_forecasts"].sum() == len(forecasts)
+    assert np.isfinite(
+        rolling[
+            [
+                "restricted_rmse",
+                "unrestricted_rmse",
+                "oos_r_squared_vs_restricted",
+            ]
+        ]
+    ).all().all()
