@@ -69,12 +69,17 @@ These are meaningful empirical findings. They should not be converted into a cla
 
 ## 6. Remaining validation work
 
-Before treating the results as final:
+The following code-level additions are implemented and pass the automated test suite, but their empirical outputs have not yet been regenerated from the project author's local raw-data snapshots:
 
-1. Verify the timing and data-vintage conventions against the exact source snapshots and the code that constructs lagged variables.
-2. Inspect the flagged extreme observations against their source series. The diagnostic flags are screening aids; no observation should be deleted mechanically.
-3. Consider whether a forecast comparison robust to structural breaks or changing forecast performance over time is warranted. Any such exercise must be pre-specified before implementation and labelled as an additional robustness analysis.
-4. Re-run the updated script 09 after the latest documentation/output changes. The current uploaded output archive predates the latest script 09 reporting changes, which add Ljung-Box output and Holm/Bonferroni adjustments for its five exploratory comparisons.
-5. Update this memo only after regenerated outputs have been checked.
+- `scripts/10_stability_analysis.py`: rolling 120-month M3 LMN coefficient estimates with HAC intervals, rolling M3-versus-M2 forecast performance, and descriptive decade-level forecast metrics.
+- `scripts/11_influence_sensitivity.py`: conventional OLS influence diagnostics and exact leave-one-month-out changes in the M3 LMN point estimate. The deletion exercise deliberately reports no HAC standard errors or p-values because omitting an interior month creates an irregular time index.
+
+The remaining sequence is:
+
+1. Verify the timing and data-vintage conventions against the exact source snapshots and panel-construction code. The two-month uncertainty-index lag is a conservative convention, not a reconstruction of historical release dates.
+2. Run the updated data audit, stability analysis and influence sensitivity scripts. Inspect the flagged observations against their original source series and economic context. A statistical flag is not a reason to delete a genuine crisis observation.
+3. Re-run `scripts/09_dynamic_specification_sensitivity.py` and regenerate its outputs. The current empirical output archive predates its latest reporting changes, which add Ljung-Box output and Holm/Bonferroni adjustments for the five exploratory comparisons.
+4. Only after reviewing the rolling and influence outputs, decide whether a formal structural-break or forecast-instability test is warranted. Do not select break dates or a test solely because they produce a favorable result. Any formal test must have a documented rationale, account for break-date uncertainty where relevant, and remain supplementary to M0-M4.
+5. Update this memo only after the regenerated outputs have been checked.
 
 No automatic outlier deletion, baseline replacement, causal interpretation or novelty claim is warranted.
