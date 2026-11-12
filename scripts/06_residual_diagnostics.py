@@ -98,7 +98,7 @@ def main() -> None:
         bg_results.append(bg_diagnostics)
 
         print(
-            f"\\n{label}: {len(sample)} observations, "
+            f"\n{label}: {len(sample)} observations, "
             f"{sample.index.min()} to {sample.index.max()}"
         )
         print(
