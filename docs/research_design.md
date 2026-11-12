@@ -79,7 +79,7 @@ Evaluation metrics:
 A one-month horizon is chosen for the initial project to keep timing transparent. Longer horizons may be considered only after the one-month design is validated.
 
 ## Timing and information set
-The forecast-origin convention must be explicit. Predictors are dated at or before the forecast origin; the dependent variable is the subsequent monthly change. Daily series are converted to month-end observations, not monthly averages, to align with the New York Fed ACM monthly end-of-month estimates.
+The forecast-origin convention must be explicit. The analysis panel records the realised change during month t. Daily market predictors are aggregated to month-end and lagged one month; monthly JLN/LMN uncertainty indexes are lagged two months as a conservative publication-delay convention. This means that at the end of month t-1 the model predicts the term-premium change realised during month t. Daily series are converted to month-end observations, not monthly averages, to align with the New York Fed ACM monthly end-of-month estimates. The two-month uncertainty lag is a conservative convention, not a reconstruction of each historical release date.
 
 Monthly uncertainty series are currently revised and updated periodically. The first implementation uses the latest available vintage and is therefore a **pseudo-out-of-sample exercise**, not a genuine real-time forecasting exercise. We will not claim real-time forecasting unless historical vintages and publication availability are reconstructed.
 
