@@ -123,13 +123,14 @@ def main() -> None:
     # Robust modified-z flags are for manual review, never automatic deletion.
     level_variables = [
         "acm_term_premium_10y", "acm_expected_short_rate_10y",
-        "THREEFYTP10", "LMNUF1M", "JLNUM1M", "VIXCLS",
-        "DFF", "DGS2", "DGS10",
+        "THREEFYTP10", "LMNUF1M", "LMNUF12M",
+        "JLNUM1M", "JLNUM12M", "VIXCLS", "DFF", "DGS2", "DGS10",
     ]
-    change_variables = [
-        "acm_term_premium_change", "acm_expected_short_rate_change",
-        "kim_wright_term_premium_change", "dff_change",
-    ]
+    # The panel's *_change variables are mechanically generated with .diff()
+    # from level series already screened below. Re-screening those aliases
+    # would duplicate the same extreme dates. Add only independently sourced
+    # change series here if the data design later introduces any.
+    change_variables: list[str] = []
     extremes = extreme_observation_table(
         panel,
         level_variables=level_variables,
