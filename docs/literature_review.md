@@ -91,7 +91,7 @@ The distinction is methodological and empirical, not a claim that the underlying
 
 **Creal, Drew D., and Jing Cynthia Wu (2017). "Monetary Policy Uncertainty and Economic Fluctuations." International Economic Review, 58(4), 1317–1354.**
 
-Creal and Wu develop a term-structure model in which second moments of macroeconomic variables and yields can affect first-moment dynamics. Their model includes two unspanned volatility factors associated with monetary-policy uncertainty and term-premium uncertainty. They find that uncertainty matters for economic activity and that responses vary across historical episodes.
+Creal and Wu develop a no-arbitrage term-structure model in which latent yield-volatility factors can affect the conditional means of macroeconomic variables and yield factors. The accessible earlier NBER working-paper version describes two dimensions of interest-rate uncertainty, short-term and long-term, and estimates the nonlinear, non-Gaussian state-space model using Bayesian MCMC and particle-filter methods. The published 2017 version is titled *Monetary Policy Uncertainty and Economic Fluctuations*. This is a model-based treatment of uncertainty embedded in yield volatility, not the externally constructed LMN/JLN index comparison used here.
 
 **Overlap:** The paper places uncertainty directly inside a macro-finance term-structure framework and distinguishes uncertainty dimensions.
 
@@ -102,7 +102,7 @@ Creal and Wu develop a term-structure model in which second moments of macroecon
 
 **Tillmann, Peter (2020). "Monetary Policy Uncertainty and the Response of the Yield Curve to Policy Shocks." Journal of Money, Credit and Banking, 52(4), 803–833.**
 
-Tillmann studies how monetary-policy uncertainty changes the yield-curve response to monetary-policy shocks. The paper reports that long-term yields rise less after a tightening when policy uncertainty is high, with the weaker response driven by a stronger decline in term premia.
+Tillmann uses interacted local projections to estimate yield-curve responses to monetary-policy shocks conditional on several monetary-policy-uncertainty measures. The baseline sample is monthly, January 1994-November 2015. The paper uses ACM fitted yields and their expectations/term-premium components, with Kim-Wright estimates as an alternative measurement check. Its primary shock is the daily change in the 2-year Treasury yield on FOMC meeting days, with an alternative high-frequency shock series. The uncertainty measures include a newspaper-based monetary-policy uncertainty index, survey-based interest-rate uncertainty, and squared monetary-policy surprises. Long-term yields rise less after a tightening when policy uncertainty is high, with the weaker response attributed to a stronger fall in term premia.
 
 **Overlap:** It directly examines the term-premium component and shows that uncertainty conditions can alter the yield-curve response to monetary-policy shocks.
 
@@ -122,7 +122,7 @@ The paper combines a general-equilibrium model with empirical analysis of econom
 
 **Shang, Fei (2022). "The Effect of Uncertainty on the Sensitivity of the Yield Curve to Monetary Policy Surprises." Journal of Economic Dynamics and Control, 137, 104355.**
 
-Shang uses a nonlinear dynamic Nelson-Siegel model with regime shifts related to macroeconomic uncertainty to study how uncertainty changes the sensitivity of the U.S. Treasury yield curve to monetary-policy surprises. The paper highlights the role of uncertainty and the zero lower bound in the response of yield-curve factors.
+Shang uses a threshold factor-augmented VAR built around a dynamic Nelson-Siegel representation of U.S. Treasury yields. The regime shifts are linked to macroeconomic uncertainty, and the model studies how the yield-curve level, slope and curvature respond to monetary-policy surprises. The monthly sample covers 1991-2016, with separate attention to the pre-zero-lower-bound and zero-lower-bound periods. The results show that uncertainty changes the sensitivity to policy surprises particularly during the zero-lower-bound period; the paper does not evaluate the incremental forecast value of LMN for ACM term-premium changes.
 
 **Overlap:** It studies uncertainty-dependent yield-curve dynamics and monetary-policy transmission across regimes.
 
