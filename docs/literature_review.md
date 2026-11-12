@@ -87,6 +87,49 @@ The distinction is methodological and empirical, not a claim that the underlying
 - Open-access publisher PDF in the University of Kent repository: https://kar.kent.ac.uk/113848/19/1-s2.0-S0014292126000966-main.pdf
 - Repository record: https://kar.kent.ac.uk/113848/
 
+### Additional term-structure studies on policy and macroeconomic uncertainty
+
+**Creal, Drew D., and Jing Cynthia Wu (2017). "Monetary Policy Uncertainty and Economic Fluctuations." International Economic Review, 58(4), 1317–1354.**
+
+Creal and Wu develop a term-structure model in which second moments of macroeconomic variables and yields can affect first-moment dynamics. Their model includes two unspanned volatility factors associated with monetary-policy uncertainty and term-premium uncertainty. They find that uncertainty matters for economic activity and that responses vary across historical episodes.
+
+**Overlap:** The paper places uncertainty directly inside a macro-finance term-structure framework and distinguishes uncertainty dimensions.
+
+**Difference:** Its focus is a model-based term-structure and macroeconomic-fluctuation analysis, not the incremental pseudo-out-of-sample predictive value of LMN financial uncertainty relative to JLN macroeconomic uncertainty in monthly ACM term-premium changes.
+
+- Article: https://doi.org/10.1111/iere.12253
+- NBER working-paper version: https://www.nber.org/papers/w20594
+
+**Tillmann, Peter (2020). "Monetary Policy Uncertainty and the Response of the Yield Curve to Policy Shocks." Journal of Money, Credit and Banking, 52(4), 803–833.**
+
+Tillmann studies how monetary-policy uncertainty changes the yield-curve response to monetary-policy shocks. The paper reports that long-term yields rise less after a tightening when policy uncertainty is high, with the weaker response driven by a stronger decline in term premia.
+
+**Overlap:** It directly examines the term-premium component and shows that uncertainty conditions can alter the yield-curve response to monetary-policy shocks.
+
+**Difference:** The uncertainty concept is monetary-policy uncertainty, and the design studies conditional responses to identified policy shocks rather than the monthly forecast contribution of LMN financial uncertainty.
+
+- Article: https://doi.org/10.1111/jmcb.12657
+
+**Leippold, Markus, and Felix Matthys (2022). "Economic Policy Uncertainty and the Yield Curve." Review of Finance, 26(4), 751–797.**
+
+The paper combines a general-equilibrium model with empirical analysis of economic-policy uncertainty and the nominal yield curve. It reports that higher policy uncertainty is associated with lower yield levels and higher yield volatility, predicts future short rates, and has an ambiguous effect on term premia; the response of bond risk premia differs by maturity.
+
+**Overlap:** It explicitly links policy uncertainty, expected short rates, yield volatility and bond risk premia.
+
+**Difference:** Its focus is economic-policy uncertainty and a structural/theoretical term-structure framework, not LMN-versus-JLN incremental forecast evaluation for monthly changes in the ACM 10-year term premium.
+
+- Article: https://doi.org/10.1093/rof/rfac031
+
+**Shang, Fei (2022). "The Effect of Uncertainty on the Sensitivity of the Yield Curve to Monetary Policy Surprises." Journal of Economic Dynamics and Control, 137, 104355.**
+
+Shang uses a nonlinear dynamic Nelson-Siegel model with regime shifts related to macroeconomic uncertainty to study how uncertainty changes the sensitivity of the U.S. Treasury yield curve to monetary-policy surprises. The paper highlights the role of uncertainty and the zero lower bound in the response of yield-curve factors.
+
+**Overlap:** It studies uncertainty-dependent yield-curve dynamics and monetary-policy transmission across regimes.
+
+**Difference:** Its outcome is the conditional response of yield-curve factors to monetary-policy surprises, not pseudo-out-of-sample forecasts of monthly ACM term-premium changes.
+
+- Article: https://doi.org/10.1016/j.jedc.2022.104355
+
 ## Forecast comparison under instability
 
 **Giacomini, Raffaella, and Barbara Rossi (2010). "Forecast Comparisons in Unstable Environments." Journal of Applied Econometrics, 25(4), 595–620.**
