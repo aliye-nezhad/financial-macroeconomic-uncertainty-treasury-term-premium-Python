@@ -49,6 +49,7 @@ Activate the existing environment, then run:
     python scripts/03_data_audit.py
     python scripts/04_estimate_models.py
     python scripts/05_forecast_evaluation.py
+    python scripts/06_residual_diagnostics.py
 
 Use python scripts/01_download_data.py --refresh to request fresh source snapshots.
 
@@ -61,10 +62,11 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - src/term_premium/diagnostics.py: reusable non-destructive missingness and modified-z outlier screening.
 - scripts/04_estimate_models.py: nested OLS estimation and HAC inference.
 - scripts/05_forecast_evaluation.py: expanding-window forecasts, accuracy metrics, Clark-West tests and forecast plots.
+- scripts/06_residual_diagnostics.py: residual ACFs at lags 1-12 and Ljung-Box tests at lags 1, 3, 6 and 12 for every pre-specified regression hierarchy.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
-- outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts and matched-sample diagnostics.
+- outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts, matched-sample diagnostics and residual autocorrelation diagnostics.
 - outputs/estimation/: regression summaries, coefficients and estimation samples.
 - outputs/forecasting/: forecast series, forecast accuracy, Clark-West tests and plots.
 
