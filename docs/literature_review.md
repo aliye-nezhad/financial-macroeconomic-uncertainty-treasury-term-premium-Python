@@ -41,6 +41,20 @@ Provides an alternative model-based term-premium estimate distributed through FR
 
 ## Closest related empirical studies
 
+### Dick, Schmeling, and Schrimpf (2013): macro expectations and expected term premia
+
+**Dick, Christian D., Maik Schmeling, and Andreas Schrimpf (2013). "Macro-expectations, aggregate uncertainty, and expected term premia." European Economic Review, 58, 58–80.**
+
+This study uses individual Survey of Professional Forecasters (SPF) data to construct a real-time proxy for expected changes in 10-year Treasury term premia. In the accessible working-paper version, the sample covers 1992Q1–2009Q2 and 153 forecasters. The proxy is derived from expected 10-year Treasury yields and 3-month Treasury-bill rates. The authors measure uncertainty from the density forecasts for GDP growth and inflation, rather than from the later JLN or LMN indexes. They find that expected term-premium changes are positively related to expected output growth and macroeconomic uncertainty, with real-side factors generally more important than nominal factors. An aggregate measure of expected term-premium changes predicts future bond excess returns, with predictive (R^2) values of up to 23% at an annual horizon.
+
+**Overlap:** This is an important forecasting-related antecedent: it directly links macroeconomic uncertainty to expected term-premium changes and shows that a survey-based term-premium expectation measure contains information about future bond excess returns.
+
+**Difference from this project:** The paper uses quarterly, survey-based, real-time expectations and density-forecast uncertainty. This project uses monthly, model-estimated ACM term-premium changes and LMN/JLN indexes, and evaluates whether LMN adds predictive value in recursive pseudo-out-of-sample forecasts. Its target is the change in the ACM term premium, not bond excess returns.
+
+- Published article: https://doi.org/10.1016/j.euroecorev.2012.11.005
+- Accessible working-paper version: https://pure.au.dk/ws/files/21737272/rp10_49.pdf
+- Repository record: https://openaccess.city.ac.uk/id/eprint/14117/
+
 ### Castelnuovo (2019): financial uncertainty and the yield curve
 
 **Castelnuovo, Efrem (2019). "Yield Curve and Financial Uncertainty: Evidence Based on US Data." Australian Economic Review, 52(3), 323–335.**
@@ -87,7 +101,20 @@ The distinction is methodological and empirical, not a claim that the underlying
 - Open-access publisher PDF in the University of Kent repository: https://kar.kent.ac.uk/113848/19/1-s2.0-S0014292126000966-main.pdf
 - Repository record: https://kar.kent.ac.uk/113848/
 
-### Additional term-structure studies on policy and macroeconomic uncertainty
+### Additional term-structure studies on uncertainty and term premia
+
+### Wright (2011): inflation uncertainty and term premia across countries
+
+**Wright, Jonathan H. (2011). "Term Premia and Inflation Uncertainty: Empirical Evidence from an International Panel Dataset." American Economic Review, 101(4), 1514–1534.**
+
+Wright constructs a panel of zero-coupon nominal government bond yields for ten industrialized countries over nearly two decades. He decomposes forward rates into expected future short rates and term premia using both an affine term-structure model with unspanned macroeconomic risk factors and survey-based estimates, then examines alternative measures of inflation uncertainty. The paper finds that term premia declined internationally, particularly in countries that apparently reduced inflation uncertainty after changes to their monetary-policy frameworks.
+
+**Overlap:** It provides direct cross-country evidence that inflation uncertainty is related to term-premium variation and decomposition.
+
+**Difference from this project:** The analysis is an international panel focused on inflation uncertainty and longer-run term-premium movements, not a U.S. monthly forecast comparison using LMN and JLN. This 2011 article is also distinct from the Kim–Wright 2005 model and the FRED THREEFYTP10 series used as the project's alternative outcome measurement.
+
+- Published article: https://doi.org/10.1257/aer.101.4.1514
+- AEA article page: https://www.aeaweb.org/articles?id=10.1257/aer.101.4.1514
 
 **Creal, Drew D., and Jing Cynthia Wu (2017). "Monetary Policy Uncertainty and Economic Fluctuations." International Economic Review, 58(4), 1317–1354.**
 
@@ -100,7 +127,20 @@ Creal and Wu develop a no-arbitrage term-structure model in which latent yield-v
 - Article: https://doi.org/10.1111/iere.12253
 - NBER working-paper version: https://www.nber.org/papers/w20594
 
-**Tillmann, Peter (2020). "Monetary Policy Uncertainty and the Response of the Yield Curve to Policy Shocks." Journal of Money, Credit and Banking, 52(4), 803–833.**
+### Hansen, McMahon, and Tong (2019): uncertainty news in central-bank communication
+
+**Hansen, Stephen, Michael McMahon, and Matthew Tong (2019). "The Long-Run Information Effect of Central Bank Communication." Journal of Monetary Economics, 108, 185–202.**
+
+The paper studies the Bank of England's Inflation Report publications from February 1998 through May 2015. It extracts high-dimensional numeric and narrative signals from the reports and examines their effects on the yield curve. The authors show that information about economic uncertainty can have increasingly large effects at longer maturities and operates primarily through the term premium, rather than through short-run interest-rate expectations.
+
+**Overlap:** It demonstrates that uncertainty-related information can affect long-term rates through the term-premium component, reinforcing the distinction between expected short rates and risk compensation.
+
+**Difference from this project:** The study is an event-based analysis of central-bank communication and market reactions, not a monthly predictive exercise using broad LMN/JLN indexes or recursive forecasts of ACM term-premium changes.
+
+- Published article: https://doi.org/10.1016/j.jmoneco.2019.09.002
+- Publisher article page: https://www.sciencedirect.com/science/article/pii/S0304393219301606
+
+**Tillmann, Peter (2020).**Tillmann, Peter (2020). "Monetary Policy Uncertainty and the Response of the Yield Curve to Policy Shocks." Journal of Money, Credit and Banking, 52(4), 803–833.**
 
 Tillmann uses interacted local projections to estimate yield-curve responses to monetary-policy shocks conditional on several monetary-policy-uncertainty measures. The baseline sample is monthly, January 1994-November 2015. The paper uses ACM fitted yields and their expectations/term-premium components, with Kim-Wright estimates as an alternative measurement check. Its primary shock is the daily change in the 2-year Treasury yield on FOMC meeting days, with an alternative high-frequency shock series. The uncertainty measures include a newspaper-based monetary-policy uncertainty index, survey-based interest-rate uncertainty, and squared monetary-policy surprises. Long-term yields rise less after a tightening when policy uncertainty is high, with the weaker response attributed to a stronger fall in term premia.
 
@@ -132,7 +172,33 @@ Shang uses a threshold factor-augmented VAR built around a dynamic Nelson-Siegel
 
 - Article: https://doi.org/10.1016/j.jedc.2022.104355
 
-## Forecast comparison under instability
+### Amisano and Tristani (2023): uncertainty shocks and 10-year term premia
+
+**Amisano, Gianni, and Oreste Tristani (2023). "Monetary Policy and Long-Term Interest Rates." Quantitative Economics, 14(2), 689–716.**
+
+The authors estimate a structural general-equilibrium model using U.S. macroeconomic and yield data. Regime shifts in the conditional variance of productivity shocks act as uncertainty shocks and are a key driver of bond risk premia. Their model-implied 10-year term-premium estimates are highly correlated with estimates from the affine term-structure literature, although less volatile.
+
+**Overlap:** This study directly links uncertainty shocks to 10-year term premia and compares structural estimates with affine-model estimates, making it relevant to the project's use of ACM term-premium data.
+
+**Difference from this project:** It uses a structural model with endogenous uncertainty and risk premia. It does not compare the incremental pseudo-out-of-sample predictive value of LMN relative to JLN and conventional controls.
+
+- Published article: https://doi.org/10.3982/QE1287
+- Full-text article: https://www.econstor.eu/bitstream/10419/296333/1/quan200265.pdf
+
+### Bianchi, Kung, and Tirskikh (2023): demand- and supply-side uncertainty
+
+**Bianchi, Francesco, Howard Kung, and Mikhail Tirskikh (2023). "The Origins and Effects of Macroeconomic Uncertainty." Quantitative Economics, 14(3), 855–896.**
+
+This paper estimates a production-based general-equilibrium model with demand- and supply-side uncertainty and an endogenous term premium. Using macroeconomic and term-structure data, it finds that both uncertainty sources generate contractions in real activity and increases in term premia, while supply-side uncertainty has larger effects on inflation and investment.
+
+**Overlap:** It establishes that distinct macroeconomic uncertainty shocks can have economically meaningful effects on endogenous term premia and shows why uncertainty sources should not be treated as interchangeable.
+
+**Difference from this project:** Its contribution is structural estimation and decomposition of uncertainty propagation. It does not evaluate whether an externally constructed financial-uncertainty index adds predictive information beyond a macroeconomic-uncertainty index in monthly ACM term-premium forecasts.
+
+- Published article: https://doi.org/10.3982/QE1979
+- Full-text article: https://www.econstor.eu/bitstream/10419/296343/1/quan200283.pdf
+
+## Forecast comparison under instability## Forecast comparison under instability
 
 **Giacomini, Raffaella, and Barbara Rossi (2010). "Forecast Comparisons in Unstable Environments." Journal of Applied Econometrics, 25(4), 595–620.**
 
@@ -172,6 +238,8 @@ The defensible scope is narrower:
 4. Measurement robustness using the distinct Kim-Wright term-premium estimate.
 5. Explicit forecast evaluation using an expanding window, common target-month samples, RMSE, MAE, out-of-sample R-squared, and Clark-West tests for nested forecasts.
 
+The related literature already contains survey-based links between uncertainty, expected term-premium changes, and bond excess returns (Dick, Schmeling, and Schrimpf, 2013); cross-country evidence on inflation uncertainty and term premia (Wright, 2011); event-study evidence that uncertainty-related central-bank communication affects long-run term premia (Hansen, McMahon, and Tong, 2019); and structural models with endogenous term premia under uncertainty shocks (Amisano and Tristani, 2023; Bianchi, Kung, and Tirskikh, 2023; Cross, Poon, and Zhu, 2026). The project's distinction must therefore be framed narrowly around its outcome, uncertainty measures, timing, and forecast-comparison design—not as a first demonstration that uncertainty matters for term premia.
+
 This is best described as a **reproducible macro-finance forecasting assessment**. Its value for a computational research portfolio lies in the quality of the data pipeline, timing discipline, econometric implementation, diagnostics, forecast evaluation, and honest interpretation. It should not be presented as a novel causal paper.
 
 ## Implications for interpreting the current results
@@ -184,6 +252,6 @@ The pre-specified robustness, stability, influence, and DFF aggregation exercise
 
 ## Remaining literature-review work
 
-This focused review is not exhaustive. The four studies above have been screened and their broad designs compared. Publicly accessible earlier working-paper text was also inspected for Creal and Wu, Tillmann, and Leippold and Matthys; the accessible Shang article preview includes its introduction, model description, data overview, and conclusion. Earlier drafts and article previews are not substitutes for checking the final published versions, and differences across versions may matter. Before making a formal originality claim, compare the final published versions and inspect additional work on monetary-policy uncertainty, term premia, and forecast evaluation cited in their references and in Cross, Poon, and Zhu (2026).
+This focused review remains non-exhaustive. Publisher records, abstracts, and accessible full-text versions were checked for the core outcomes and designs of the closest studies, including Dick et al. (2013), Wright (2011), Hansen et al. (2019), Amisano and Tristani (2023), Bianchi et al. (2023), Castelnuovo (2019), Kumar et al. (2023), and Cross et al. (2026). Full-text coverage is uneven. Publicly accessible earlier working-paper text was also inspected for Creal and Wu, Tillmann, and Leippold and Matthys; the accessible Shang article preview includes its introduction, model description, data overview, and conclusion. Before making a formal originality claim, complete a closer full-text comparison of the closest published studies and inspect additional work on term-premium forecasting, uncertainty, and forecast evaluation cited in their references and in Cross, Poon, and Zhu (2026).
 
 The final review should compare exact outcomes, uncertainty measures, samples, identification or forecasting designs, and evaluation methods. A title or abstract match alone is not enough to establish either overlap or novelty.
