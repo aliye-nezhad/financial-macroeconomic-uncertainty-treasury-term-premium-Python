@@ -1,4 +1,4 @@
-# Financial and Macroeconomic Uncertainty and the U.S. Treasury Term Premium
+# Financial and Macroeconomic Uncertainty and the U.S. Treasury Term Premium: A Pseudo-Out-of-Sample Forecasting Assessment
 
 **Python | Macro-finance | Monetary economics | Term structure | Forecast evaluation**
 
@@ -6,11 +6,15 @@
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators? Does predictive information differ between the term-premium and expected-short-rate components?
 
 ## Research status
-The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box and Breusch-Godfrey LM/F diagnostics are implemented. The baseline and supplementary empirical exercises have been run, and their main numerical summaries are recorded in docs/empirical_results.md. The original M0-M4 hierarchy remains the pre-specified baseline; additional autoregressive-lag experiments are exploratory and do not replace it.
+The project implements programmatic source acquisition, monthly panel construction, source diagnostics, nested OLS regressions with HAC inference, recursive expanding-window forecasts, forecast-accuracy metrics, Clark-West comparisons, and residual autocorrelation diagnostics. The pre-specified M0-M4 hierarchy remains the primary design; additional autoregressive-lag comparisons are exploratory and do not replace it.
 
-The rolling-stability and observation-influence analyses have been run on preserved local raw-data snapshots. The rolling analysis reports pointwise HAC confidence intervals for the LMN coefficient and descriptive M3-versus-M2 forecast comparisons over overlapping 120-month windows. A separate DFF aggregation sensitivity compares month-end and monthly-mean construction, validates the monthly mean against FRED's official FEDFUNDS series, and confirms that the main forecast conclusion is unchanged. An independent clean Windows audit worktree at commit `221a56e` reran dataset construction and analysis scripts 03-12 from the preserved raw snapshots; all scripts completed successfully, and the 59-test suite passed. All 11 raw-source hashes were verified. The preserved archive's 12 raw-data files and 84 generated-output files passed file-level hash comparison (96/96, with no missing, extra, or mismatched files). Raw data and generated outputs remain local and are excluded from Git by default. The standard Giacomini-Rossi Fluctuation Test is not applied to the existing recursive expanding-window forecasts because its standard implementation assumes fixed or rolling estimation windows.
+The rolling-stability, observation-influence, alternative uncertainty-horizon, Kim-Wright measurement, VIX, and DFF aggregation exercises have been completed and are summarized in [docs/empirical_results.md](docs/empirical_results.md). The primary finding is that adding JLN and LMN uncertainty does not improve pseudo-out-of-sample forecasts of monthly changes in the 10-year ACM term premium over the AR(1)/monetary benchmark. The secondary expected-short-rate result is more nuanced but does not establish a robust forecast improvement.
 
-This is a predictive project, not a causal identification design. The forecasting exercise uses currently available revised uncertainty-index data and must be described as pseudo-out-of-sample, not genuine real-time forecasting.
+The full pipeline from dataset construction through scripts 03-12 was run in an independent clean Windows audit worktree at code commit `221a56e`; all scripts completed successfully, the 59-test suite passed on Python 3.13.15, and all 11 raw-source hashes matched the manifest. GitHub Actions run #119 on the merged `main` commit `06af936` passed all 59 tests on Python 3.11 in 3.94 seconds.
+
+The original 12 raw-data files and 84 output files were each compared with their preserved backup copies (96/96 matches). This verifies backup integrity; it is not a byte-for-byte comparison of newly regenerated outputs against the archived outputs. That separate comparison remains a local reproducibility check. Raw data and generated outputs are not committed to Git.
+
+This is a predictive project, not a causal identification design. The forecasting exercise uses currently revised uncertainty-index vintages and must be described as pseudo-out-of-sample, not genuine real-time forecasting.
 
 ## Empirical design
 The primary outcome is the one-month change in the 10-year ACM term premium. The secondary outcome is the change in the ACM expected-average-short-rate component. The Kim-Wright 10-year term premium is an alternative outcome measurement.
@@ -27,6 +31,13 @@ M0-M3 use the longest common sample. M0-M4 are re-estimated on the VIX-available
 The primary regressions use OLS with Newey-West/HAC standard errors (six lags initially). Forecast evaluation uses recursive expanding-window one-month-ahead forecasts with a 120-observation initial window, RMSE, MAE, out-of-sample R-squared, and Clark-West tests for nested forecasts.
 
 See docs/research_design.md, docs/literature_review.md, docs/data_plan.md, and docs/empirical_results.md for the research design, literature positioning, data construction, and empirical results.
+
+## Main empirical finding
+For the primary ACM term-premium outcome, the AR(1) benchmark (M0) has an RMSE of 0.231417. Adding monetary controls, JLN macroeconomic uncertainty, and LMN financial uncertainty raises M3 RMSE to 0.236518; M3's out-of-sample R-squared relative to M0 is -0.044572. The M2-to-M3 Clark-West p-value is 0.340455. The results therefore do not support incremental forecast improvement from adding LMN financial uncertainty in the primary specification.
+
+The ACM expected-short-rate component has a negative in-sample LMN coefficient with HAC p-values between 0.0106 and 0.0166, but M3 forecast RMSE (0.187538) exceeds the AR(1) benchmark (0.182450), and the broader Holm-adjusted nested forecast comparisons do not reject at the 5% level. This is a secondary, qualified result rather than evidence of a robust predictive gain.
+
+See [docs/empirical_results.md](docs/empirical_results.md) for the full results, sensitivity analyses, and interpretation limits.
 
 ## Data sources
 - [New York Fed Treasury Term Premia (ACM)](https://www.newyorkfed.org/research/data_indicators/term-premia-tabs)
