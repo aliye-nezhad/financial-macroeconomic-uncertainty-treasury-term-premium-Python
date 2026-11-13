@@ -103,6 +103,34 @@ The distinction is methodological and empirical, not a claim that the underlying
 
 ## Additional term-structure studies on uncertainty and term premia
 
+### Ioannidis and Ka (2021): economic policy uncertainty and bond risk premia
+
+**Ioannidis, Christos, and Kook Ka (2021). "Economic Policy Uncertainty and Bond Risk Premia." *Journal of Money, Credit and Banking*, 53(6), 1479–1522.**
+
+The authors examine the forecasting power of the Baker, Bloom, and Davis economic policy uncertainty (EPU) index for future government bond returns. They report that EPU is particularly informative for shorter maturities and shorter investment horizons. They also estimate an affine term-structure model that incorporates EPU as an additional pricing factor; the resulting term-premium estimates fluctuate more and exhibit countercyclical movements.
+
+**Overlap:** This is a direct antecedent for the relationship between policy-related uncertainty, bond-return predictability, and estimated term premia. It rules out a claim that uncertainty-based predictors or policy uncertainty in an affine term-structure model are new to bond-risk-premium research.
+
+**Difference from this project:** The paper uses the broad news-based EPU measure and an affine pricing framework. It does not ask whether the LMN financial-uncertainty index adds one-month-ahead forecast information conditional on JLN macroeconomic uncertainty and the project's monetary/yield-curve controls, nor does it evaluate monthly changes in the New York Fed ACM term premium through the same recursive forecast design.
+
+- Published article: https://doi.org/10.1111/jmcb.12748
+- Publisher record and supporting information: https://onlinelibrary.wiley.com/doi/10.1111/jmcb.12748
+
+### Li, Yin, and Yu (2025): time-varying monetary-policy uncertainty and bond risk premia
+
+**Li, Luyang, Ximing Yin, and Deshui Yu (2025). "On the Time-Varying Relation between Monetary Policy Uncertainty and Bond Risk Premia." *International Review of Financial Analysis*, 106, 104465.**
+
+The authors study the time-varying predictive relationship between monetary-policy uncertainty and U.S. zero-coupon bond excess returns over 1985–2022. Their MPU measure is a monthly, newspaper-based textual index constructed from articles containing monetary-policy, political, and uncertainty terms; it is not the option-implied short-rate uncertainty measure used in the derivatives literature. They estimate nonparametric time-varying coefficient predictive regressions and report that MPU predicts bond excess returns during substantial portions of the sample, including after controlling for yield-curve factors. Their analysis also examines time variation associated with interest-rate expectations and economic conditions.
+
+**Overlap:** This is a close predictive antecedent: it studies monthly U.S. bond-risk-premium predictability using a monetary-policy uncertainty index and asks whether that information survives controls for the yield curve. It means the project cannot claim that uncertainty-based predictors of bond risk premia, or predictive comparisons conditional on yield-curve information, are unexplored.
+
+**Difference from this project:** The paper's predictor is a news-based monetary-policy uncertainty index, its outcomes are zero-coupon bond excess returns, and its main method is a nonparametric time-varying coefficient model. The current project instead asks whether LMN financial uncertainty adds predictive information conditional on JLN macroeconomic uncertainty, uses monthly changes in model-estimated ACM term-premium components as outcomes, and evaluates a fixed nested hierarchy with recursive expanding-window forecasts. These distinctions are meaningful but narrow; they do not by themselves establish a publishable novelty claim.
+
+- Published article: https://doi.org/10.1016/j.irfa.2025.104465
+- Publisher article: https://www.sciencedirect.com/science/article/pii/S1057521925005526
+- Earlier working-paper version: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5169121
+
+
 ### Wright (2011): inflation uncertainty and term premia across countries
 
 **Wright, Jonathan H. (2011). "Term Premia and Inflation Uncertainty: Empirical Evidence from an International Panel Dataset." American Economic Review, 101(4), 1514–1534.**
@@ -270,7 +298,7 @@ The defensible scope is narrower:
 4. Measurement robustness using the distinct Kim-Wright term-premium estimate.
 5. Explicit forecast evaluation using an expanding window, common target-month samples, RMSE, MAE, out-of-sample R-squared, and Clark-West tests for nested forecasts.
 
-The related literature already contains survey-based links between uncertainty, expected term-premium changes, and bond excess returns (Dick, Schmeling, and Schrimpf, 2013); cross-country evidence on inflation uncertainty and term premia (Wright, 2011); event-study evidence that uncertainty-related central-bank communication affects long-run term premia (Hansen, McMahon, and Tong, 2019); structural models with endogenous term premia under uncertainty shocks (Amisano and Tristani, 2023; Bianchi, Kung, and Tirskikh, 2023; Cross, Poon, and Zhu, 2026); and a separate market-based monetary-policy uncertainty literature (De Pooter et al., 2021; Bauer, Lakdawala, and Mueller, 2022; Bundick, Herriford, and Smith, 2024; Ying et al., 2025). The project's distinction must therefore be framed narrowly around its outcome, uncertainty measures, timing, and forecast-comparison design—not as a first demonstration that uncertainty matters for term premia.
+The related literature already contains survey-based links between uncertainty, expected term-premium changes, and bond excess returns (Dick, Schmeling, and Schrimpf, 2013); evidence on economic policy uncertainty and bond risk premia (Ioannidis and Ka, 2021); time-varying predictive evidence using a news-based monetary-policy uncertainty index and bond excess returns (Li, Yin, and Yu, 2025); cross-country evidence on inflation uncertainty and term premia (Wright, 2011); event-study evidence that uncertainty-related central-bank communication affects long-run term premia (Hansen, McMahon, and Tong, 2019); structural models with endogenous term premia under uncertainty shocks (Amisano and Tristani, 2023; Bianchi, Kung, and Tirskikh, 2023; Cross, Poon, and Zhu, 2026); and a separate derivatives-based monetary-policy uncertainty literature (De Pooter et al., 2021; Bauer, Lakdawala, and Mueller, 2022; Bundick, Herriford, and Smith, 2024; Ying et al., 2025). The project's distinction must therefore be framed narrowly around its outcome, uncertainty measures, timing, and forecast-comparison design—not as a first demonstration that uncertainty matters for term premia.
 
 This is best described as a **reproducible macro-finance forecasting assessment**. Its value for a computational research portfolio lies in the quality of the data pipeline, timing discipline, econometric implementation, diagnostics, forecast evaluation, and honest interpretation. It should not be presented as a novel causal paper.
 
@@ -284,6 +312,6 @@ The pre-specified robustness, stability, influence, and DFF aggregation exercise
 
 ## Remaining literature-review work
 
-This focused review remains non-exhaustive. Publisher records, abstracts, and accessible full-text versions were checked for the core outcomes and designs of the closest studies, including Dick et al. (2013), Wright (2011), Hansen et al. (2019), Amisano and Tristani (2023), Bianchi et al. (2023), Castelnuovo (2019), Kumar et al. (2023), and Cross et al. (2026). Full-text coverage is uneven. Publicly accessible earlier working-paper text was also inspected for Creal and Wu, Tillmann, and Leippold and Matthys; the accessible Shang article preview includes its introduction, model description, data overview, and conclusion. Before making a formal originality claim, complete a closer full-text comparison of the closest published studies and inspect additional work on term-premium forecasting, uncertainty, and forecast evaluation cited in their references and in Cross, Poon, and Zhu (2026).
+This focused review remains non-exhaustive. Publisher records, abstracts, and accessible full-text versions were checked for the core outcomes and designs of the closest studies, including Dick et al. (2013), Ioannidis and Ka (2021), Li et al. (2025), Wright (2011), Hansen et al. (2019), Amisano and Tristani (2023), Bianchi et al. (2023), Castelnuovo (2019), Kumar et al. (2023), and Cross et al. (2026). Full-text coverage is uneven. Publicly accessible earlier working-paper text was also inspected for Creal and Wu, Tillmann, and Leippold and Matthys; the accessible Shang article preview includes its introduction, model description, data overview, and conclusion. Before making a formal originality claim, complete a closer full-text comparison of the closest published studies and inspect additional work on term-premium forecasting, uncertainty, and forecast evaluation cited in their references and in Cross, Poon, and Zhu (2026).
 
 The final review should compare exact outcomes, uncertainty measures, samples, identification or forecasting designs, and evaluation methods. A title or abstract match alone is not enough to establish either overlap or novelty.
