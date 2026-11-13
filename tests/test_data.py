@@ -6,6 +6,8 @@ import pytest
 from term_premium.data import (
     _incomplete_month_for_daily_source,
     _parse_acm_monthly_frame,
+    _verify_snapshot_hash,
+    sha256_bytes,
     _snapshot_timestamp_for_entry,
     monthly_period_series,
     read_fred_csv,
@@ -203,3 +205,39 @@ def test_acm_parser_rejects_failed_yield_decomposition():
 
     with pytest.raises(ValueError, match="decomposition identity failed"):
         _parse_acm_monthly_frame(frame)
+
+
+def test_snapshot_hash_verification_accepts_matching_source(tmp_path):
+    path = tmp_path / "source.csv"
+    payload = b"date,value\\n2020-01-01,1.0\\n"
+    path.write_bytes(payload)
+
+    _verify_snapshot_hash(
+        path,
+        {"sha256": sha256_bytes(payload)},
+        source_label="test source",
+    )
+
+
+def test_snapshot_hash_verification_rejects_changed_source(tmp_path):
+    path = tmp_path / "source.csv"
+    path.write_bytes(b"date,value\\n2020-01-01,2.0\\n")
+
+    with pytest.raises(ValueError, match="Raw source hash mismatch"):
+        _verify_snapshot_hash(
+            path,
+            {"sha256": sha256_bytes(b"date,value\\n2020-01-01,1.0\\n")},
+            source_label="test source",
+        )
+
+
+def test_snapshot_hash_verification_rejects_missing_manifest_hash(tmp_path):
+    path = tmp_path / "source.csv"
+    path.write_text("date,value\\n2020-01-01,1.0\\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="no SHA-256 hash"):
+        _verify_snapshot_hash(
+            path,
+            {},
+            source_label="test source",
+        )
