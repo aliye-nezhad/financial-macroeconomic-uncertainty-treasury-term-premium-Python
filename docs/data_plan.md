@@ -35,7 +35,7 @@ The downloader must inspect the current workbook and verify sheet names and colu
 
 Both are monthly indexes. They have different underlying research frameworks and should not be interpreted as having directly comparable levels. FRED series pages provide definitions and current observations. Data are revised; the first project version will use current vintages and must be described as pseudo-out-of-sample.
 
-### FRED daily series
+### FRED market-rate series
 - THREEFYTP10: Kim-Wright 10-year zero-coupon term premium.
 - VIXCLS: CBOE VIX close.
 - DFF: effective federal funds rate.
