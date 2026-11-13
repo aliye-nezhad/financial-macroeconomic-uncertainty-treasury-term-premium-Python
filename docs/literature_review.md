@@ -45,7 +45,7 @@ Provides an alternative model-based term-premium estimate distributed through FR
 
 **Dick, Christian D., Maik Schmeling, and Andreas Schrimpf (2013). "Macro-expectations, aggregate uncertainty, and expected term premia." European Economic Review, 58, 58–80.**
 
-This study uses individual Survey of Professional Forecasters (SPF) data to construct a real-time proxy for expected changes in 10-year Treasury term premia. In the accessible working-paper version, the sample covers 1992Q1–2009Q2 and 153 forecasters. The proxy is derived from expected 10-year Treasury yields and 3-month Treasury-bill rates. The authors measure uncertainty from the density forecasts for GDP growth and inflation, rather than from the later JLN or LMN indexes. They find that expected term-premium changes are positively related to expected output growth and macroeconomic uncertainty, with real-side factors generally more important than nominal factors. An aggregate measure of expected term-premium changes predicts future bond excess returns, with predictive (R^2) values of up to 23% at an annual horizon.
+This study uses individual Survey of Professional Forecasters (SPF) data to construct a real-time proxy for expected changes in 10-year Treasury term premia. In the accessible working-paper version, the sample covers 1992Q1–2009Q2 and 153 forecasters. The proxy is derived from expected 10-year Treasury yields and 3-month Treasury-bill rates. The authors measure uncertainty from the density forecasts for GDP growth and inflation, rather than from the later JLN or LMN indexes. They find that expected term-premium changes are positively related to expected output growth and macroeconomic uncertainty, with real-side factors generally more important than nominal factors. An aggregate measure of expected term-premium changes predicts future bond excess returns, with predictive R-squared values of up to 23% at an annual horizon.
 
 **Overlap:** This is an important forecasting-related antecedent: it directly links macroeconomic uncertainty to expected term-premium changes and shows that a survey-based term-premium expectation measure contains information about future bond excess returns.
 
@@ -101,7 +101,7 @@ The distinction is methodological and empirical, not a claim that the underlying
 - Open-access publisher PDF in the University of Kent repository: https://kar.kent.ac.uk/113848/19/1-s2.0-S0014292126000966-main.pdf
 - Repository record: https://kar.kent.ac.uk/113848/
 
-### Additional term-structure studies on uncertainty and term premia
+## Additional term-structure studies on uncertainty and term premia
 
 ### Wright (2011): inflation uncertainty and term premia across countries
 
