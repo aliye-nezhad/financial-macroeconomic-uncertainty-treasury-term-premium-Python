@@ -35,7 +35,9 @@ FRED_SERIES: dict[str, str] = {
     "THREEFYTP10": "Kim-Wright 10-year term premium",
     "VIXCLS": "CBOE VIX close",
     "DFF": "Effective federal funds rate",
-    "FEDFUNDS": "Federal funds effective rate, monthly average (validation reference)",
+    "FEDFUNDS": (
+        "Federal funds effective rate, monthly average (validation reference)"
+    ),
     "DGS2": "2-year Treasury constant-maturity yield",
     "DGS10": "10-year Treasury constant-maturity yield",
 }
