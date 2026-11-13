@@ -154,13 +154,23 @@ This conclusion is specific to the chosen outcome, predictor timing, sample, mod
 
 The empirical specification search should now be frozen. No further model additions, post-hoc break dates, automatic outlier deletion or replacement of the pre-specified M0-M4 hierarchy are warranted on the basis of the current results.
 
-The remaining work is project finalization rather than further exploratory estimation:
+## Reproducibility verification
 
-1. Complete a file-level review of the detailed rolling coefficient, rolling forecast, influence and leave-one-month-out CSV files and their plots. The summary statistics are recorded above; generated outputs remain local and are excluded from Git by default.
-2. Re-run the full pipeline from the preserved raw-data snapshots in a clean environment, including all twelve analysis scripts, and confirm that the documented sample sizes and key summary statistics reproduce.
-3. Run the complete test suite and repository checks, including whitespace validation, Python compilation and Git status review.
-4. Finalize the README and reproducibility documentation, ensuring that the workflow, script inventory, output locations, data-vintage limitations and interpretation guardrails agree with the implemented code.
-5. Commit and synchronize the final, reviewed project state on the intended branch, then verify the GitHub repository and its reproducibility instructions.
+A final computational audit was completed at commit `221a56e` in an independent clean Windows worktree using Python 3.13.15 and the preserved raw-data snapshots.
+
+- Dataset construction (`scripts/02_build_dataset.py`) and analysis scripts `03` through `12` all completed with exit code zero.
+- The 59-test suite passed, and the dependency consistency check found no broken requirements.
+- All 11 raw-source hashes recorded in the local manifest matched.
+- The preserved archive contained 12 raw-data files and 84 generated-output files. All 96 files passed the file-level hash comparison, with no missing, extra, or mismatched files.
+- DFF aggregation validation covered 868 matched months (July 1954-October 2026). The maximum absolute difference from official FEDFUNDS was 0.005 percentage points, and all matched months were within the 0.01-point tolerance.
+- The primary estimation sample remained 602 observations (July 1976-August 2026), with 482 forecast targets (July 1986-August 2026); all five exploratory dynamic specifications passed output validation.
+- GitHub Actions passed all 59 tests on Python 3.11 at the same commit. The independent Windows test run used Python 3.13.15.
+
+This audit establishes successful execution against the preserved raw snapshots and file-level integrity of the archived outputs. Raw data and generated outputs remain local and are excluded from Git. Fresh source downloads may produce different values because source series are revised.
+
+## Release status
+
+The empirical specification search is frozen. No further model additions, post-hoc break dates, automatic outlier deletion, or replacement of the pre-specified M0-M4 hierarchy are warranted. The remaining work is limited to final review of the updated documentation and pull request. `main` remains unchanged until the pull request is reviewed and merged.
 
 The standard Giacomini-Rossi Fluctuation Test should not be applied directly to the existing recursive expanding-window forecasts. A separate formal instability exercise is not required for completion and should only be considered if a valid estimation and inference design is independently justified.
 

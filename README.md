@@ -8,7 +8,7 @@ Does financial-sector uncertainty contain incremental predictive information for
 ## Research status
 The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box and Breusch-Godfrey LM/F diagnostics are implemented. The baseline and supplementary empirical exercises have been run, and their main numerical summaries are recorded in docs/empirical_results.md. The original M0-M4 hierarchy remains the pre-specified baseline; additional autoregressive-lag experiments are exploratory and do not replace it.
 
-The rolling-stability and observation-influence analyses have been run on the local raw-data snapshots. The rolling analysis reports pointwise HAC confidence intervals for the LMN coefficient and descriptive M3-versus-M2 forecast comparisons over overlapping 120-month windows. A separate DFF aggregation sensitivity compares month-end and monthly-mean construction, validates the monthly mean against FRED's official FEDFUNDS series, and confirms that the main forecast conclusion is unchanged. Detailed generated CSV files and plots remain local, are excluded from Git by default, and are subject to final file-level review. The standard Giacomini-Rossi Fluctuation Test is not applied to the existing recursive expanding-window forecasts because its standard implementation assumes fixed or rolling estimation windows.
+The rolling-stability and observation-influence analyses have been run on preserved local raw-data snapshots. The rolling analysis reports pointwise HAC confidence intervals for the LMN coefficient and descriptive M3-versus-M2 forecast comparisons over overlapping 120-month windows. A separate DFF aggregation sensitivity compares month-end and monthly-mean construction, validates the monthly mean against FRED's official FEDFUNDS series, and confirms that the main forecast conclusion is unchanged. An independent clean Windows audit worktree at commit `221a56e` reran dataset construction and analysis scripts 03-12 from the preserved raw snapshots; all scripts completed successfully, and the 59-test suite passed. All 11 raw-source hashes were verified. The preserved archive's 12 raw-data files and 84 generated-output files passed file-level hash comparison (96/96, with no missing, extra, or mismatched files). Raw data and generated outputs remain local and are excluded from Git by default. The standard Giacomini-Rossi Fluctuation Test is not applied to the existing recursive expanding-window forecasts because its standard implementation assumes fixed or rolling estimation windows.
 
 This is a predictive project, not a causal identification design. The forecasting exercise uses currently available revised uncertainty-index data and must be described as pseudo-out-of-sample, not genuine real-time forecasting.
 
@@ -26,7 +26,7 @@ M0-M3 use the longest common sample. M0-M4 are re-estimated on the VIX-available
 
 The primary regressions use OLS with Newey-West/HAC standard errors (six lags initially). Forecast evaluation uses recursive expanding-window one-month-ahead forecasts with a 120-observation initial window, RMSE, MAE, out-of-sample R-squared, and Clark-West tests for nested forecasts.
 
-See docs/research_design.md, docs/literature_review.md, docs/data_plan.md, and docs/empirical_results.md for the initial generated results and their interpretation.
+See docs/research_design.md, docs/literature_review.md, docs/data_plan.md, and docs/empirical_results.md for the research design, literature positioning, data construction, and empirical results.
 
 ## Data sources
 - [New York Fed Treasury Term Premia (ACM)](https://www.newyorkfed.org/research/data_indicators/term-premia-tabs)
@@ -61,6 +61,8 @@ Activate the existing environment, then run:
     python scripts/12_dff_aggregation_sensitivity.py
 
 Use python scripts/01_download_data.py --refresh to request fresh source snapshots. Refresh replaces the cached source files and updates their manifest hashes; it does not archive the previous files. Keep a separate copy of any snapshot needed for historical-vintage comparisons.
+
+Exact reproduction of the reported results requires the preserved raw-data snapshots and matching source manifest used for the audited run. These files are not committed to Git. If they are unavailable, running the downloader obtains current source versions; because some source series are revised, regenerated values may differ from the documented results. Do not use `--refresh` when reproducing the archived run; it replaces cached source files and updates the manifest.
 
 ## Code map
 - src/term_premium/data.py: source downloads, caching, SHA-256 snapshot verification, source parsers, month-end alignment, ACM decomposition validation, and panel construction.
