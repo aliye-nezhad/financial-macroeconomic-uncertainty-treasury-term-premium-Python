@@ -8,7 +8,7 @@ Does financial-sector uncertainty contain incremental predictive information for
 ## Research status
 The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box and Breusch-Godfrey LM/F diagnostics are implemented. The initial empirical results have been generated and reviewed. The focused literature review covers the closest related uncertainty/term-structure studies.
 
-The rolling-stability and observation-influence scripts have also been run on the local raw-data snapshots. Their console summaries are recorded in docs/empirical_results.md; the detailed CSV files and plots remain subject to final file-level review. The original M0-M4 hierarchy remains the pre-specified baseline. Additional autoregressive-lag experiments are exploratory and do not replace it. The standard Giacomini-Rossi Fluctuation Test is not applied to the existing recursive expanding-window forecasts because its standard implementation assumes fixed or rolling estimation windows.
+The rolling-stability and observation-influence scripts have also been run on the local raw-data snapshots. Their console summaries are recorded in docs/empirical_results.md; the detailed CSV files and plots remain subject to final file-level review. A separate DFF aggregation sensitivity compares month-end and monthly-average construction; the monthly mean is validated against FRED's official FEDFUNDS series. The original M0-M4 hierarchy remains the pre-specified baseline. Additional autoregressive-lag experiments are exploratory and do not replace it. The standard Giacomini-Rossi Fluctuation Test is not applied to the existing recursive expanding-window forecasts because its standard implementation assumes fixed or rolling estimation windows.
 
 This is a predictive project, not a causal identification design. The first forecasting exercise uses currently available revised uncertainty-index data and must be described as pseudo-out-of-sample, not genuine real-time forecasting.
 
@@ -34,6 +34,7 @@ See docs/research_design.md, docs/literature_review.md, docs/data_plan.md, and d
 - [FRED Kim-Wright 10-year term premium (THREEFYTP10)](https://fred.stlouisfed.org/series/THREEFYTP10)
 - [FRED VIXCLS](https://fred.stlouisfed.org/series/VIXCLS)
 - [FRED DFF](https://fred.stlouisfed.org/series/DFF)
+- [FRED FEDFUNDS](https://fred.stlouisfed.org/series/FEDFUNDS), used only to validate the monthly average of daily DFF
 - [FRED DGS2](https://fred.stlouisfed.org/series/DGS2)
 - [FRED DGS10](https://fred.stlouisfed.org/series/DGS10)
 
@@ -57,6 +58,7 @@ Activate the existing environment, then run:
     python scripts/09_dynamic_specification_sensitivity.py
     python scripts/10_stability_analysis.py
     python scripts/11_influence_sensitivity.py
+    python scripts/12_dff_aggregation_sensitivity.py
 
 Use python scripts/01_download_data.py --refresh to request fresh source snapshots. Refresh replaces the cached source files and updates their manifest hashes; it does not archive the previous files. Keep a separate copy of any snapshot needed for historical-vintage comparisons.
 
@@ -75,6 +77,7 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - scripts/09_dynamic_specification_sensitivity.py: compares exploratory autoregressive specifications using identical samples, residual diagnostics, recursive forecasts and nested Clark-West tests; it does not replace the pre-specified baseline.
 - scripts/10_stability_analysis.py: examines 120-month rolling HAC estimates of the primary M3 LMN coefficient, rolling M3-versus-M2 forecast performance, and descriptive calendar-decade forecast metrics. Overlapping windows are descriptive, not independent hypothesis tests.
 - scripts/11_influence_sensitivity.py: reports OLS leverage, externally studentized residuals, Cook's distance, DFFITS and focal-coefficient DFBETAS, alongside exact leave-one-month-out changes in the M3 LMN point estimate. No observations are automatically removed; deletion-sample HAC inference is not reported because an interior deletion breaks monthly spacing.
+- scripts/12_dff_aggregation_sensitivity.py: compares the month-end DFF baseline with a monthly-average alternative, validates the latter against official monthly FEDFUNDS, and repeats the same estimation and forecast comparisons on identical samples.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
@@ -83,6 +86,7 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
   - M3 regression-influence flags, leave-one-month-out coefficient sensitivity and a screening summary.
 - outputs/estimation/: regression summaries, coefficients and estimation samples.
 - outputs/forecasting/: forecast series, forecast accuracy, Clark-West tests, HAC sensitivity results and black-and-white plots.
+- outputs/dff_aggregation_sensitivity/: DFF monthly-average validation and aggregation-sensitivity tables.
 
 Generated outputs and local data are not committed by default. Re-run the scripts to recreate them from the raw source snapshots.
 
