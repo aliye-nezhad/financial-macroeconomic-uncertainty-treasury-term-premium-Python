@@ -67,3 +67,52 @@ def test_sample_record_rejects_internal_gaps_in_model_variables():
             "y",
             {"M0_AR1": ["y_lag1"], "M1": ["y_lag1", "x"]},
         )
+
+
+def test_sample_record_requires_filters_to_be_in_model_hierarchy():
+    index = pd.period_range("2000-01", periods=8, freq="M")
+    y = pd.Series(np.arange(8, dtype=float), index=index)
+    panel = pd.DataFrame(
+        {
+            "y": y,
+            "y_lag1": y.shift(1),
+            "x": np.linspace(0.0, 1.0, len(index)),
+            "vix": np.linspace(10.0, 20.0, len(index)),
+        },
+        index=index,
+    )
+
+    with pytest.raises(ValueError, match="Every sample filter"):
+        DATA_AUDIT._sample_record(
+            panel,
+            "vix_common_sample",
+            "y",
+            {"M0": ["y_lag1"], "M1": ["y_lag1", "x"]},
+            sample_filters=["vix"],
+        )
+
+
+def test_sample_record_includes_declared_vix_filter_in_matched_sample():
+    index = pd.period_range("2000-01", periods=8, freq="M")
+    y = pd.Series(np.arange(8, dtype=float), index=index)
+    panel = pd.DataFrame(
+        {
+            "y": y,
+            "y_lag1": y.shift(1),
+            "x": np.linspace(0.0, 1.0, len(index)),
+            "vix": np.linspace(10.0, 20.0, len(index)),
+        },
+        index=index,
+    )
+    result = DATA_AUDIT._sample_record(
+        panel,
+        "vix_common_sample",
+        "y",
+        {"M0": ["y_lag1"], "M1": ["y_lag1", "x"], "M2": ["y_lag1", "x", "vix"]},
+        sample_filters=["vix"],
+        reported_predictors=["y_lag1", "x"],
+    )
+
+    assert result["n_complete"] == 7
+    assert result["sample_filters"] == "vix"
+    assert result["predictors"] == "y_lag1;x"
