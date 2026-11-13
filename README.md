@@ -77,7 +77,7 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - scripts/09_dynamic_specification_sensitivity.py: compares exploratory autoregressive specifications using identical samples, residual diagnostics, recursive forecasts and nested Clark-West tests; it does not replace the pre-specified baseline.
 - scripts/10_stability_analysis.py: examines 120-month rolling HAC estimates of the primary M3 LMN coefficient, rolling M3-versus-M2 forecast performance, and descriptive calendar-decade forecast metrics. Overlapping windows are descriptive, not independent hypothesis tests.
 - scripts/11_influence_sensitivity.py: reports OLS leverage, externally studentized residuals, Cook's distance, DFFITS and focal-coefficient DFBETAS, alongside exact leave-one-month-out changes in the M3 LMN point estimate. No observations are automatically removed; deletion-sample HAC inference is not reported because an interior deletion breaks monthly spacing.
-- scripts/12_dff_aggregation_sensitivity.py: compares the month-end DFF baseline with a monthly-average alternative, validates the latter against official monthly FEDFUNDS, and repeats the same estimation and forecast comparisons on identical samples.
+- scripts/12_dff_aggregation_sensitivity.py: compares month-end DFF with the daily monthly mean, reports the absolute-difference distribution, validates the monthly mean against official FEDFUNDS, and repeats the same estimation and forecast comparisons on identical samples.
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
