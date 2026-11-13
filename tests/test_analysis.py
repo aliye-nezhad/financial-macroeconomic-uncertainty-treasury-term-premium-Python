@@ -564,3 +564,26 @@ def test_rolling_lmn_coefficients_reject_rank_deficient_windows():
             window_size=60,
             hac_lags=3,
         )
+
+
+def test_influence_sensitivity_script_is_importable():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "11_influence_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "influence_sensitivity",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    assert module.OUTCOME == "target_acm_tp_change"
+    assert module.FOCAL_PREDICTOR == "lmnuf1m_lag2"
+    assert module.MODEL_ID == "M3_PLUS_LMN_1M"
+    assert callable(module.main)
