@@ -149,6 +149,7 @@ def main() -> None:
         "JLNUM12M",
         "VIXCLS",
         "DFF",
+        "FEDFUNDS",
         "DGS2",
         "DGS10",
         "yield_curve_slope_10y2y",
