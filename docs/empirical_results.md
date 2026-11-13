@@ -149,10 +149,11 @@ The rolling-stability and influence scripts have now been executed from the proj
 The remaining sequence is:
 
 1. Re-run `scripts/03_data_audit.py`, `scripts/06_residual_diagnostics.py`, and `scripts/09_dynamic_specification_sensitivity.py` against the latest repository version. The current local audit and dynamic-sensitivity outputs were generated before the latest pull; the updated reports include matched-sample validation, Breusch-Godfrey diagnostics, and Holm/Bonferroni adjustments.
-2. Confirm that the HAC and Clark-West sensitivity outputs in `scripts/07_hac_sensitivity.py` and `scripts/08_forecast_test_sensitivity.py` correspond to the current raw-data snapshots and latest code. The three-lag Clark-West results must reproduce the baseline files.
-3. Review the detailed rolling coefficient, rolling forecast, influence, and leave-one-month-out CSVs and their black-and-white plots. Inspect flagged months against the original source series and economic context; do not remove genuine crisis or policy observations.
-4. Verify source timing and data-vintage conventions. The two-month uncertainty-index lag remains a conservative convention, not a reconstruction of historical release dates.
-5. Only consider a separate formal instability exercise after its estimation scheme and inferential assumptions have been justified. Do not apply the standard Giacomini-Rossi procedure to the existing recursive forecasts.
-6. Update the empirical memo and final interpretation after the regenerated output files have been checked.
+2. Re-run `scripts/12_dff_aggregation_sensitivity.py` against the current raw-data snapshots. Confirm that the FEDFUNDS validation remains within 0.01 percentage points, that the month-end and monthly-mean estimation/forecast samples match, and that the reported results reproduce the sensitivity tables.
+3. Confirm that the HAC and Clark-West sensitivity outputs in `scripts/07_hac_sensitivity.py` and `scripts/08_forecast_test_sensitivity.py` correspond to the current raw-data snapshots and latest code. The three-lag Clark-West results must reproduce the baseline files.
+4. Review the detailed rolling coefficient, rolling forecast, influence, and leave-one-month-out CSVs and their black-and-white plots. Inspect flagged months against the original source series and economic context; do not remove genuine crisis or policy observations.
+5. Verify source timing and data-vintage conventions. The two-month uncertainty-index lag remains a conservative convention, not a reconstruction of historical release dates.
+6. Only consider a separate formal instability exercise after its estimation scheme and inferential assumptions have been justified. Do not apply the standard Giacomini-Rossi procedure to the existing recursive forecasts.
+7. Update the empirical memo and final interpretation after the regenerated output files have been checked.
 
 No automatic outlier deletion, baseline replacement, causal interpretation or broad novelty claim is warranted.
