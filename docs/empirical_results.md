@@ -170,6 +170,7 @@ A final computational audit was completed at code commit `221a56e` in an indepen
 - GitHub Actions run #121 on current `main` commit `2808114` passed all 59 tests on Python 3.11 in 4.49 seconds. The independent Windows test run used Python 3.13.15.
 
 The audit establishes successful pipeline execution against the preserved raw snapshots, source-hash integrity, backup integrity, and substantive reconciliation of the regenerated analytical outputs. Raw data and generated outputs remain local and are excluded from Git. Fresh source downloads may produce different values because source series are revised.
+
 ## Release status
 
 The computational release was merged into `main` on 13 November 2026 at commit `06af936`. The current `main` head is `2808114`, a documentation-only update relative to the independently audited code commit `221a56e`. GitHub Actions run #121 passed all 59 tests on that current head. The empirical specification search is frozen; no further model additions, post-hoc break dates, automatic outlier deletion, or replacement of the pre-specified M0-M4 hierarchy are warranted on the basis of the current results.
