@@ -37,6 +37,18 @@ def _sample_record(
     in the supplied model specifications.
     """
     sample_filters = sample_filters or []
+    model_predictors = {
+        predictor
+        for specification in model_specs.values()
+        for predictor in specification
+    }
+    unmodeled_filters = sorted(set(sample_filters).difference(model_predictors))
+    if unmodeled_filters:
+        raise ValueError(
+            "Every sample filter must appear in at least one supplied model "
+            f"specification. Missing filters: {unmodeled_filters}"
+        )
+
     required_predictors = list(
         dict.fromkeys(
             [
