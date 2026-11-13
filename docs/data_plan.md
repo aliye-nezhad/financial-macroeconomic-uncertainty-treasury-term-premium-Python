@@ -1,7 +1,7 @@
 # Data Plan and Source Registry
 
 ## Data acquisition principle
-Download source data programmatically. Preserve unmodified raw snapshots locally, record per-source snapshot retrieval timestamps and SHA-256 hashes, and never silently overwrite a source snapshot. The analysis must be reproducible from saved raw files after the initial download.
+Download source data programmatically. Preserve unmodified raw snapshots locally, record per-source snapshot retrieval timestamps and SHA-256 hashes, and never silently overwrite a source snapshot. The analysis must be reproducible from saved raw files after the initial download. A normal run reuses cached files. An explicit `--refresh` replaces the cached source file and updates its manifest entry; the manifest records the replacement snapshot's timestamp and hash, but does not archive the previous file. Preserve a separate copy of any raw snapshot that must remain available for historical-vintage comparisons.
 
 Do not commit raw data until redistribution and source terms have been checked. The code should support a local raw-data cache and an explicit refresh option.
 
@@ -46,7 +46,9 @@ For alignment with ACM month-end data, use the last valid observation in each ca
 FRED graph CSV endpoints can be used without a FRED API key for initial acquisition, subject to endpoint stability and series terms. The official FRED API may be added later with a key stored in an environment variable, never committed to the repository.
 
 ## Initial sample
-The preferred common sample begins in January 1990 because the Kim-Wright daily 10-year term-premium series begins in 1990. FRED metadata confirms that JLNUM1M and JLNUM12M are monthly JLN measures, while LMNUF1M and LMNUF12M are monthly LMN financial-uncertainty measures; the latter series is valid and is not a typo. The final start date and end date must be determined from actual downloaded data and complete-case availability. ACM-only analysis can use a longer sample as a separate robustness exercise.
+A comparison that includes the Kim-Wright 10-year term-premium measure cannot begin before its available history, which starts in January 1990. This is not a global restriction on the primary ACM-only analysis: the M0-M3 ACM hierarchy uses its own longest common sample and can begin earlier. The initial empirical results accordingly report an ACM-only sample beginning in July 1976, while the Kim-Wright comparison uses its shorter available history. Each outcome and model hierarchy must report its own complete-case sample dates rather than imply that every exercise uses one global sample.
+
+FRED metadata confirms that JLNUM1M and JLNUM12M are monthly JLN measures, while LMNUF1M and LMNUF12M are monthly LMN financial-uncertainty measures; the latter series is valid and is not a typo. The final start date and end date must be determined from actual downloaded data and complete-case availability.
 
 ## Frequency and timing rules
 1. Parse all dates explicitly and use a month-end PeriodIndex internally.
