@@ -61,7 +61,7 @@ Activate the existing environment, then run:
 Use python scripts/01_download_data.py --refresh to request fresh source snapshots. Refresh replaces the cached source files and updates their manifest hashes; it does not archive the previous files. Keep a separate copy of any snapshot needed for historical-vintage comparisons.
 
 ## Code map
-- src/term_premium/data.py: source downloads, caching, hashes, source parsers, month-end alignment, ACM decomposition validation, and panel construction.
+- src/term_premium/data.py: source downloads, caching, SHA-256 snapshot verification, source parsers, month-end alignment, ACM decomposition validation, and panel construction.
 - src/term_premium/analysis.py: model specifications, common-sample validation, HAC regressions, expanding-window forecasts, forecast metrics, and Clark-West tests.
 - scripts/01_download_data.py: source acquisition.
 - scripts/02_build_dataset.py: processed panel construction.
