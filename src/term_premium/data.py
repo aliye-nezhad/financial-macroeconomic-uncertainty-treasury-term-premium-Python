@@ -35,6 +35,9 @@ FRED_SERIES: dict[str, str] = {
     "THREEFYTP10": "Kim-Wright 10-year term premium",
     "VIXCLS": "CBOE VIX close",
     "DFF": "Effective federal funds rate",
+    "FEDFUNDS": (
+        "Federal funds effective rate, monthly average (validation reference)"
+    ),
     "DGS2": "2-year Treasury constant-maturity yield",
     "DGS10": "10-year Treasury constant-maturity yield",
 }
@@ -44,6 +47,7 @@ MONTHLY_FRED_SERIES = {
     "LMNUF12M",
     "JLNUM1M",
     "JLNUM12M",
+    "FEDFUNDS",
 }
 DAILY_FRED_SERIES = set(FRED_SERIES) - MONTHLY_FRED_SERIES
 
@@ -325,6 +329,40 @@ def monthly_period_series(
         result = result.groupby(level=0).last()
     else:
         raise ValueError("source_frequency must be 'daily' or 'monthly'.")
+
+    result.index.name = "month"
+    return result.astype(float)
+
+
+def monthly_average_period_series(
+    series: pd.Series,
+    *,
+    incomplete_month: pd.Period | str | None = None,
+) -> pd.Series:
+    """Aggregate daily observations to arithmetic calendar-month means.
+
+    Empty months remain explicit NaNs. When supplied, the incomplete month
+    identified from the source snapshot metadata is excluded. This is a
+    sensitivity transformation; it does not replace month-end aggregation
+    in the primary forecasting specification.
+    """
+    if not isinstance(series.index, pd.DatetimeIndex):
+        raise TypeError("Daily source series must use a DatetimeIndex.")
+
+    series = series.dropna().sort_index()
+    result = series.groupby(series.index.to_period("M")).mean()
+
+    if not result.empty:
+        expected_months = pd.period_range(
+            result.index.min(), result.index.max(), freq="M"
+        )
+        result = result.reindex(expected_months)
+
+    if incomplete_month is not None:
+        result = result.drop(
+            index=pd.Period(str(incomplete_month), freq="M"),
+            errors="ignore",
+        )
 
     result.index.name = "month"
     return result.astype(float)

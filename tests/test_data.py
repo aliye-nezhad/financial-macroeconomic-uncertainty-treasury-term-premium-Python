@@ -9,6 +9,9 @@ from term_premium.data import (
     _verify_snapshot_hash,
     sha256_bytes,
     _snapshot_timestamp_for_entry,
+    FRED_SERIES,
+    MONTHLY_FRED_SERIES,
+    monthly_average_period_series,
     monthly_period_series,
     read_fred_csv,
 )
@@ -241,3 +244,51 @@ def test_snapshot_hash_verification_rejects_missing_manifest_hash(tmp_path):
             {},
             source_label="test source",
         )
+
+
+
+def test_fedfunds_is_registered_as_monthly_validation_series():
+    assert "FEDFUNDS" in FRED_SERIES
+    assert "monthly average" in FRED_SERIES["FEDFUNDS"]
+    assert "FEDFUNDS" in MONTHLY_FRED_SERIES
+
+
+def test_monthly_average_series_uses_arithmetic_means_and_preserves_gaps():
+    source = pd.Series(
+        [1.0, 3.0, 5.0],
+        index=pd.to_datetime(["2020-01-30", "2020-01-31", "2020-03-02"]),
+        name="DFF",
+    )
+
+    result = monthly_average_period_series(source)
+
+    assert list(result.index.astype(str)) == ["2020-01", "2020-02", "2020-03"]
+    assert result.loc[pd.Period("2020-01", freq="M")] == pytest.approx(2.0)
+    assert pd.isna(result.loc[pd.Period("2020-02", freq="M")])
+    assert result.loc[pd.Period("2020-03", freq="M")] == pytest.approx(5.0)
+
+
+def test_monthly_average_series_excludes_incomplete_snapshot_month():
+    source = pd.Series(
+        [1.0, 3.0, 5.0],
+        index=pd.to_datetime(["2020-01-30", "2020-01-31", "2020-02-10"]),
+        name="DFF",
+    )
+
+    result = monthly_average_period_series(
+        source,
+        incomplete_month=pd.Period("2020-02", freq="M"),
+    )
+
+    assert list(result.index.astype(str)) == ["2020-01"]
+    assert result.iloc[0] == pytest.approx(2.0)
+
+
+def test_monthly_average_series_requires_datetime_index():
+    source = pd.Series(
+        [1.0, 3.0],
+        index=pd.Index(["2020-01-30", "2020-01-31"]),
+    )
+
+    with pytest.raises(TypeError, match="DatetimeIndex"):
+        monthly_average_period_series(source)

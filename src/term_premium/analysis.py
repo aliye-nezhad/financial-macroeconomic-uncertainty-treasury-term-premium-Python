@@ -441,7 +441,7 @@ def forecast_accuracy_table(
     model_ids: Sequence[str],
     benchmark_model: str = "M0_AR1",
 ) -> pd.DataFrame:
-    """Calculate OOS RMSE, MAE, bias and R-squared relative to an AR benchmark."""
+    """Calculate forecast metrics and R-squared relative to the selected benchmark."""
     required = {"actual", benchmark_model, *model_ids}
     missing = sorted(required.difference(forecasts.columns))
     if missing:
@@ -453,6 +453,12 @@ def forecast_accuracy_table(
     )
     if benchmark_sse <= 0:
         raise ValueError("Benchmark forecast SSE must be positive.")
+
+    r_squared_column = (
+        "oos_r_squared_vs_ar1"
+        if benchmark_model == "M0_AR1"
+        else f"oos_r_squared_vs_{benchmark_model.lower()}"
+    )
 
     rows: list[dict[str, object]] = []
     for model_id in model_ids:
@@ -467,7 +473,7 @@ def forecast_accuracy_table(
                 "rmse": float(np.sqrt(np.mean(np.square(errors)))),
                 "mae": float(np.mean(np.abs(errors))),
                 "mean_forecast_error": float(errors.mean()),
-                "oos_r_squared_vs_ar1": float(1.0 - sse / benchmark_sse),
+                r_squared_column: float(1.0 - sse / benchmark_sse),
                 "sse": sse,
             }
         )

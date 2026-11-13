@@ -15,7 +15,8 @@ Do not commit raw data until redistribution and source terms have been checked. 
 | Financial uncertainty | FRED LMNUF1M | Monthly | Main predictor |
 | Macroeconomic uncertainty | FRED JLNUM1M | Monthly | Comparator |
 | Equity-market implied volatility | FRED VIXCLS | Daily | Proxy / robustness |
-| Effective federal funds rate | FRED DFF | Daily | Monetary-policy control |
+| Effective federal funds rate | FRED DFF | Daily | Primary month-end monetary-policy control; monthly-mean sensitivity |
+| Official monthly effective federal funds rate | FRED FEDFUNDS | Monthly average | Validation reference for the daily-DFF monthly-mean sensitivity; not a model predictor |
 | 2-year Treasury yield | FRED DGS2 | Daily | Yield-curve control |
 | 10-year Treasury yield | FRED DGS10 | Daily | Yield-curve slope construction |
 
@@ -34,14 +35,15 @@ The downloader must inspect the current workbook and verify sheet names and colu
 
 Both are monthly indexes. They have different underlying research frameworks and should not be interpreted as having directly comparable levels. FRED series pages provide definitions and current observations. Data are revised; the first project version will use current vintages and must be described as pseudo-out-of-sample.
 
-### FRED daily series
+### FRED market-rate series
 - THREEFYTP10: Kim-Wright 10-year zero-coupon term premium.
 - VIXCLS: CBOE VIX close.
 - DFF: effective federal funds rate.
+- FEDFUNDS: official monthly average of the effective federal funds rate; retained as a validation reference for the monthly mean computed from daily DFF, not as a model predictor.
 - DGS2: 2-year Treasury constant-maturity yield.
 - DGS10: 10-year Treasury constant-maturity yield.
 
-For alignment with ACM month-end data, use the last valid observation in each calendar month for daily series. Do not use a monthly average in the baseline. A monthly-average aggregation may be a sensitivity check.
+For alignment with ACM month-end data, use the last valid observation in each calendar month for daily series. Month-end DFF is the primary monetary-policy measure. Do not replace it with a monthly average in the baseline. A monthly-average DFF aggregation is a supplementary sensitivity check and must be validated against the official monthly FEDFUNDS series. FEDFUNDS is not entered as an additional predictor.
 
 FRED graph CSV endpoints can be used without a FRED API key for initial acquisition, subject to endpoint stability and series terms. The official FRED API may be added later with a key stored in an environment variable, never committed to the repository.
 

@@ -3,7 +3,7 @@
 ## Project identity
 **Title:** Financial Uncertainty and the U.S. Treasury Term Premium: An Out-of-Sample Forecasting Assessment  
 **Field:** Macro-finance, monetary economics, fixed-income markets, uncertainty, time-series econometrics.  
-**Status:** Data acquisition, panel construction, estimation, forecasting and diagnostic pipelines are implemented. Initial empirical results and supplementary rolling-stability and influence summaries have been generated; see [empirical_results.md](empirical_results.md). Detailed output files remain subject to final review, and timing and data-vintage limitations remain.
+**Status:** Data acquisition, panel construction, baseline estimation, forecasting and diagnostic/sensitivity pipelines are implemented. The baseline and supplementary empirical results, including rolling-stability, influence and DFF aggregation analyses, have been generated and summarized in [empirical_results.md](empirical_results.md). An independent clean Windows worktree at commit `221a56e` completed dataset construction and scripts 03-12 from the preserved raw snapshots; the 59-test suite passed, all 11 raw-source hashes were verified, and the preserved archive (12 raw-data files and 84 generated outputs) passed 96/96 file-level hash checks. Raw data and generated outputs remain local and are not committed to Git. Exact reproduction requires the preserved snapshots; fresh downloads may differ because source series are revised. The forecasting exercise is pseudo-out-of-sample rather than genuine real-time, and the two-month uncertainty lag is a conservative timing convention rather than a reconstruction of historical release dates.
 
 ## Main research question
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators?
@@ -56,6 +56,9 @@ The LMN financial and JLN macroeconomic measures are produced in related but dis
 
 The lagged dependent variable captures autoregressive dynamics. Additional controls will not be added mechanically.
 
+### Federal-funds-rate aggregation sensitivity
+The primary specification uses the last valid daily DFF observation in each completed month, aligning the monetary-policy control with the month-end ACM outcome. A supplementary sensitivity replaces month-end DFF with the arithmetic mean of daily DFF observations within each completed month. The resulting monthly mean is checked against FRED's official monthly FEDFUNDS series. FEDFUNDS is a validation reference only; it is not entered as a separate predictor. This exercise assesses whether the forecast results depend on the aggregation convention without changing the pre-specified M0-M3 hierarchy.
+
 ## Nested model hierarchy
 All models within a given comparison use the same complete-case sample.
 
@@ -97,7 +100,7 @@ For nested forecast comparisons, report Clark-West adjusted MSPE tests for M0-M1
 Repeat the primary hierarchy for the ACM expected-average-short-rate change, the Kim-Wright term-premium change, and the 12-month uncertainty horizon. These are robustness exercises, not pooled estimates.
 
 ## Timing and information set
-The panel records the change realised during month t. Daily market predictors are aggregated to month-end and lagged one month; monthly JLN/LMN uncertainty indexes are lagged two months as a conservative publication-delay convention. The model predicts the change realised during month t using the specified lagged information set.
+The panel records the change realised during month t. Daily market predictors are aggregated to month-end and lagged one month; the DFF monthly-mean alternative is examined separately as an aggregation sensitivity and validated against FEDFUNDS. Monthly JLN/LMN uncertainty indexes are lagged two months as a conservative publication-delay convention. The model predicts the change realised during month t using the specified lagged information set.
 
 The two-month uncertainty lag is not a reconstruction of each historical release date. Monthly uncertainty series are revised periodically. The first implementation uses the latest available vintage and is therefore **pseudo-out-of-sample**, not genuine real-time forecasting. We will not claim real-time forecasting unless historical vintages and publication availability are reconstructed.
 

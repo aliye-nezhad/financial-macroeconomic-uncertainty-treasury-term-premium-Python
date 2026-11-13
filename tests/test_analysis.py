@@ -268,6 +268,34 @@ def test_forecast_accuracy_and_clark_west_outputs():
     assert 0 <= cw.loc[0, "p_value_one_sided"] <= 1
 
 
+
+def test_forecast_accuracy_names_selected_nondefault_benchmark():
+    forecasts = pd.DataFrame(
+        {
+            "actual": [1.0, 2.0, 3.0, 4.0],
+            "M3_AR1": [0.0, 1.0, 2.0, 3.0],
+            "M3_AR1_AR2": [0.5, 1.5, 2.5, 3.5],
+        },
+        index=pd.period_range("2020-01", periods=4, freq="M"),
+    )
+
+    accuracy = forecast_accuracy_table(
+        forecasts,
+        model_ids=["M3_AR1", "M3_AR1_AR2"],
+        benchmark_model="M3_AR1",
+    )
+
+    assert "oos_r_squared_vs_m3_ar1" in accuracy.columns
+    assert "oos_r_squared_vs_ar1" not in accuracy.columns
+    benchmark_r_squared = accuracy.loc[
+        accuracy["model"] == "M3_AR1", "oos_r_squared_vs_m3_ar1"
+    ].iloc[0]
+    unrestricted_r_squared = accuracy.loc[
+        accuracy["model"] == "M3_AR1_AR2", "oos_r_squared_vs_m3_ar1"
+    ].iloc[0]
+    assert benchmark_r_squared == pytest.approx(0.0)
+    assert unrestricted_r_squared == pytest.approx(0.75)
+
 def test_clark_west_hac_bandwidth_changes_inference_not_adjusted_loss_mean():
     rng = np.random.default_rng(20261112)
     n = 240
@@ -587,3 +615,133 @@ def test_influence_sensitivity_script_is_importable():
     assert module.FOCAL_PREDICTOR == "lmnuf1m_lag2"
     assert module.MODEL_ID == "M3_PLUS_LMN_1M"
     assert callable(module.main)
+
+
+def test_dff_aggregation_sensitivity_script_is_importable():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "12_dff_aggregation_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "dff_aggregation_sensitivity",
+        script_path,
+    )
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    assert module.FEDFUNDS_TOLERANCE == 0.01
+
+
+
+def test_fedfunds_validation_compares_daily_mean_with_official_monthly_series():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "12_dff_aggregation_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "dff_aggregation_sensitivity_validation",
+        script_path,
+    )
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    daily_dff = pd.Series(
+        [1.0, 3.0, 4.0, 6.0],
+        index=pd.to_datetime(
+            ["2020-01-30", "2020-01-31", "2020-02-27", "2020-02-28"]
+        ),
+    )
+    official_fedfunds = pd.Series(
+        [2.0, 5.0],
+        index=pd.to_datetime(["2020-01-01", "2020-02-01"]),
+    )
+
+    monthly_mean, comparison, summary = module._fedfunds_validation(
+        daily_dff,
+        official_fedfunds,
+        incomplete_month=None,
+    )
+
+    assert monthly_mean.loc[pd.Period("2020-01", freq="M")] == pytest.approx(2.0)
+    assert monthly_mean.loc[pd.Period("2020-02", freq="M")] == pytest.approx(5.0)
+    assert comparison["absolute_difference"].dropna().max() == pytest.approx(0.0)
+    assert summary.loc[0, "n_matched_months"] == 2
+    assert summary.loc[0, "n_outside_0_01_percentage_points"] == 0
+
+
+def test_dff_aggregation_difference_summary_reports_distribution():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "12_dff_aggregation_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "dff_aggregation_difference",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    index = pd.period_range("2020-01", periods=4, freq="M")
+    month_end = pd.Series([1.0, 2.0, 4.0, 8.0], index=index)
+    monthly_mean = pd.Series([1.0, 1.0, 2.0, 4.0], index=index)
+
+    comparison, summary = module._dff_aggregation_difference(
+        month_end,
+        monthly_mean,
+    )
+
+    assert len(comparison) == 4
+    assert summary.loc[0, "n_matched_months"] == 4
+    assert summary.loc[0, "first_month"] == "2020-01"
+    assert summary.loc[0, "last_month"] == "2020-04"
+    assert summary.loc[0, "mean_absolute_difference"] == pytest.approx(1.75)
+    assert summary.loc[0, "median_absolute_difference"] == pytest.approx(1.5)
+    assert summary.loc[0, "p75_absolute_difference"] == pytest.approx(2.5)
+    assert summary.loc[0, "maximum_absolute_difference"] == pytest.approx(4.0)
+
+
+def test_dff_aggregation_difference_rejects_no_overlap():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "12_dff_aggregation_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "dff_aggregation_difference_empty",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    month_end = pd.Series(
+        [1.0],
+        index=pd.PeriodIndex(["2020-01"], freq="M"),
+    )
+    monthly_mean = pd.Series(
+        [2.0],
+        index=pd.PeriodIndex(["2020-02"], freq="M"),
+    )
+
+    with pytest.raises(ValueError, match="No overlapping observations"):
+        module._dff_aggregation_difference(month_end, monthly_mean)
