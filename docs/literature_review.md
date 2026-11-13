@@ -198,6 +198,37 @@ This paper estimates a production-based general-equilibrium model with demand- a
 - Published article: https://doi.org/10.3982/QE1979
 - Full-text article: https://www.econstor.eu/bitstream/10419/296343/1/quan200283.pdf
 
+### Option-implied monetary-policy uncertainty and term-premium transmission
+
+A separate literature studies uncertainty about future short-term policy rates using interest-rate options around Federal Open Market Committee (FOMC) announcements. These measures are conceptually distinct from the broad LMN financial-uncertainty and JLN macroeconomic-uncertainty indexes used in the current project.
+
+**Bundick, Herriford, and Smith (2017; updated 2021), "Forward Guidance, Monetary Policy Uncertainty, and the Term Premium."** This Federal Reserve Bank of Kansas City working paper uses Eurodollar options to measure the term structure of implied short-rate volatility. It identifies level and slope movements around FOMC announcements and finds that an unexpected decline in the slope of implied volatility lowers term premia on longer-term bonds, while supporting economic activity and inflation. It is an early direct antecedent for the interest-rate-uncertainty channel.
+
+- Working paper RWP 17-07: https://doi.org/10.18651/RWP2017-07
+- Full text: https://www.kansascityfed.org/documents/3978/rwp17-07bundicksmithherriford.pdf
+
+**De Pooter, Favara, Modugno, and Wu (2021), "Monetary Policy Uncertainty and Monetary Policy Surprises."** Using market-based short-rate uncertainty and monetary-policy announcement surprises, the authors find that a given policy shock has a larger effect on longer-term nominal and real yields when policy uncertainty is low. They attribute the weaker transmission under high uncertainty to less active position adjustment by primary dealers and other investors.
+
+- Journal of International Money and Finance, 112, 102323: https://doi.org/10.1016/j.jimonfin.2020.102323
+- Federal Reserve paper: https://www.federalreserve.gov/econres/feds/monetary-policy-uncertainty-and-monetary-policy-surprises.htm
+
+**Bauer, Lakdawala, and Mueller (2022), "Market-Based Monetary Policy Uncertainty."** The authors construct a model-free measure of uncertainty about future policy rates from derivatives and document an FOMC uncertainty cycle: announcements tend to resolve uncertainty, which then gradually rebuilds between meetings. Changes in uncertainty have asset-price effects distinct from conventional policy surprises, and the prevailing uncertainty level moderates market reactions to surprises about the future policy path.
+
+- The Economic Journal, 132(644), 1290–1308: https://doi.org/10.1093/ej/ueab086
+- Author page and replication materials: https://www.michaeldbauer.com/publication/monetary-policy-uncertainty/
+
+**Bundick, Herriford, and Smith (2024), "The Term Structure of Monetary Policy Uncertainty."** This published study develops level and slope factors for the term structure of policy-rate uncertainty using high-frequency movements around FOMC announcements. The factors help explain Treasury yields and forward real rates after accounting for changes in the expected policy path. The paper's yield-component analysis indicates that the effects are concentrated in term premia.
+
+- Journal of Economic Dynamics and Control, 160, 104803: https://doi.org/10.1016/j.jedc.2023.104803
+- Federal Reserve Bank of Kansas City working-paper version: https://www.kansascityfed.org/research/research-working-papers/the-term-structure-of-monetary-policy-uncertainty/
+
+**Ying, Sheen, Gu, and Wang (2025), "Does Monetary Policy Uncertainty Moderate the Transmission of Policy Shocks to Government Bond Yields?"** The authors construct a cleansed measure of monetary-policy uncertainty from changes in short-term option prices around FOMC announcements, addressing option-trading effects that can contaminate raw volatility changes. Their event-study results show that policy uncertainty primarily moderates forward-guidance shocks and that the moderation operates through the term-premium component rather than the expected-rate component.
+
+- Journal of International Money and Finance, 154, 103321: https://doi.org/10.1016/j.jimonfin.2025.103321
+- Publisher article: https://www.sciencedirect.com/science/article/pii/S0261560625000567
+
+**Implication for this project:** These studies show that short-rate option-implied monetary-policy uncertainty is a separate and potentially important source of information about term-premium transmission. The current predictor set does not include such a measure. VIX is equity-market implied volatility and is not a substitute for option-implied uncertainty about future policy rates. The project's conclusion must therefore remain conditional on LMN, JLN, VIX, and the specified monetary/yield-curve controls; it cannot establish that LMN dominates all available financial or policy-uncertainty measures. This is a scope limitation and a possible future extension, not a reason to reopen the frozen M0-M4 hierarchy.
+
 ## Forecast comparison under instability
 
 **Giacomini, Raffaella, and Barbara Rossi (2010). "Forecast Comparisons in Unstable Environments." Journal of Applied Econometrics, 25(4), 595–620.**
@@ -238,7 +269,7 @@ The defensible scope is narrower:
 4. Measurement robustness using the distinct Kim-Wright term-premium estimate.
 5. Explicit forecast evaluation using an expanding window, common target-month samples, RMSE, MAE, out-of-sample R-squared, and Clark-West tests for nested forecasts.
 
-The related literature already contains survey-based links between uncertainty, expected term-premium changes, and bond excess returns (Dick, Schmeling, and Schrimpf, 2013); cross-country evidence on inflation uncertainty and term premia (Wright, 2011); event-study evidence that uncertainty-related central-bank communication affects long-run term premia (Hansen, McMahon, and Tong, 2019); and structural models with endogenous term premia under uncertainty shocks (Amisano and Tristani, 2023; Bianchi, Kung, and Tirskikh, 2023; Cross, Poon, and Zhu, 2026). The project's distinction must therefore be framed narrowly around its outcome, uncertainty measures, timing, and forecast-comparison design—not as a first demonstration that uncertainty matters for term premia.
+The related literature already contains survey-based links between uncertainty, expected term-premium changes, and bond excess returns (Dick, Schmeling, and Schrimpf, 2013); cross-country evidence on inflation uncertainty and term premia (Wright, 2011); event-study evidence that uncertainty-related central-bank communication affects long-run term premia (Hansen, McMahon, and Tong, 2019); structural models with endogenous term premia under uncertainty shocks (Amisano and Tristani, 2023; Bianchi, Kung, and Tirskikh, 2023; Cross, Poon, and Zhu, 2026); and a separate market-based monetary-policy uncertainty literature (De Pooter et al., 2021; Bauer, Lakdawala, and Mueller, 2022; Bundick, Herriford, and Smith, 2024; Ying et al., 2025). The project's distinction must therefore be framed narrowly around its outcome, uncertainty measures, timing, and forecast-comparison design—not as a first demonstration that uncertainty matters for term premia.
 
 This is best described as a **reproducible macro-finance forecasting assessment**. Its value for a computational research portfolio lies in the quality of the data pipeline, timing discipline, econometric implementation, diagnostics, forecast evaluation, and honest interpretation. It should not be presented as a novel causal paper.
 
