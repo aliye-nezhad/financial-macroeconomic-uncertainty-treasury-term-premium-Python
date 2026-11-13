@@ -268,6 +268,34 @@ def test_forecast_accuracy_and_clark_west_outputs():
     assert 0 <= cw.loc[0, "p_value_one_sided"] <= 1
 
 
+
+def test_forecast_accuracy_names_selected_nondefault_benchmark():
+    forecasts = pd.DataFrame(
+        {
+            "actual": [1.0, 2.0, 3.0, 4.0],
+            "M3_AR1": [0.0, 1.0, 2.0, 3.0],
+            "M3_AR1_AR2": [0.5, 1.5, 2.5, 3.5],
+        },
+        index=pd.period_range("2020-01", periods=4, freq="M"),
+    )
+
+    accuracy = forecast_accuracy_table(
+        forecasts,
+        model_ids=["M3_AR1", "M3_AR1_AR2"],
+        benchmark_model="M3_AR1",
+    )
+
+    assert "oos_r_squared_vs_m3_ar1" in accuracy.columns
+    assert "oos_r_squared_vs_ar1" not in accuracy.columns
+    benchmark_r_squared = accuracy.loc[
+        accuracy["model"] == "M3_AR1", "oos_r_squared_vs_m3_ar1"
+    ].iloc[0]
+    unrestricted_r_squared = accuracy.loc[
+        accuracy["model"] == "M3_AR1_AR2", "oos_r_squared_vs_m3_ar1"
+    ].iloc[0]
+    assert benchmark_r_squared == pytest.approx(0.0)
+    assert unrestricted_r_squared == pytest.approx(0.75)
+
 def test_clark_west_hac_bandwidth_changes_inference_not_adjusted_loss_mean():
     rng = np.random.default_rng(20261112)
     n = 240
