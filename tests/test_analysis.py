@@ -717,4 +717,3 @@ def test_dff_aggregation_difference_rejects_no_overlap():
 
     with pytest.raises(ValueError, match="No overlapping observations"):
         module._dff_aggregation_difference(month_end, monthly_mean)
-
