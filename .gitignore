@@ -33,3 +33,6 @@ outputs/forecasting/*
 Thumbs.db
 .vscode/
 .idea/
+outputs/dff_aggregation_sensitivity/
+outputs/*.zip
+outputs_review*.zip
