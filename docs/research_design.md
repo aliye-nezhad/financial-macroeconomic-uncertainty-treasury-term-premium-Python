@@ -1,9 +1,9 @@
 # Research Design
 
 ## Project identity
-**Title:** Financial Uncertainty and the U.S. Treasury Term Premium: An Out-of-Sample Forecasting Assessment  
+**Title:** Financial and Macroeconomic Uncertainty and the U.S. Treasury Term Premium: A Pseudo-Out-of-Sample Forecasting Assessment  
 **Field:** Macro-finance, monetary economics, fixed-income markets, uncertainty, time-series econometrics.  
-**Status:** Data acquisition, panel construction, baseline estimation, forecasting and diagnostic/sensitivity pipelines are implemented. The baseline and supplementary empirical results, including rolling-stability, influence and DFF aggregation analyses, have been generated and summarized in [empirical_results.md](empirical_results.md). An independent clean Windows worktree at commit `221a56e` completed dataset construction and scripts 03-12 from the preserved raw snapshots; the 59-test suite passed, all 11 raw-source hashes were verified, and the preserved archive (12 raw-data files and 84 generated outputs) passed 96/96 file-level hash checks. Raw data and generated outputs remain local and are not committed to Git. Exact reproduction requires the preserved snapshots; fresh downloads may differ because source series are revised. The forecasting exercise is pseudo-out-of-sample rather than genuine real-time, and the two-month uncertainty lag is a conservative timing convention rather than a reconstruction of historical release dates.
+**Status:** Data acquisition, panel construction, baseline estimation, forecasting and diagnostic/sensitivity pipelines are implemented. The baseline and supplementary empirical results, including rolling-stability, influence and DFF aggregation analyses, are summarized in [empirical_results.md](empirical_results.md). An independent clean Windows audit worktree at code commit `221a56e` completed dataset construction and scripts 03-12 from preserved raw snapshots; the 59-test suite passed on Python 3.13.15 and all 11 raw-source hashes matched. The original 12 raw-data files and 84 output files were each compared with their preserved backup copies (96/96 matches), verifying backup integrity rather than regenerated-output equivalence. GitHub Actions run #119 on merged `main` commit `06af936` passed all 59 tests on Python 3.11. Raw data and generated outputs remain local and are not committed to Git. Exact reproduction requires preserved snapshots; fresh downloads may differ because source series are revised. The forecasting exercise is pseudo-out-of-sample rather than genuine real-time, and the two-month uncertainty lag is a conservative timing convention rather than a reconstruction of historical release dates.
 
 ## Main research question
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators?
@@ -118,12 +118,11 @@ The project does not claim that uncertainty and term premia have not been studie
 
 A stronger novelty claim requires a completed literature review and evidence that the exact forecasting comparison is not already covered.
 
-## Reproducibility decision gates
-Before interpreting results, confirm source downloads, ACM definitions, common samples, frequency alignment, forecast timing, vintage practices, test results, and plausibility of generated outputs.
+## Reproducibility verification
+The computational release checks are complete. The independent Windows audit used preserved raw snapshots, completed dataset construction and scripts 03-12, passed all 59 tests, and verified all 11 source hashes. The archived raw-data and output folders were copied to a separate backup and their 96 files matched their backup counterparts. This is a backup-integrity check, not a comparison between newly regenerated outputs and the archived outputs. GitHub Actions run #119 on merged `main` commit `06af936` passed all 59 tests on Python 3.11. Exact reproduction still depends on preserving the raw snapshots because source series can be revised.
 
-
-## Initial empirical evidence
-The first generated results do not show improved pseudo-out-of-sample accuracy for the primary ACM term-premium outcome when JLN, LMN or VIX is added to the AR/monetary benchmark. The ACM expected-short-rate component contains a secondary LMN association that requires cautious interpretation after multiple-testing adjustment and forecast-accuracy comparison. Exploratory autoregressive extensions are not part of the pre-specified M0-M4 hierarchy. Full results and qualifications are recorded in [empirical_results.md](empirical_results.md).
+## Empirical findings
+The primary ACM term-premium forecast results do not show an incremental improvement from adding JLN or LMN uncertainty to the AR/monetary benchmark. The expected-short-rate component contains a secondary in-sample LMN association, but the adjusted nested forecast comparisons and absolute forecast accuracy do not support a robust predictive gain. The VIX, 12-month uncertainty, Kim-Wright, rolling-stability, influence and DFF aggregation exercises do not overturn the primary conclusion. Full results and qualifications are recorded in [empirical_results.md](empirical_results.md).
 
 
 ## Stability analysis

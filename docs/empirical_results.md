@@ -146,7 +146,7 @@ None of the one-sided Clark-West comparisons is statistically significant at con
 
 The DFF aggregation choice does not change the substantive conclusion. The richer models do not improve the primary ACM term-premium forecasts relative to the AR(1) benchmark, and the LMN addition does not deliver a statistically significant nested forecast improvement. The month-end and monthly-mean DFF specifications are robustness alternatives, not competing models from which to select the more favorable result.
 
-## 10. Final empirical assessment and remaining project work
+## 10. Final empirical assessment
 
 The baseline and supplementary empirical exercises have now been run, and their main numerical summaries have been reviewed. The current evidence does not support a robust incremental forecasting contribution from LMN financial uncertainty for monthly changes in the 10-year ACM term premium beyond the AR/monetary/JLN benchmark. The LMN coefficient is positive in most rolling windows but is statistically inconclusive in most pointwise intervals; adding LMN improves rolling-window RMSE in only 22.3% of the evaluation windows, with negative mean and median relative out-of-sample R-squared. The DFF aggregation sensitivity, alternative uncertainty horizon, VIX comparison and Kim-Wright measurement exercise do not overturn the main forecast conclusion.
 
@@ -156,22 +156,24 @@ The empirical specification search should now be frozen. No further model additi
 
 ## Reproducibility verification
 
-A final computational audit was completed at commit `221a56e` in an independent clean Windows worktree using Python 3.13.15 and the preserved raw-data snapshots.
+A final computational audit was completed at code commit `221a56e` in an independent clean Windows worktree using Python 3.13.15 and the preserved raw-data snapshots.
 
 - Dataset construction (`scripts/02_build_dataset.py`) and analysis scripts `03` through `12` all completed with exit code zero.
 - The 59-test suite passed, and the dependency consistency check found no broken requirements.
 - All 11 raw-source hashes recorded in the local manifest matched.
-- The preserved archive contained 12 raw-data files and 84 generated-output files. All 96 files passed the file-level hash comparison, with no missing, extra, or mismatched files.
+- The original archive contained 12 raw-data files and 84 generated-output files. These 96 original files were each compared with their separate backup copies and all matched. This verifies backup integrity; it does **not** establish byte-for-byte equivalence between the newly regenerated audit outputs and the archived outputs.
 - DFF aggregation validation covered 868 matched months (July 1954-October 2026). The maximum absolute difference from official FEDFUNDS was 0.005 percentage points, and all matched months were within the 0.01-point tolerance.
 - The primary estimation sample remained 602 observations (July 1976-August 2026), with 482 forecast targets (July 1986-August 2026); all five exploratory dynamic specifications passed output validation.
-- GitHub Actions passed all 59 tests on Python 3.11 at the same commit. The independent Windows test run used Python 3.13.15.
+- GitHub Actions run #119 on the merged `main` commit `06af936` passed all 59 tests on Python 3.11 in 3.94 seconds. The independent Windows test run used Python 3.13.15.
 
-This audit establishes successful execution against the preserved raw snapshots and file-level integrity of the archived outputs. Raw data and generated outputs remain local and are excluded from Git. Fresh source downloads may produce different values because source series are revised.
+The audit establishes successful pipeline execution against the preserved raw snapshots, source-hash integrity, and integrity of the separate backup copy. A direct file-level comparison of regenerated outputs against the archived outputs remains a distinct local check. Raw data and generated outputs remain local and are excluded from Git. Fresh source downloads may produce different values because source series are revised.
 
 ## Release status
 
-The empirical specification search is frozen. No further model additions, post-hoc break dates, automatic outlier deletion, or replacement of the pre-specified M0-M4 hierarchy are warranted. The remaining work is limited to final review of the updated documentation and pull request. `main` remains unchanged until the pull request is reviewed and merged.
+The computational release was merged into `main` on 13 November 2026 at commit `06af936`. GitHub Actions run #119 passed all 59 tests on that merge commit. The empirical specification search is frozen; no further model additions, post-hoc break dates, automatic outlier deletion, or replacement of the pre-specified M0-M4 hierarchy are warranted on the basis of the current results.
 
-The standard Giacomini-Rossi Fluctuation Test should not be applied directly to the existing recursive expanding-window forecasts. A separate formal instability exercise is not required for completion and should only be considered if a valid estimation and inference design is independently justified.
+The standard Giacomini-Rossi Fluctuation Test should not be applied directly to the existing recursive expanding-window forecasts. A separate formal instability exercise is not required for computational release and should only be considered if a valid estimation and inference design is independently justified.
 
-No causal interpretation, broad novelty claim or claim of genuine real-time forecasting is warranted.
+The remaining portfolio work is to complete the separate regenerated-output comparison, decide whether the repository should be made public, and finalize its presentation and licensing. The literature review remains focused rather than exhaustive, so no broad originality claim is warranted.
+
+No causal interpretation or claim of genuine real-time forecasting is warranted.

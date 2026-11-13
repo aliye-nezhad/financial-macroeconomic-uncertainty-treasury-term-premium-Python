@@ -180,7 +180,7 @@ The project's current forecast results do not show improved term-premium forecas
 
 The expected-short-rate exercise contains a Clark-West comparison that merits careful reporting, but it must be interpreted alongside raw forecast errors and out-of-sample R-squared. No single p-value should determine the conclusion.
 
-The next research tasks are to complete the pre-specified robustness and stability checks, verify all empirical outputs, and document the results. Any subsequent model extensions should be clearly labelled exploratory and should not replace the original pre-specified baseline.
+The pre-specified robustness, stability, influence, and DFF aggregation exercises have been completed and are documented in [empirical_results.md](empirical_results.md). The focused literature review remains non-exhaustive: before making any originality claim, compare the final published versions of the closest studies and inspect the references and citing literature. Any subsequent model extensions should be clearly labelled exploratory and should not replace the original pre-specified baseline.
 
 ## Remaining literature-review work
 
