@@ -140,7 +140,7 @@ The paper studies the Bank of England's Inflation Report publications from Febru
 - Published article: https://doi.org/10.1016/j.jmoneco.2019.09.002
 - Publisher article page: https://www.sciencedirect.com/science/article/pii/S0304393219301606
 
-**Tillmann, Peter (2020).**Tillmann, Peter (2020). "Monetary Policy Uncertainty and the Response of the Yield Curve to Policy Shocks." Journal of Money, Credit and Banking, 52(4), 803–833.**
+**Tillmann, Peter (2020). "Monetary Policy Uncertainty and the Response of the Yield Curve to Policy Shocks." Journal of Money, Credit and Banking, 52(4), 803–833.**
 
 Tillmann uses interacted local projections to estimate yield-curve responses to monetary-policy shocks conditional on several monetary-policy-uncertainty measures. The baseline sample is monthly, January 1994-November 2015. The paper uses ACM fitted yields and their expectations/term-premium components, with Kim-Wright estimates as an alternative measurement check. Its primary shock is the daily change in the 2-year Treasury yield on FOMC meeting days, with an alternative high-frequency shock series. The uncertainty measures include a newspaper-based monetary-policy uncertainty index, survey-based interest-rate uncertainty, and squared monetary-policy surprises. Long-term yields rise less after a tightening when policy uncertainty is high, with the weaker response attributed to a stronger fall in term premia.
 
@@ -198,7 +198,7 @@ This paper estimates a production-based general-equilibrium model with demand- a
 - Published article: https://doi.org/10.3982/QE1979
 - Full-text article: https://www.econstor.eu/bitstream/10419/296343/1/quan200283.pdf
 
-## Forecast comparison under instability## Forecast comparison under instability
+## Forecast comparison under instability
 
 **Giacomini, Raffaella, and Barbara Rossi (2010). "Forecast Comparisons in Unstable Environments." Journal of Applied Econometrics, 25(4), 595–620.**
 
