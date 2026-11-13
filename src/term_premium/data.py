@@ -422,6 +422,29 @@ def read_acm_monthly(path: str | Path) -> pd.DataFrame:
     return _parse_acm_monthly_frame(frame)
 
 
+def _verify_snapshot_hash(
+    path: Path,
+    entry: dict[str, Any],
+    *,
+    source_label: str,
+) -> None:
+    """Confirm that a cached source file matches its recorded manifest hash."""
+    expected_hash = entry.get("sha256")
+    if not expected_hash:
+        raise ValueError(
+            f"The download manifest has no SHA-256 hash for {source_label}. "
+            "Run scripts/01_download_data.py --refresh to rebuild source metadata."
+        )
+
+    actual_hash = sha256_bytes(path.read_bytes())
+    if actual_hash != expected_hash:
+        raise ValueError(
+            f"Raw source hash mismatch for {source_label}. The file does not "
+            "match the snapshot recorded in download_manifest.json. Restore "
+            "the matching source file or run scripts/01_download_data.py --refresh."
+        )
+
+
 def _source_snapshot_timestamp(
     manifest: dict[str, Any],
     series_id: str,
@@ -478,6 +501,11 @@ def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
             raise FileNotFoundError(
                 f"Missing {path}. Run scripts/01_download_data.py first."
             )
+        _verify_snapshot_hash(
+            path,
+            manifest.get("fred", {}).get(series_id, {}),
+            source_label=f"FRED {series_id}",
+        )
         raw_series = read_fred_csv(path, series_id)
         frequency = (
             "monthly" if series_id in MONTHLY_FRED_SERIES else "daily"
@@ -511,6 +539,11 @@ def build_monthly_panel(raw_dir: str | Path = "data/raw") -> pd.DataFrame:
         raise FileNotFoundError(
             f"Missing {acm_path}. Run scripts/01_download_data.py first."
         )
+    _verify_snapshot_hash(
+        acm_path,
+        manifest.get("acm", {}),
+        source_label="New York Fed ACM workbook",
+    )
     acm = read_acm_monthly(acm_path)
 
     panel = pd.concat(series + [acm], axis=1).sort_index()
