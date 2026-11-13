@@ -69,7 +69,7 @@ FRED metadata confirms that JLNUM1M and JLNUM12M are monthly JLN measures, while
 - ACM yield decomposition identity checked to the extent supported by workbook columns and definitions.
 - Kim-Wright and ACM series not assumed to be numerically identical.
 - Missingness table and common-sample dates saved to outputs.
-- Raw source files hashed and recorded in a manifest.
+- Raw source files hashed and recorded in a manifest; panel construction verifies each file against its recorded SHA-256 hash and stops if a file has changed or the manifest lacks its hash.
 
 ## Programmatic download implementation
 Create separate functions for:
