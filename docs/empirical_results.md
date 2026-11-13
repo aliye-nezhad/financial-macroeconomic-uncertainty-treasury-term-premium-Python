@@ -41,9 +41,9 @@ HAC standard errors change estimated uncertainty around coefficients. They do no
 
 ## 4. Exploratory dynamic specification sensitivity
 
-Five specifications were compared on one identical 602-observation estimation sample (July 1976-August 2026), with 482 expanding-window forecasts (July 1986-August 2026). They are exploratory additions to, not replacements for, M0-M4.
+Five specifications were compared on one identical 602-observation estimation sample (July 1976-August 2026), with 482 expanding-window forecasts (July 1986-August 2026). They are exploratory additions to, not replacements for, M0-M4. Within this exploratory exercise, M3 AR(1) is the restricted forecast benchmark; the OOS R-squared values below are measured relative to M3 AR(1), not the M0 AR(1) benchmark used in the primary M0-M3 hierarchy.
 
-| Exploratory specification | Adjusted R-squared | AIC | BIC | RMSE | OOS R-squared vs. AR(1) |
+| Exploratory specification | Adjusted R-squared | AIC | BIC | RMSE | OOS R-squared vs. M3 AR(1) |
 |---|---:|---:|---:|---:|---:|
 | M3 AR(1) | 0.011967 | 72.80 | 103.60 | 0.236518 | 0.000000 |
 | M3 AR(1), AR(2) | 0.021828 | 67.75 | 102.95 | 0.234830 | 0.014225 |
@@ -51,7 +51,7 @@ Five specifications were compared on one identical 602-observation estimation sa
 | M3 AR(1), AR(2), AR(12) | 0.040809 | 56.94 | 96.54 | 0.240830 | -0.036793 |
 | M3 AR(1)-AR(12) | 0.045259 | 62.93 | 142.14 | 0.245278 | -0.075441 |
 
-Adding AR(2) produces a small reduction in RMSE (about 0.7%) and an OOS R-squared of 0.0142. The one-sided Clark-West p-value is 0.078953 before adjustment across the five exploratory comparisons. The Holm-adjusted p-value across those five comparisons is approximately 0.3469. This is suggestive at most, not confirmatory evidence. A descriptive decade split also shows that the AR(2) RMSE improvement is not uniform: it is marginally worse than AR(1) in the 1980s, 1990s and 2010s, and better in the 2000s and 2020s. These decade-specific comparisons are descriptive and were not separately tested.
+Adding AR(2) produces a small reduction in RMSE (about 0.7%) and an OOS R-squared of 0.0142 relative to the M3 AR(1) benchmark. The one-sided Clark-West p-value is 0.078953 before adjustment across the five exploratory comparisons. The Holm-adjusted p-value across those five comparisons is approximately 0.3469. This is suggestive at most, not confirmatory evidence. A descriptive decade split also shows that the AR(2) RMSE improvement is not uniform: it is marginally worse than AR(1) in the 1980s, 1990s and 2010s, and better in the 2000s and 2020s. These decade-specific comparisons are descriptive and were not separately tested.
 
 Adding AR(12), alone or alongside AR(2), does not improve out-of-sample accuracy. The full AR(1)-through-AR(12) model has a lower AIC than the AR(1) and AR(1)+AR(2) specifications, but it does not have the lowest AIC overall. It has the highest BIC because of its parameter count and the worst RMSE of the five specifications. In-sample fit is not a sufficient selection criterion.
 
