@@ -147,7 +147,13 @@ This review emphasizes robust evaluation of forecasting performance under instab
 - Article: https://doi.org/10.1257/jel.20201479
 - AEA article page: https://www.aeaweb.org/articles?id=10.1257/jel.20201479
 
-**Implication for this project:** The 120-month rolling M3-versus-M2 results in `scripts/10_stability_analysis.py` are descriptive diagnostics, not a formal instability test. If they show a substantively meaningful change in relative forecast performance, a Giacomini-Rossi-style test is a candidate for further study. Its assumptions and implementation must first be checked against this project's recursive expanding-window forecasts and nested M2/M3 comparison; the published procedure should not be transplanted mechanically. An Andrews or Bai-Perron parameter-break test is not the default next step because the primary research question concerns forecast performance, not structural parameter breaks.
+**Rossi, Barbara, and Matthieu Soupre (2018). "Implementing Tests for Forecast Evaluation in the Presence of Instabilities." The Stata Journal, 17(4).**
+
+This article reviews procedures for relative and absolute forecast evaluation under instability and documents the Giacomini-Rossi Fluctuation Test implementation. It states that the standard implementation assumes model parameters are estimated either with a fixed sample or a rolling sample of fixed size, and that this excludes recursive expanding-window estimation. This restriction matters for the present project because its primary forecasts use an expanding estimation window.
+
+- Article: https://doi.org/10.1177/1536867X1801700405
+
+**Implication for this project:** The 120-month rolling M3-versus-M2 results in `scripts/10_stability_analysis.py` are descriptive diagnostics, not a formal instability test. The standard Giacomini-Rossi Fluctuation Test should not be applied directly to the project's existing recursive expanding-window forecasts. If formal local forecast-comparison inference is later warranted, it requires a separately labelled fixed/rolling-estimation forecast exercise or a different procedure whose validity covers recursive estimation. An Andrews or Bai-Perron parameter-break test is not the default next step because the primary research question concerns forecast performance, not structural parameter breaks.
 
 ## Research positioning and claims
 

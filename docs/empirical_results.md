@@ -53,7 +53,7 @@ Five specifications were compared on one identical 602-observation estimation sa
 
 Adding AR(2) produces a small reduction in RMSE (about 0.7%) and an OOS R-squared of 0.0142. The one-sided Clark-West p-value is 0.078953 before adjustment across the five exploratory comparisons. The Holm-adjusted p-value across those five comparisons is approximately 0.3469. This is suggestive at most, not confirmatory evidence. A descriptive decade split also shows that the AR(2) RMSE improvement is not uniform: it is marginally worse than AR(1) in the 1980s, 1990s and 2010s, and better in the 2000s and 2020s. These decade-specific comparisons are descriptive and were not separately tested.
 
-Adding AR(12), alone or alongside AR(2), does not improve out-of-sample accuracy. The full AR(1)-through-AR(12) model has the lowest AIC among some alternatives only in a limited sense, but its BIC is much higher because of the parameter count and its RMSE is the worst of the five specifications. In-sample fit is not a sufficient selection criterion.
+Adding AR(12), alone or alongside AR(2), does not improve out-of-sample accuracy. The full AR(1)-through-AR(12) model has a lower AIC than the AR(1) and AR(1)+AR(2) specifications, but it does not have the lowest AIC overall. It has the highest BIC because of its parameter count and the worst RMSE of the five specifications. In-sample fit is not a sufficient selection criterion.
 
 The residual diagnostics illustrate the trade-off. M3 AR(1) rejects the Breusch-Godfrey null at six and twelve lags (p-values 0.0013 and 0.00005). Adding AR(2) alone does not remove this evidence (p-values 0.0160 and 0.00041). The AR(1)+AR(2)+AR(12) model does not reject at six or twelve lags (p-values 0.1192 and 0.2204), but still has worse forecast accuracy than the AR(1) benchmark. The full AR(12) model also has much weaker residual serial-correlation diagnostics, but worse forecast accuracy and a substantial parameter penalty.
 
@@ -67,19 +67,54 @@ The expected-short-rate component offers a potentially interesting secondary sig
 
 These are meaningful empirical findings. They should not be converted into a claim that uncertainty is economically irrelevant, nor into a causal statement. The conclusion is limited to this outcome definition, predictor timing, sample, model hierarchy and pseudo-out-of-sample design.
 
-## 6. Remaining validation work
+## 6. Rolling stability
 
-The following code-level additions are implemented and pass the automated test suite, but their empirical outputs have not yet been regenerated from the project author's local raw-data snapshots:
+The supplementary stability script was run on the 602-observation primary ACM estimation sample (July 1976-August 2026).
 
-- `scripts/10_stability_analysis.py`: rolling 120-month M3 LMN coefficient estimates with HAC intervals, rolling M3-versus-M2 forecast performance, and descriptive decade-level forecast metrics.
-- `scripts/11_influence_sensitivity.py`: conventional OLS influence diagnostics and exact leave-one-month-out changes in the M3 LMN point estimate. The deletion exercise deliberately reports no HAC standard errors or p-values because omitting an interior month creates an irregular time index.
+The lagged LMN coefficient was re-estimated in 483 overlapping 120-month windows using OLS with six-lag HAC covariance estimates. The median rolling coefficient was 0.0764, the range was -0.3812 to 0.6397, and 66.7% of window estimates were positive. The coefficient therefore varies materially in magnitude and changes sign across windows. These overlapping estimates and their pointwise HAC intervals are descriptive; they are not independent tests of coefficient stability.
+
+The existing recursive expanding-window forecasts were also compared in 363 overlapping 120-target-month windows. M3 had a lower RMSE than M2 in 22.3% of windows. The rolling comparison therefore does not indicate a persistent forecasting advantage from adding LMN.
+
+| Forecast decade | Forecasts | M2 RMSE | M3 RMSE | OOS R-squared of M3 relative to M2 |
+|---|---:|---:|---:|---:|
+| 1980s | 42 | 0.222674 | 0.218376 | 0.038228 |
+| 1990s | 120 | 0.192967 | 0.194123 | -0.012024 |
+| 2000s | 120 | 0.297840 | 0.298729 | -0.005983 |
+| 2010s | 120 | 0.218077 | 0.219587 | -0.013892 |
+| 2020s | 80 | 0.222000 | 0.222027 | -0.000244 |
+
+The decade comparison is descriptive. The 1980s and 2020s are partial decades, and no decade-specific significance tests were conducted. M3 performs slightly better in the first partial period, but its RMSE is marginally higher than M2 in every subsequent decade. This does not support a stable incremental forecast contribution from LMN.
+
+## 7. Observation-influence sensitivity
+
+The supplementary influence analysis was run on the same 602-observation M3 estimation sample.
+
+- 84 months were flagged by at least one conventional OLS influence rule.
+- February 1986 had the largest Cook's distance.
+- Excluding December 2008 produced the largest absolute change in the LMN coefficient.
+- The maximum absolute leave-one-month-out coefficient change was 0.027368.
+
+The 84 flagged months are the union of several overlapping screening rules, not 84 confirmed data errors or grounds for deletion. The month with the largest Cook's distance differs from the month whose exclusion changes the focal coefficient most, illustrating that the diagnostics capture different forms of influence. The available console summary does not report the sign of the largest coefficient change or the resulting leave-one-out estimate, so no sign-reversal claim is made.
+
+These are conventional OLS screening and point-estimate sensitivity measures. They do not use the HAC covariance estimator. No observations are removed, and no HAC inference is calculated on the gapped leave-one-month-out samples.
+
+## 8. Decision on formal forecast-instability testing
+
+The rolling results motivate attention to time variation, but the standard Giacomini-Rossi (2010) Fluctuation Test should not be applied directly to the current forecast series. The project's forecasts are generated recursively with an expanding estimation window. Rossi and Soupre (2018) describe the Giacomini-Rossi implementation as requiring fixed or rolling parameter-estimation windows of fixed size and explicitly rule out recursive estimation.
+
+The current rolling M3-versus-M2 results therefore remain descriptive. If formal local forecast-comparison inference is later justified, it will require either a separately labelled fixed/rolling-estimation forecast exercise or a different procedure whose validity covers recursive estimation. Such an exercise must not replace the pre-specified expanding-window baseline or be selected because it produces a favorable result. Parameter-break tests are not a substitute for the project's relative forecast-performance question.
+
+## 9. Remaining validation work
+
+The rolling-stability and influence scripts have now been executed from the project author's local raw-data snapshots. Their console summaries are recorded above. The detailed CSV files and plots remain local and have not yet undergone a complete file-level review.
 
 The remaining sequence is:
 
-1. Verify the timing and data-vintage conventions against the exact source snapshots and panel-construction code. The two-month uncertainty-index lag is a conservative convention, not a reconstruction of historical release dates.
-2. Run the updated data audit, stability analysis and influence sensitivity scripts. Inspect the flagged observations against their original source series and economic context. A statistical flag is not a reason to delete a genuine crisis observation.
-3. Re-run `scripts/09_dynamic_specification_sensitivity.py` and regenerate its outputs. The current empirical output archive predates its latest reporting changes, which add Ljung-Box output and Holm/Bonferroni adjustments for the five exploratory comparisons.
-4. Only after reviewing the rolling and influence outputs, decide whether a formal forecast-instability test is warranted. The primary question is time variation in M3-versus-M2 forecast performance, not automatically a break in regression coefficients. A Giacomini-Rossi-style procedure is a candidate, subject to checking its assumptions for recursive expanding-window forecasts and nested models. Do not select break dates or a test solely because they produce a favorable result. Any formal test must have a documented rationale and remain supplementary to M0-M4.
-5. Update this memo only after the regenerated outputs have been checked.
+1. Re-run `scripts/03_data_audit.py`, `scripts/06_residual_diagnostics.py`, and `scripts/09_dynamic_specification_sensitivity.py` against the latest repository version. The current local audit and dynamic-sensitivity outputs were generated before the latest pull; the updated reports include matched-sample validation, Breusch-Godfrey diagnostics, and Holm/Bonferroni adjustments.
+2. Confirm that the HAC and Clark-West sensitivity outputs in `scripts/07_hac_sensitivity.py` and `scripts/08_forecast_test_sensitivity.py` correspond to the current raw-data snapshots and latest code. The three-lag Clark-West results must reproduce the baseline files.
+3. Review the detailed rolling coefficient, rolling forecast, influence, and leave-one-month-out CSVs and their black-and-white plots. Inspect flagged months against the original source series and economic context; do not remove genuine crisis or policy observations.
+4. Verify source timing and data-vintage conventions. The two-month uncertainty-index lag remains a conservative convention, not a reconstruction of historical release dates.
+5. Only consider a separate formal instability exercise after its estimation scheme and inferential assumptions have been justified. Do not apply the standard Giacomini-Rossi procedure to the existing recursive forecasts.
+6. Update the empirical memo and final interpretation after the regenerated output files have been checked.
 
-No automatic outlier deletion, baseline replacement, causal interpretation or novelty claim is warranted.
+No automatic outlier deletion, baseline replacement, causal interpretation or broad novelty claim is warranted.
