@@ -6,11 +6,11 @@
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators? Does predictive information differ between the term-premium and expected-short-rate components?
 
 ## Research status
-The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box and Breusch-Godfrey LM/F diagnostics are implemented. The initial empirical results have been generated and reviewed. The focused literature review covers the closest related uncertainty/term-structure studies.
+The raw-data acquisition, monthly panel construction, source diagnostics, nested HAC regression pipeline, expanding-window forecasting, forecast accuracy metrics, Clark-West comparisons, and residual ACF/Ljung-Box and Breusch-Godfrey LM/F diagnostics are implemented. The baseline and supplementary empirical exercises have been run, and their main numerical summaries are recorded in docs/empirical_results.md. The original M0-M4 hierarchy remains the pre-specified baseline; additional autoregressive-lag experiments are exploratory and do not replace it.
 
-The rolling-stability and observation-influence scripts have also been run on the local raw-data snapshots. Their console summaries are recorded in docs/empirical_results.md; the detailed CSV files and plots remain subject to final file-level review. A separate DFF aggregation sensitivity compares month-end and monthly-average construction; the monthly mean is validated against FRED's official FEDFUNDS series. The original M0-M4 hierarchy remains the pre-specified baseline. Additional autoregressive-lag experiments are exploratory and do not replace it. The standard Giacomini-Rossi Fluctuation Test is not applied to the existing recursive expanding-window forecasts because its standard implementation assumes fixed or rolling estimation windows.
+The rolling-stability and observation-influence analyses have been run on the local raw-data snapshots. The rolling analysis reports pointwise HAC confidence intervals for the LMN coefficient and descriptive M3-versus-M2 forecast comparisons over overlapping 120-month windows. A separate DFF aggregation sensitivity compares month-end and monthly-mean construction, validates the monthly mean against FRED's official FEDFUNDS series, and confirms that the main forecast conclusion is unchanged. Detailed generated CSV files and plots remain local, are excluded from Git by default, and are subject to final file-level review. The standard Giacomini-Rossi Fluctuation Test is not applied to the existing recursive expanding-window forecasts because its standard implementation assumes fixed or rolling estimation windows.
 
-This is a predictive project, not a causal identification design. The first forecasting exercise uses currently available revised uncertainty-index data and must be described as pseudo-out-of-sample, not genuine real-time forecasting.
+This is a predictive project, not a causal identification design. The forecasting exercise uses currently available revised uncertainty-index data and must be described as pseudo-out-of-sample, not genuine real-time forecasting.
 
 ## Empirical design
 The primary outcome is the one-month change in the 10-year ACM term premium. The secondary outcome is the change in the ACM expected-average-short-rate component. The Kim-Wright 10-year term premium is an alternative outcome measurement.
@@ -81,11 +81,11 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 - tests/: parser, timing, model, inference and forecast tests.
 
 ## Output locations
-- outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts, matched-sample diagnostics, residual autocorrelation diagnostics and Breusch-Godfrey test results.
+- outputs/diagnostics/: source coverage, missingness profiles, monthly-index audit, extreme-observation review flags, descriptive statistics, correlations, pairwise counts, matched-sample diagnostics, residual autocorrelation diagnostics, Breusch-Godfrey tests, rolling LMN coefficient estimates and influence diagnostics.
   - HAC sensitivity summaries and coefficient-inference tables.
-  - M3 regression-influence flags, leave-one-month-out coefficient sensitivity and a screening summary.
+  - Leave-one-month-out coefficient sensitivity and influence-screening summaries.
 - outputs/estimation/: regression summaries, coefficients and estimation samples.
-- outputs/forecasting/: forecast series, forecast accuracy, Clark-West tests, HAC sensitivity results and black-and-white plots.
+- outputs/forecasting/: forecast series, forecast accuracy, Clark-West tests, HAC sensitivity results, rolling M3-versus-M2 performance, decade summaries and black-and-white plots.
 - outputs/dff_aggregation_sensitivity/: DFF monthly-average validation and aggregation-sensitivity tables.
 
 Generated outputs and local data are not committed by default. Re-run the scripts to recreate them from the raw source snapshots.
@@ -96,4 +96,5 @@ Generated outputs and local data are not committed by default. Re-run the script
 - ACM and Kim-Wright are distinct model-based estimates.
 - The two-month uncertainty lag is a conservative timing convention, not a historical release-calendar reconstruction.
 - Current revised data imply pseudo-out-of-sample, not genuine real-time, forecasting.
-- No empirical result or novelty claim should be made before reviewing generated outputs and completing the literature review.
+- Empirical claims must remain within the reviewed results and the stated design limitations.
+- The literature review does not support a broad novelty claim; see docs/literature_review.md for the defensible scope of the project.
