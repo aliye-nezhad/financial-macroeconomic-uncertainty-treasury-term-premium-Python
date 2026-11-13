@@ -194,7 +194,7 @@ def main() -> None:
     print("\nFORECAST ACCURACY")
     print(
         accuracy[
-            ["model", "n_forecasts", "rmse", "mae", "oos_r_squared_vs_ar1"]
+            ["model", "n_forecasts", "rmse", "mae", "oos_r_squared_vs_m3_ar1"]
         ].to_string(index=False)
     )
     print("\nNESTED CLARK-WEST TESTS")
