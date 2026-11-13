@@ -156,24 +156,26 @@ The empirical specification search should now be frozen. No further model additi
 
 ## Reproducibility verification
 
-A final computational audit was completed at code commit `221a56e` in an independent clean Windows worktree using Python 3.13.15 and the preserved raw-data snapshots.
+A final computational audit was completed at code commit `221a56e` in an independent clean Windows worktree using Python 3.13.15 and the preserved raw-data snapshots. No raw-source refresh was performed.
 
 - Dataset construction (`scripts/02_build_dataset.py`) and analysis scripts `03` through `12` all completed with exit code zero.
 - The 59-test suite passed, and the dependency consistency check found no broken requirements.
 - All 11 raw-source hashes recorded in the local manifest matched.
-- The original archive contained 12 raw-data files and 84 generated-output files. These 96 original files were each compared with their separate backup copies and all matched. This verifies backup integrity; it does **not** establish byte-for-byte equivalence between the newly regenerated audit outputs and the archived outputs.
+- The original archive contained 12 raw-data files and 84 generated-output files. All 96 files matched their separate backup copies, verifying backup integrity.
+- A separate regenerated-output reconciliation found 75 of 84 archived output files byte-identical to the audit-worktree outputs. The sole schema difference was the benchmark metric rename from `oos_r_squared_vs_ar1` to `oos_r_squared_vs_m3_ar1`; all 40 model-by-metric comparisons matched, with exact date-label matches and numeric agreement within tolerance.
+- Eight archived paths were not reproduced at their original locations. Three exploratory diagnostic CSVs (AR coefficients, AR model comparison, and Breusch-Godfrey tests) matched current canonical outputs exactly. The legacy descriptive-statistics and contemporaneous-correlation tables were reconstructed from the preserved raw data and matched archived values at numerical precision. The archived HAC review ZIP passed CRC validation, and both CSV members matched the current HAC outputs. Two historical run logs were not regenerated. No substantive analytical discrepancy was identified, although not every archived artifact was reproduced byte-for-byte.
 - DFF aggregation validation covered 868 matched months (July 1954-October 2026). The maximum absolute difference from official FEDFUNDS was 0.005 percentage points, and all matched months were within the 0.01-point tolerance.
 - The primary estimation sample remained 602 observations (July 1976-August 2026), with 482 forecast targets (July 1986-August 2026); all five exploratory dynamic specifications passed output validation.
-- GitHub Actions run #119 on the merged `main` commit `06af936` passed all 59 tests on Python 3.11 in 3.94 seconds. The independent Windows test run used Python 3.13.15.
+- The current `main` head (`2808114`) differs from the independently audited code commit `221a56e` only in the README and three documentation files; all tracked source, scripts, tests, configuration, and workflow files are identical.
+- GitHub Actions run #121 on current `main` commit `2808114` passed all 59 tests on Python 3.11 in 4.49 seconds. The independent Windows test run used Python 3.13.15.
 
-The audit establishes successful pipeline execution against the preserved raw snapshots, source-hash integrity, and integrity of the separate backup copy. A direct file-level comparison of regenerated outputs against the archived outputs remains a distinct local check. Raw data and generated outputs remain local and are excluded from Git. Fresh source downloads may produce different values because source series are revised.
-
+The audit establishes successful pipeline execution against the preserved raw snapshots, source-hash integrity, backup integrity, and substantive reconciliation of the regenerated analytical outputs. Raw data and generated outputs remain local and are excluded from Git. Fresh source downloads may produce different values because source series are revised.
 ## Release status
 
-The computational release was merged into `main` on 13 November 2026 at commit `06af936`. GitHub Actions run #119 passed all 59 tests on that merge commit. The empirical specification search is frozen; no further model additions, post-hoc break dates, automatic outlier deletion, or replacement of the pre-specified M0-M4 hierarchy are warranted on the basis of the current results.
+The computational release was merged into `main` on 13 November 2026 at commit `06af936`. The current `main` head is `2808114`, a documentation-only update relative to the independently audited code commit `221a56e`. GitHub Actions run #121 passed all 59 tests on that current head. The empirical specification search is frozen; no further model additions, post-hoc break dates, automatic outlier deletion, or replacement of the pre-specified M0-M4 hierarchy are warranted on the basis of the current results.
 
 The standard Giacomini-Rossi Fluctuation Test should not be applied directly to the existing recursive expanding-window forecasts. A separate formal instability exercise is not required for computational release and should only be considered if a valid estimation and inference design is independently justified.
 
-The remaining portfolio work is to complete the separate regenerated-output comparison, decide whether the repository should be made public, and finalize its presentation and licensing. The literature review remains focused rather than exhaustive, so no broad originality claim is warranted.
+The remaining portfolio decisions are whether to make the repository public and which license to apply to the code. The literature review remains focused rather than exhaustive, so no broad originality claim is warranted.
 
 No causal interpretation or claim of genuine real-time forecasting is warranted.
