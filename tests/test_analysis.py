@@ -608,3 +608,46 @@ def test_dff_aggregation_sensitivity_script_is_importable():
     spec.loader.exec_module(module)
 
     assert module.FEDFUNDS_TOLERANCE == 0.01
+
+
+
+def test_fedfunds_validation_compares_daily_mean_with_official_monthly_series():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "12_dff_aggregation_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "dff_aggregation_sensitivity_validation",
+        script_path,
+    )
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    daily_dff = pd.Series(
+        [1.0, 3.0, 4.0, 6.0],
+        index=pd.to_datetime(
+            ["2020-01-30", "2020-01-31", "2020-02-27", "2020-02-28"]
+        ),
+    )
+    official_fedfunds = pd.Series(
+        [2.0, 5.0],
+        index=pd.to_datetime(["2020-01-01", "2020-02-01"]),
+    )
+
+    monthly_mean, comparison, summary = module._fedfunds_validation(
+        daily_dff,
+        official_fedfunds,
+        incomplete_month=None,
+    )
+
+    assert monthly_mean.loc[pd.Period("2020-01", freq="M")] == pytest.approx(2.0)
+    assert monthly_mean.loc[pd.Period("2020-02", freq="M")] == pytest.approx(5.0)
+    assert comparison["absolute_difference"].dropna().max() == pytest.approx(0.0)
+    assert summary.loc[0, "n_matched_months"] == 2
+    assert summary.loc[0, "n_outside_0_01_percentage_points"] == 0
