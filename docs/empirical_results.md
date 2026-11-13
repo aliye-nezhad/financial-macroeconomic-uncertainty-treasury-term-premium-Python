@@ -104,7 +104,45 @@ The rolling results motivate attention to time variation, but the standard Giaco
 
 The current rolling M3-versus-M2 results therefore remain descriptive. If formal local forecast-comparison inference is later justified, it will require either a separately labelled fixed/rolling-estimation forecast exercise or a different procedure whose validity covers recursive estimation. Such an exercise must not replace the pre-specified expanding-window baseline or be selected because it produces a favorable result. Parameter-break tests are not a substitute for the project's relative forecast-performance question.
 
-## 9. Remaining validation work
+## 9. DFF aggregation sensitivity
+
+The primary analysis uses the last valid daily DFF observation in each completed month. A supplementary sensitivity replaces that value with the arithmetic mean of daily DFF observations within the month. The alternative is validated against FRED's official monthly FEDFUNDS series; FEDFUNDS is not used as a model predictor.
+
+### Validation of the monthly average
+
+The daily-DFF monthly mean matches the official monthly FEDFUNDS series over 868 months, July 1954-October 2026. The mean absolute difference is 0.002404 percentage points, the maximum absolute difference is 0.005 percentage points, and the correlation is 0.9999997. All 868 matched months are within 0.01 percentage points, consistent with the published series' two-decimal rounding.
+
+The absolute difference between month-end DFF and the monthly mean is not negligible in every month: across the same 868-month sample its mean is 0.2880 percentage points, median 0.10, 75th percentile 0.33, and maximum 7.44. This supports retaining month-end DFF as the primary convention when aligning predictors with the month-end ACM outcome, while reporting the monthly mean as a distinct sensitivity rather than treating the two measures as interchangeable.
+
+### Estimation and forecast comparison
+
+Both aggregation methods use the same 602-observation estimation sample (July 1976-August 2026) and the same 482 forecast target months (July 1986-August 2026). The M0 AR(1) forecasts are identical by construction because DFF does not enter M0.
+
+| Aggregation | Model | RMSE | MAE | OOS R-squared vs. M0 |
+|---|---|---:|---:|---:|
+| Month-end | M0 AR(1) | 0.231417 | 0.169517 | 0.000000 |
+| Month-end | M1 monetary | 0.233421 | 0.170520 | -0.017389 |
+| Month-end | M2 + JLN | 0.236000 | 0.171723 | -0.039999 |
+| Month-end | M3 + LMN | 0.236518 | 0.171133 | -0.044572 |
+| Monthly mean | M0 AR(1) | 0.231417 | 0.169517 | 0.000000 |
+| Monthly mean | M1 monetary | 0.233660 | 0.170215 | -0.019476 |
+| Monthly mean | M2 + JLN | 0.236522 | 0.171645 | -0.044600 |
+| Monthly mean | M3 + LMN | 0.236924 | 0.170498 | -0.048155 |
+
+None of the one-sided Clark-West comparisons is statistically significant at conventional levels:
+
+| Aggregation | Nested comparison | Clark-West p-value |
+|---|---|---:|
+| Month-end | M0 vs. M1 | 0.205646 |
+| Month-end | M1 vs. M2 | 0.640734 |
+| Month-end | M2 vs. M3 | 0.340455 |
+| Monthly mean | M0 vs. M1 | 0.257830 |
+| Monthly mean | M1 vs. M2 | 0.737262 |
+| Monthly mean | M2 vs. M3 | 0.187645 |
+
+The DFF aggregation choice does not change the substantive conclusion. The richer models do not improve the primary ACM term-premium forecasts relative to the AR(1) benchmark, and the LMN addition does not deliver a statistically significant nested forecast improvement. The month-end and monthly-mean DFF specifications are robustness alternatives, not competing models from which to select the more favorable result.
+
+## 10. Remaining validation work
 
 The rolling-stability and influence scripts have now been executed from the project author's local raw-data snapshots. Their console summaries are recorded above. The detailed CSV files and plots remain local and have not yet undergone a complete file-level review.
 
