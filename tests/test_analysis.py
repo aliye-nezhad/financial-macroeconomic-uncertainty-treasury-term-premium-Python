@@ -651,3 +651,70 @@ def test_fedfunds_validation_compares_daily_mean_with_official_monthly_series():
     assert comparison["absolute_difference"].dropna().max() == pytest.approx(0.0)
     assert summary.loc[0, "n_matched_months"] == 2
     assert summary.loc[0, "n_outside_0_01_percentage_points"] == 0
+
+
+def test_dff_aggregation_difference_summary_reports_distribution():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "12_dff_aggregation_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "dff_aggregation_difference",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    index = pd.period_range("2020-01", periods=4, freq="M")
+    month_end = pd.Series([1.0, 2.0, 4.0, 8.0], index=index)
+    monthly_mean = pd.Series([1.0, 1.0, 2.0, 4.0], index=index)
+
+    comparison, summary = module._dff_aggregation_difference(
+        month_end,
+        monthly_mean,
+    )
+
+    assert len(comparison) == 4
+    assert summary.loc[0, "n_matched_months"] == 4
+    assert summary.loc[0, "first_month"] == "2020-01"
+    assert summary.loc[0, "last_month"] == "2020-04"
+    assert summary.loc[0, "mean_absolute_difference"] == pytest.approx(1.75)
+    assert summary.loc[0, "median_absolute_difference"] == pytest.approx(1.5)
+    assert summary.loc[0, "p75_absolute_difference"] == pytest.approx(2.5)
+    assert summary.loc[0, "maximum_absolute_difference"] == pytest.approx(4.0)
+
+
+def test_dff_aggregation_difference_rejects_no_overlap():
+    import importlib.util
+    from pathlib import Path
+
+    script_path = (
+        Path(__file__).resolve().parents[1]
+        / "scripts"
+        / "12_dff_aggregation_sensitivity.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "dff_aggregation_difference_empty",
+        script_path,
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    month_end = pd.Series(
+        [1.0],
+        index=pd.PeriodIndex(["2020-01"], freq="M"),
+    )
+    monthly_mean = pd.Series(
+        [2.0],
+        index=pd.PeriodIndex(["2020-02"], freq="M"),
+    )
+
+    with pytest.raises(ValueError, match="No overlapping observations"):
+        module._dff_aggregation_difference(month_end, monthly_mean)
+
