@@ -47,6 +47,14 @@ For alignment with ACM month-end data, use the last valid observation in each ca
 
 FRED graph CSV endpoints can be used without a FRED API key for initial acquisition, subject to endpoint stability and series terms. The official FRED API may be added later with a key stored in an environment variable, never committed to the repository.
 
+## Potential extension outside the baseline
+
+The San Francisco Fed publishes a daily Market-Based Monetary Policy Uncertainty series based on money-market futures and options, following Bauer, Lakdawala, and Mueller (2022). It provides constant-maturity measures at 6, 12, 18, and 24 months, with history extending back to 1990. The underlying contracts are Eurodollar futures and options through September 2022 and SOFR futures and options from October 2022.
+
+This series is not part of the current M0-M4 predictor set and must not be silently added to the baseline. The SF Fed notes that it can reflect both uncertainty about future policy rates and macroeconomic uncertainty, because policy rates respond to macroeconomic conditions. It should not be described as a clean exogenous policy-uncertainty shock. A future extension would require a separate research design specifying monthly aggregation, information timing relative to the forecast origin, treatment of historical data vintages, and the exact incremental comparison to be tested.
+
+Source and methodology: https://www.frbsf.org/research-and-insights/data-and-indicators/market-based-monetary-policy-uncertainty/
+
 ## Initial sample
 A comparison that includes the Kim-Wright 10-year term-premium measure cannot begin before its available history, which starts in January 1990. This is not a global restriction on the primary ACM-only analysis: the M0-M3 ACM hierarchy uses its own longest common sample and can begin earlier. The initial empirical results accordingly report an ACM-only sample beginning in July 1976, while the Kim-Wright comparison uses its shorter available history. Each outcome and model hierarchy must report its own complete-case sample dates rather than imply that every exercise uses one global sample.
 
