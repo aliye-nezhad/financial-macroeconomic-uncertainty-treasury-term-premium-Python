@@ -56,6 +56,9 @@ The LMN financial and JLN macroeconomic measures are produced in related but dis
 
 The lagged dependent variable captures autoregressive dynamics. Additional controls will not be added mechanically.
 
+### Federal-funds-rate aggregation sensitivity
+The primary specification uses the last valid daily DFF observation in each completed month, aligning the monetary-policy control with the month-end ACM outcome. A supplementary sensitivity replaces month-end DFF with the arithmetic mean of daily DFF observations within each completed month. The resulting monthly mean is checked against FRED's official monthly FEDFUNDS series. FEDFUNDS is a validation reference only; it is not entered as a separate predictor. This exercise assesses whether the forecast results depend on the aggregation convention without changing the pre-specified M0-M3 hierarchy.
+
 ## Nested model hierarchy
 All models within a given comparison use the same complete-case sample.
 
@@ -97,7 +100,7 @@ For nested forecast comparisons, report Clark-West adjusted MSPE tests for M0-M1
 Repeat the primary hierarchy for the ACM expected-average-short-rate change, the Kim-Wright term-premium change, and the 12-month uncertainty horizon. These are robustness exercises, not pooled estimates.
 
 ## Timing and information set
-The panel records the change realised during month t. Daily market predictors are aggregated to month-end and lagged one month; monthly JLN/LMN uncertainty indexes are lagged two months as a conservative publication-delay convention. The model predicts the change realised during month t using the specified lagged information set.
+The panel records the change realised during month t. Daily market predictors are aggregated to month-end and lagged one month; the DFF monthly-mean alternative is examined separately as an aggregation sensitivity and validated against FEDFUNDS. Monthly JLN/LMN uncertainty indexes are lagged two months as a conservative publication-delay convention. The model predicts the change realised during month t using the specified lagged information set.
 
 The two-month uncertainty lag is not a reconstruction of each historical release date. Monthly uncertainty series are revised periodically. The first implementation uses the latest available vintage and is therefore **pseudo-out-of-sample**, not genuine real-time forecasting. We will not claim real-time forecasting unless historical vintages and publication availability are reconstructed.
 
