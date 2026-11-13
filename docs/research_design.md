@@ -3,7 +3,7 @@
 ## Project identity
 **Title:** Financial Uncertainty and the U.S. Treasury Term Premium: An Out-of-Sample Forecasting Assessment  
 **Field:** Macro-finance, monetary economics, fixed-income markets, uncertainty, time-series econometrics.  
-**Status:** Data acquisition, panel construction, estimation, forecasting and diagnostic pipelines are implemented. Initial empirical results and supplementary rolling-stability and influence summaries have been generated; see [empirical_results.md](empirical_results.md). Detailed output files remain subject to final review, and timing and data-vintage limitations remain.
+**Status:** Data acquisition, panel construction, baseline estimation, forecasting and diagnostic/sensitivity pipelines are implemented. The baseline and supplementary empirical results, including rolling-stability, influence and DFF aggregation analyses, have been generated and summarized in [empirical_results.md](empirical_results.md). Detailed generated outputs remain local and are subject to final file-level review. The forecasting exercise is pseudo-out-of-sample rather than genuine real-time, and the two-month uncertainty lag is a conservative timing convention rather than a reconstruction of historical release dates.
 
 ## Main research question
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators?
