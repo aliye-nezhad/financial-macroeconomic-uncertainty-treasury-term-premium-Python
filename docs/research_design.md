@@ -3,7 +3,7 @@
 ## Project identity
 **Title:** Financial and Macroeconomic Uncertainty and the U.S. Treasury Term Premium: A Pseudo-Out-of-Sample Forecasting Assessment  
 **Field:** Macro-finance, monetary economics, fixed-income markets, uncertainty, time-series econometrics.  
-**Status:** Data acquisition, panel construction, baseline estimation, forecasting and diagnostic/sensitivity pipelines are implemented. The baseline and supplementary empirical results, including rolling-stability, influence and DFF aggregation analyses, are summarized in [empirical_results.md](empirical_results.md). An independent clean Windows audit worktree at code commit `221a56e` completed dataset construction and scripts 03-12 from preserved raw snapshots; the 59-test suite passed on Python 3.13.15 and all 11 raw-source hashes matched. The original 12 raw-data files and 84 output files were each compared with their preserved backup copies (96/96 matches), verifying backup integrity rather than regenerated-output equivalence. GitHub Actions run #119 on merged `main` commit `06af936` passed all 59 tests on Python 3.11. Raw data and generated outputs remain local and are not committed to Git. Exact reproduction requires preserved snapshots; fresh downloads may differ because source series are revised. The forecasting exercise is pseudo-out-of-sample rather than genuine real-time, and the two-month uncertainty lag is a conservative timing convention rather than a reconstruction of historical release dates.
+**Status:** Data acquisition, panel construction, baseline estimation, forecasting, and diagnostic/sensitivity pipelines are implemented. The independent clean Windows audit at code commit `221a56e` completed dataset construction and scripts 03-12; all 59 tests passed on Python 3.13.15, and all 11 raw-source hashes matched. The original 12 raw-data files and 84 archived outputs matched their separate backup copies (96/96), verifying backup integrity. A separate regenerated-output reconciliation found 75/84 archived outputs byte-identical, one schema-only benchmark rename with all 40 model-by-metric comparisons matching, and eight archived paths accounted for through canonical diagnostic matches, numerical reconstruction, HAC archive validation, and two historical logs not regenerated. Current `main` head `f38dda3` differs from the audited code commit only in documentation files; GitHub Actions run #128 passed all 59 tests on Python 3.11. Raw data and generated outputs remain local and are not committed to Git. Exact reproduction requires preserved snapshots; fresh downloads may differ because source series are revised. The forecasting exercise is pseudo-out-of-sample rather than genuine real-time, and the two-month uncertainty lag is a conservative timing convention rather than a reconstruction of historical release dates.
 
 ## Main research question
 Does financial-sector uncertainty contain incremental predictive information for changes in the U.S. 10-year Treasury term premium, beyond macroeconomic uncertainty and conventional monetary-policy and yield-curve indicators?
@@ -45,6 +45,7 @@ Change in the 10-year Kim-Wright term premium (FRED: THREEFYTP10), aggregated to
 - **Primary financial uncertainty:** LMN 1-month-ahead financial uncertainty (FRED: LMNUF1M).
 - **Macroeconomic uncertainty comparator:** JLN 1-month-ahead macroeconomic uncertainty (FRED: JLNUM1M).
 - **Market-based proxy:** VIX (VIXCLS), used as a secondary proxy/robustness measure, not as a comprehensive uncertainty measure.
+- **Not included:** a dedicated market-based monetary-policy uncertainty measure derived from options on short-term interest rates (such as Eurodollar/SOFR options). VIX measures equity-market volatility and is not a substitute for this policy-rate uncertainty.
 - **Alternative horizon:** LMN and JLN 12-month-ahead indexes, estimated in a separate model hierarchy.
 
 The LMN financial and JLN macroeconomic measures are produced in related but distinct research frameworks. Their levels should not be treated as directly comparable. The empirical question concerns incremental predictive content conditional on each measure's own variation.
@@ -107,6 +108,7 @@ The two-month uncertainty lag is not a reconstruction of each historical release
 ## Interpretation and limitations
 - Predictive regressions do not identify causal effects of uncertainty.
 - Uncertainty indexes may be endogenous to financial and macroeconomic conditions.
+- The model does not include a dedicated option-implied monetary-policy uncertainty measure. The results are conditional on LMN, JLN, VIX, and the specified monetary/yield-curve controls; they do not establish LMN's predictive value relative to every market-based uncertainty measure.
 - ACM and Kim-Wright term premia are estimated latent components, not directly observed prices.
 - Term-premium estimates can be revised and differ across models.
 - Monthly data and persistent uncertainty measures require careful treatment of serial correlation.
@@ -114,7 +116,7 @@ The two-month uncertainty lag is not a reconstruction of each historical release
 - Results may be sensitive to crisis episodes and sample endpoints.
 
 ## Literature positioning
-The project does not claim that uncertainty and term premia have not been studied. The contribution at this stage is a transparent independent forecasting comparison of financial versus macroeconomic uncertainty, examining incremental predictive content and the decomposition into expected rates and term premia, with an alternative term-premium estimate as a measurement robustness check.
+The project does not claim that uncertainty and term premia have not been studied. The contribution at this stage is a transparent independent forecasting comparison of financial versus macroeconomic uncertainty, examining incremental predictive content and the decomposition into expected rates and term premia, with an alternative term-premium estimate as a measurement robustness check. A separate literature shows that option-implied uncertainty about future short-term policy rates can affect the transmission of policy and forward-guidance shocks through term premia (De Pooter et al., 2021; Bauer et al., 2022; Bundick et al., 2024; Ying et al., 2025). Because the frozen predictor set does not include a dedicated short-rate option-based MPU measure, the project's claim is limited to incremental LMN information relative to JLN and the specified controls.
 
 A stronger novelty claim requires a completed literature review and evidence that the exact forecasting comparison is not already covered.
 
