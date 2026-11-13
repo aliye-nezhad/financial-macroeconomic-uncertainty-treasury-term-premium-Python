@@ -108,6 +108,51 @@ def _fedfunds_validation(
     return monthly_mean, comparison, summary
 
 
+
+def _dff_aggregation_difference(
+    month_end_dff: pd.Series,
+    monthly_mean_dff: pd.Series,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Summarize how month-end DFF differs from the daily monthly mean."""
+    comparison = pd.DataFrame(
+        {
+            "DFF_month_end": month_end_dff,
+            "DFF_monthly_mean": monthly_mean_dff,
+        }
+    ).sort_index()
+    matched = comparison.dropna(
+        subset=["DFF_month_end", "DFF_monthly_mean"]
+    )
+    if matched.empty:
+        raise ValueError(
+            "No overlapping observations are available to compare "
+            "month-end DFF with the monthly mean."
+        )
+
+    comparison["absolute_difference"] = (
+        comparison["DFF_month_end"] - comparison["DFF_monthly_mean"]
+    ).abs()
+    differences = matched.index.map(
+        lambda month: comparison.loc[month, "absolute_difference"]
+    )
+    differences = pd.Series(differences, dtype=float)
+
+    summary = pd.DataFrame(
+        [
+            {
+                "n_matched_months": int(len(differences)),
+                "first_month": str(matched.index.min()),
+                "last_month": str(matched.index.max()),
+                "mean_absolute_difference": float(differences.mean()),
+                "median_absolute_difference": float(differences.median()),
+                "p75_absolute_difference": float(differences.quantile(0.75)),
+                "maximum_absolute_difference": float(differences.max()),
+            }
+        ]
+    )
+    return comparison, summary
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
 
@@ -127,6 +172,18 @@ def main() -> None:
         daily_dff,
         official_fedfunds,
         incomplete_month=excluded_month,
+    )
+
+    aggregation_comparison, aggregation_summary = _dff_aggregation_difference(
+        baseline["DFF"],
+        monthly_mean.reindex(baseline.index),
+    )
+    aggregation_comparison.to_csv(
+        OUT / "dff_aggregation_comparison.csv"
+    )
+    aggregation_summary.to_csv(
+        OUT / "dff_aggregation_difference_summary.csv",
+        index=False,
     )
 
     validation.to_csv(OUT / "fedfunds_validation.csv")
@@ -268,6 +325,9 @@ def main() -> None:
     accuracy_all.to_csv(OUT / "forecast_accuracy.csv", index=False)
     clark_west_all.to_csv(OUT / "clark_west.csv", index=False)
     sample_all.to_csv(OUT / "sample_comparison.csv", index=False)
+
+    print("\n=== MONTH-END VERSUS MONTHLY-MEAN DFF ===")
+    print(aggregation_summary.to_string(index=False))
 
     print("\n=== FEDFUNDS VALIDATION ===")
     print(validation_summary.to_string(index=False))
