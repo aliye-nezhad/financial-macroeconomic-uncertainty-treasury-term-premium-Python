@@ -4,7 +4,7 @@
 
 The raw inputs are downloaded from FRED and the New York Fed and retained without modification in a local cache. Each source has a SHA-256 hash and a retrieval timestamp recorded in `data/raw/download_manifest.json`. Building the analysis panel verifies these hashes before parsing the source files.
 
-An ordinary run reuses existing files. The `--refresh` option replaces source files and updates the manifest; it does not retain older snapshots. Preserving the original files is therefore essential for exact historical reproduction. The repository does not redistribute third-party data whose reuse terms have not been established.
+An ordinary run reuses existing files and checks their hashes against the previously recorded manifest. Changed or unrecorded cached files are not silently adopted. The `--refresh` option deliberately replaces source files and updates the manifest; it does not retain older snapshots. Preserving the original files is therefore essential for exact historical reproduction. The repository does not redistribute third-party data whose reuse terms have not been established.
 
 ## Core sources
 
@@ -28,13 +28,13 @@ Official landing page: https://www.newyorkfed.org/research/data_indicators/term-
 
 The New York Fed provides daily and monthly estimates for maturities from one to ten years, including term premia, fitted yields, and expected average short rates. Monthly observations are end-of-month estimates. The data are model estimates and are not official estimates of the Federal Reserve System or FOMC.
 
-The downloader must inspect the current workbook and verify sheet names and column names rather than assume them.
+The parser requires the expected monthly worksheet and columns and checks the yield decomposition before constructing the panel.
 
 ### Uncertainty indexes
 - LMNUF1M: LMN 1-month-ahead financial uncertainty, from Ludvigson, Ma and Ng.
 - JLNUM1M: JLN 1-month-ahead macroeconomic uncertainty, from Jurado, Ludvigson and Ng.
 
-Both are monthly indexes. They have different underlying research frameworks and should not be interpreted as having directly comparable levels. FRED series pages provide definitions and current observations. Data are revised; the first project version will use current vintages and must be described as pseudo-out-of-sample.
+Both are monthly indexes. They have different underlying research frameworks and should not be interpreted as having directly comparable levels. FRED series pages provide definitions and current observations. The analysis uses a preserved, later-revised vintage and is therefore described as pseudo-out-of-sample.
 
 ### FRED market-rate series
 - THREEFYTP10: Kim-Wright 10-year zero-coupon term premium.
@@ -59,7 +59,7 @@ Source and methodology: https://www.frbsf.org/research-and-insights/data-and-ind
 ## Initial sample
 A comparison that includes the Kim-Wright 10-year term-premium measure cannot begin before its available history, which starts in January 1990. This is not a global restriction on the primary ACM-only analysis: the M0-M3 ACM hierarchy uses its own longest common sample and can begin earlier. The initial empirical results accordingly report an ACM-only sample beginning in July 1976, while the Kim-Wright comparison uses its shorter available history. Each outcome and model hierarchy must report its own complete-case sample dates rather than imply that every exercise uses one global sample.
 
-FRED metadata confirms that JLNUM1M and JLNUM12M are monthly JLN measures, while LMNUF1M and LMNUF12M are monthly LMN financial-uncertainty measures; the latter series is valid and is not a typo. The final start date and end date must be determined from actual downloaded data and complete-case availability.
+FRED metadata confirms that JLNUM1M and JLNUM12M are monthly JLN measures, while LMNUF1M and LMNUF12M are monthly LMN financial-uncertainty measures; the latter series is valid and is not a typo. Sample endpoints are determined from the source snapshots and the complete-case requirements of each model comparison.
 
 ## Frequency and timing rules
 1. Parse all dates explicitly and use a month-end PeriodIndex internally.

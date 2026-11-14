@@ -165,7 +165,6 @@ def _download_acm_workbook(
     try:
         workbook = pd.ExcelFile(BytesIO(payload), engine="xlrd")
     except Exception as exc:
-        destination.unlink(missing_ok=True)
         raise ValueError(
             "The New York Fed ACM endpoint did not return a readable .xls "
             "workbook. Check the official download page and update the parser "
@@ -215,6 +214,35 @@ def _snapshot_timestamp_for_entry(
     return previous_timestamp
 
 
+def _verify_cached_source_against_manifest(
+    current_entry: dict[str, Any],
+    previous_entry: dict[str, Any],
+    *,
+    source_label: str,
+) -> None:
+    """Reject unrecorded or changed cached inputs without a deliberate refresh.
+
+    A new manifest must never silently adopt a changed cached source as the
+    original research snapshot. This check is separate from the verification
+    performed when constructing the analytical panel.
+    """
+    if current_entry.get("retrieval") != "cached":
+        return
+    recorded_hash = previous_entry.get("sha256")
+    if not isinstance(recorded_hash, str) or len(recorded_hash) != 64:
+        raise ValueError(
+            f"Cached source {source_label} has no prior recorded SHA-256. "
+            "Restore its original manifest or use --refresh for an explicitly "
+            "new source snapshot."
+        )
+    if current_entry.get("sha256", "").lower() != recorded_hash.lower():
+        raise ValueError(
+            f"Cached source hash mismatch for {source_label}. "
+            "The previous download manifest is unchanged. Restore the "
+            "audited input; use --refresh only for a new analysis vintage."
+        )
+
+
 def download_all(
     raw_dir: str | Path = "data/raw",
     *,
@@ -242,6 +270,9 @@ def download_all(
             series_id, path, refresh=refresh
         )
         previous_entry = previous_manifest.get("fred", {}).get(series_id, {})
+        _verify_cached_source_against_manifest(
+            entry, previous_entry, source_label=series_id
+        )
         entry["snapshot_retrieved_at_utc"] = _snapshot_timestamp_for_entry(
             entry,
             previous_entry,
@@ -252,6 +283,9 @@ def download_all(
 
     acm_path = raw_dir / "acm" / "ACMTermPremium.xls"
     acm_entry = _download_acm_workbook(acm_path, refresh=refresh)
+    _verify_cached_source_against_manifest(
+        acm_entry, previous_manifest.get("acm", {}), source_label="ACM"
+    )
     acm_entry["snapshot_retrieved_at_utc"] = _snapshot_timestamp_for_entry(
         acm_entry,
         previous_manifest.get("acm", {}),
@@ -261,9 +295,8 @@ def download_all(
     manifest["acm"] = acm_entry
 
     raw_dir.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(
-        json.dumps(manifest, indent=2),
-        encoding="utf-8",
+    _write_bytes_atomically(
+        manifest_path, (json.dumps(manifest, indent=2) + "\n").encode("utf-8")
     )
     return manifest
 

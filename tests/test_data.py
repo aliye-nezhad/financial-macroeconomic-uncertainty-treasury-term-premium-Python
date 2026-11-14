@@ -1,4 +1,8 @@
+import json
+
 from io import StringIO
+
+import term_premium.data as data_module
 
 import pandas as pd
 import pytest
@@ -292,3 +296,95 @@ def test_monthly_average_series_requires_datetime_index():
 
     with pytest.raises(TypeError, match="DatetimeIndex"):
         monthly_average_period_series(source)
+
+
+def _fake_cached_manifest() -> dict:
+    return {
+        "retrieved_at_utc": "2026-11-12T13:00:00+00:00",
+        "fred": {
+            series_id: {
+                "retrieval": "downloaded",
+                "sha256": sha256_bytes(series_id.encode()),
+                "snapshot_retrieved_at_utc": "2026-11-12T13:00:00+00:00",
+            }
+            for series_id in FRED_SERIES
+        },
+        "acm": {
+            "retrieval": "downloaded",
+            "sha256": sha256_bytes(b"ACM"),
+            "snapshot_retrieved_at_utc": "2026-11-12T13:00:00+00:00",
+        },
+    }
+
+
+def test_cached_source_change_does_not_overwrite_original_manifest(tmp_path, monkeypatch):
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    manifest_path = raw / "download_manifest.json"
+    original = json.dumps(_fake_cached_manifest(), indent=2)
+    manifest_path.write_text(original, encoding="utf-8")
+
+    def fake_fred(series_id, destination, *, refresh=False):
+        payload = b"changed" if series_id == "DFF" else series_id.encode()
+        return {"retrieval": "cached", "sha256": sha256_bytes(payload)}
+
+    monkeypatch.setattr(data_module, "_download_fred_series", fake_fred)
+    monkeypatch.setattr(
+        data_module,
+        "_download_acm_workbook",
+        lambda *args, **kwargs: {
+            "retrieval": "cached", "sha256": sha256_bytes(b"ACM")
+        },
+    )
+
+    with pytest.raises(ValueError, match="Cached source hash mismatch for DFF"):
+        data_module.download_all(raw)
+
+    assert manifest_path.read_text(encoding="utf-8") == original
+
+
+def test_cached_source_without_manifest_is_not_silently_adopted(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        data_module,
+        "_download_fred_series",
+        lambda series_id, destination, **kwargs: {
+            "retrieval": "cached",
+            "sha256": sha256_bytes(series_id.encode()),
+        },
+    )
+    with pytest.raises(ValueError, match="no prior recorded SHA-256"):
+        data_module.download_all(tmp_path / "raw")
+    assert not (tmp_path / "raw/download_manifest.json").exists()
+
+
+def test_explicit_refresh_records_new_snapshot(tmp_path, monkeypatch):
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    (raw / "download_manifest.json").write_text(json.dumps(_fake_cached_manifest()))
+
+    def fake_fred(series_id, destination, *, refresh=False):
+        assert refresh
+        return {"retrieval": "downloaded", "sha256": sha256_bytes(b"new" + series_id.encode())}
+
+    monkeypatch.setattr(data_module, "_download_fred_series", fake_fred)
+    monkeypatch.setattr(
+        data_module,
+        "_download_acm_workbook",
+        lambda *args, **kwargs: {
+            "retrieval": "downloaded", "sha256": sha256_bytes(b"new ACM")
+        },
+    )
+
+    result = data_module.download_all(raw, refresh=True)
+    assert result["fred"]["DFF"]["sha256"] == sha256_bytes(b"newDFF")
+    assert result["fred"]["DFF"]["snapshot_retrieved_at_utc"] is not None
+    assert json.loads((raw / "download_manifest.json").read_text())["acm"]["sha256"] == sha256_bytes(b"new ACM")
+
+
+def test_malformed_cached_acm_workbook_is_not_deleted(tmp_path):
+    path = tmp_path / "ACMTermPremium.xls"
+    contents = b"not a real Excel workbook"
+    path.write_bytes(contents)
+    with pytest.raises(ValueError, match="did not return a readable"):
+        data_module._download_acm_workbook(path)
+    assert path.read_bytes() == contents

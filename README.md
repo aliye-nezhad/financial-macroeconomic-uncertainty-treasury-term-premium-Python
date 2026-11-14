@@ -1,6 +1,6 @@
 # Financial and Macroeconomic Uncertainty and the U.S. Treasury Term Premium
 
-I examine whether financial-sector uncertainty improves one-month-ahead forecasts of changes in the U.S. 10-year Treasury term premium, after accounting for macroeconomic uncertainty, monetary conditions, and the yield curve. I also compare the expected-short-rate component and an alternative estimate of the term premium.
+This study evaluates whether financial-sector uncertainty improves one-month-ahead forecasts of changes in the U.S. 10-year Treasury term premium, conditional on macroeconomic uncertainty, monetary conditions, and the yield curve. It also examines the expected-short-rate component and an alternative term-premium measure.
 
 This is a **predictive macro-finance study**, not a causal analysis. The code covers source retrieval, monthly data construction, econometric estimation, forecast evaluation, and sensitivity checks in Python.
 
@@ -20,7 +20,7 @@ The nested forecasting models are:
 
 Market predictors enter with one monthly lag and the JLN/LMN indexes with two monthly lags. The common M0–M3 sample runs from **July 1976 to August 2026** (602 months). Forecasts are produced recursively with an initial 120-month estimation window, yielding **482 monthly forecasts** from July 1986 to August 2026.
 
-I estimate the regressions by OLS with Newey–West/HAC inference and compare forecasts using RMSE, MAE, out-of-sample \(R^2\), and one-sided Clark–West tests for nested specifications. The supplementary checks examine the expected-short-rate component, the [Kim–Wright term premium](https://fred.stlouisfed.org/series/THREEFYTP10), VIX, 12-month uncertainty indexes, alternative federal-funds-rate aggregation, residual dynamics, rolling stability, and influential observations.
+Models are estimated by OLS with Newey–West/HAC inference. Forecast performance is compared using RMSE, MAE, out-of-sample $R^2$, and one-sided Clark–West tests for nested specifications. Supplementary analyses consider the expected-short-rate component, the [Kim–Wright term premium](https://fred.stlouisfed.org/series/THREEFYTP10), VIX, 12-month uncertainty indexes, alternative federal-funds-rate aggregation, residual dynamics, rolling stability, and influential observations.
 
 [Research design](docs/research_design.md) · [Data sources and timing](docs/data_plan.md) · [Literature review](docs/literature_review.md)
 
@@ -43,13 +43,14 @@ The expected-short-rate component shows a negative LMN coefficient in the full-s
 
 ## Reproducing the analysis
 
-The workflow is tested with Python 3.11. From the repository root, create an environment, install the dependencies, and run the tests:
+The reference test environment is Python **3.11.18** with packages recorded in [requirements-locked.txt](requirements-locked.txt). From the repository root, create an environment, install the locked dependencies, and run the tests:
 
 ```powershell
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m pip install -e .
+python -m pip install -r requirements-locked.txt
+python -m pip install --no-deps -e .
+python -m pip check
 python -m pytest -q
 ```
 
@@ -62,15 +63,17 @@ Get-ChildItem scripts\*.py | Sort-Object Name | ForEach-Object {
 }
 ```
 
-The first script downloads the source files **only if they are not already cached**. Normal runs do not refresh existing snapshots; `python scripts/01_download_data.py --refresh` explicitly replaces them. Raw files, their SHA-256 manifest, and most generated results are kept locally. Selected aggregate results from the audited snapshot are committed under `outputs/`.
+The first script downloads inputs when they are absent and verifies cached inputs against their original SHA-256 manifest when present. It stops rather than silently adopting changed or unrecorded cached files. Use `python scripts/01_download_data.py --refresh` only to deliberately acquire a **new** snapshot, which may change the empirical results. Raw files, the snapshot manifest, and most generated results remain local; selected aggregate results from the audited snapshot are committed under `outputs/`. The complete [reproduction guide](docs/REPRODUCIBILITY.md) includes Linux, macOS, and Windows commands.
 
-**Reproduction limit:** the preserved raw snapshots behind the reported numbers are not redistributed here. Running from newly downloaded data can yield different results because source series are revised. The exercise is *pseudo-out-of-sample*: it does not reconstruct the exact information vintages available to forecasters at each historical date. The two-month uncertainty lag is a conservative timing convention, not a historical publication-calendar reconstruction. The raw-data licenses and redistribution terms remain with their original providers.
+**Reproduction limit:** The original 11 raw source snapshots are not redistributed. As a result, the public repository permits code execution and methodological inspection, but **does not by itself permit independent reproduction of the exact archived estimates**. Current downloads may differ because providers revise historical series. GitHub Actions runs the source-free test suite and validates selected archived outputs; it does not regenerate the full empirical analysis. The forecasting exercise is *pseudo-out-of-sample*, not a reconstruction of historical information vintages or publication calendars. The two-month uncertainty lag is an explicit timing convention. Source-data redistribution remains subject to provider terms.
 
 ## Repository structure
 
 ```text
 ├── .github/workflows/tests.yml
+├── .python-version
 ├── docs/
+│   ├── REPRODUCIBILITY.md
 │   ├── data_plan.md
 │   ├── empirical_results.md
 │   ├── literature_review.md
@@ -85,6 +88,7 @@ The first script downloads the source files **only if they are not already cache
 ├── tests/                       # Data, timing, inference, and forecast tests
 ├── tools/prepare_review_bundle.py
 ├── requirements.txt
+├── requirements-locked.txt
 ├── pyproject.toml
 └── LICENSE
 ```

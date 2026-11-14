@@ -18,7 +18,7 @@ Financial uncertainty may affect these components through competing channels:
 - Flight-to-safety demand may increase demand for Treasuries and compress yields or term premia.
 - Uncertainty may change expectations about future monetary policy and the economic outlook.
 
-The sign is therefore an empirical question. We will not impose a directional hypothesis as a condition for success.
+The sign is therefore an empirical question; the forecasting hypothesis does not impose a directional coefficient restriction.
 
 ## Hypotheses
 - **H1 (incremental information):** Financial uncertainty improves forecasts of the next month's change in the 10-year term premium relative to a benchmark containing macroeconomic uncertainty and standard monetary/market predictors.
@@ -103,7 +103,7 @@ Repeat the primary hierarchy for the ACM expected-average-short-rate change, the
 ## Timing and information set
 The panel records the change realised during month t. Daily market predictors are aggregated to month-end and lagged one month; the DFF monthly-mean alternative is examined separately as an aggregation sensitivity and validated against FEDFUNDS. Monthly JLN/LMN uncertainty indexes are lagged two months as a conservative publication-delay convention. The model predicts the change realised during month t using the specified lagged information set.
 
-The two-month uncertainty lag is not a reconstruction of each historical release date. Monthly uncertainty series are revised periodically. The first implementation uses the latest available vintage and is therefore **pseudo-out-of-sample**, not genuine real-time forecasting. We will not claim real-time forecasting unless historical vintages and publication availability are reconstructed.
+The two-month uncertainty lag is not a reconstruction of each historical release date. Monthly uncertainty series are revised periodically. The analysis uses a later-revised source vintage and is therefore **pseudo-out-of-sample**, not genuine real-time forecasting. A real-time claim would require historically available vintages and publication dates.
 
 ## Interpretation and limitations
 - Predictive regressions do not identify causal effects of uncertainty.
