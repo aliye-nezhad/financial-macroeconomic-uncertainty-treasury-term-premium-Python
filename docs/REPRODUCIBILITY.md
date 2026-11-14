@@ -48,6 +48,24 @@ For an intentionally new set of data, use `python scripts/01_download_data.py --
 
 When neither the cached files nor their manifest are present, the first run retrieves the sources and records a new snapshot. This enables a new analysis, **not** exact replication of the archived 1976–2026 numerical results.
 
+## Preserving the published reference results
+
+Some CSV files under `outputs/` are version-controlled reference results. The
+numbered scripts write to those same paths, so running the complete pipeline
+in the main working copy can replace the checked-in tables, particularly when
+the source vintage or software environment differs. This does not alter Git
+history, but it can leave a misleading local comparison or modified tracked
+files.
+
+For an independent reproduction check, use a separate clone or Git worktree,
+restore the preserved raw snapshots **and their matching manifest** into that
+copy, and run the pipeline there. Compare the newly generated outputs with the
+committed reference tables rather than overwriting the original evidence.
+Do not use `--refresh` when verifying the archived numerical results. Check
+`git status --short` after running the scripts to identify any changed
+tracked outputs. A fresh-vintage run is a new analysis snapshot, not an exact
+replication of the historical outputs.
+
 ## Full empirical execution
 
 After restoring the audited raw snapshots and their manifest, run the numbered programs from the repository root in order:
