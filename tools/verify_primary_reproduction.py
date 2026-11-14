@@ -31,11 +31,6 @@ from term_premium.data import build_monthly_panel
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTCOME = "target_acm_tp_change"
-SOURCE_HASHES = ROOT / "docs" / "audited_source_hashes.json"
-ACCURACY_CSV = ROOT / "outputs" / "forecasting" / "forecast_accuracy_acm_term_premium_1m.csv"
-CW_CSV = ROOT / "outputs" / "forecasting" / "clark_west_acm_term_premium_1m.csv"
-INFLUENCE_CSV = ROOT / "outputs" / "diagnostics" / "m3_influence_summary.csv"
-
 # Allow only negligible floating-point variation from the reference environment.
 REL_TOL = 1e-7
 ABS_TOL = 1e-8
