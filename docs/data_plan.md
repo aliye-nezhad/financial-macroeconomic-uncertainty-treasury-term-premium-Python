@@ -1,9 +1,10 @@
-# Data Plan and Source Registry
+# Data Sources and Construction
 
-## Data acquisition principle
-Download source data programmatically. Preserve unmodified raw snapshots locally, record per-source snapshot retrieval timestamps and SHA-256 hashes, and never silently overwrite a source snapshot. The analysis must be reproducible from saved raw files after the initial download. A normal run reuses cached files. An explicit `--refresh` replaces the cached source file and updates its manifest entry; the manifest records the replacement snapshot's timestamp and hash, but does not archive the previous file. Preserve a separate copy of any raw snapshot that must remain available for historical-vintage comparisons.
+## Source snapshots
 
-Do not commit raw data until redistribution and source terms have been checked. The code should support a local raw-data cache and an explicit refresh option.
+The raw inputs are downloaded from FRED and the New York Fed and retained without modification in a local cache. Each source has a SHA-256 hash and a retrieval timestamp recorded in `data/raw/download_manifest.json`. Building the analysis panel verifies these hashes before parsing the source files.
+
+An ordinary run reuses existing files. The `--refresh` option replaces source files and updates the manifest; it does not retain older snapshots. Preserving the original files is therefore essential for exact historical reproduction. The repository does not redistribute third-party data whose reuse terms have not been established.
 
 ## Core sources
 
@@ -81,12 +82,6 @@ FRED metadata confirms that JLNUM1M and JLNUM12M are monthly JLN measures, while
 - Missingness table and common-sample dates saved to outputs.
 - Raw source files hashed and recorded in a manifest; panel construction verifies each file against its recorded SHA-256 hash and stops if a file has changed or the manifest lacks its hash.
 
-## Programmatic download implementation
-Create separate functions for:
-- Downloading FRED graph CSV series.
-- Downloading the current ACM workbook.
-- Saving raw files without modification.
-- Recording metadata and SHA-256 hashes.
-- Parsing each source into a standardized monthly format.
+## Implementation
 
-Do not mix downloading, cleaning, variable construction, and estimation in one script.
+The [data module](../src/term_premium/data.py) separates source downloads, manifest verification, parsing, monthly aggregation, and panel construction. The numbered scripts then carry out the data audit, estimation, forecasting, diagnostics, and sensitivity checks. This separation keeps the original observations distinct from the analytical transformations and results.
