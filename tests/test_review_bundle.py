@@ -2,13 +2,19 @@
 
 import csv
 from hashlib import sha256
+import importlib.util
 import json
 from pathlib import Path
 from zipfile import ZipFile
 
 import pytest
 
-from tools import prepare_review_bundle as bundle
+
+SCRIPT = Path(__file__).resolve().parents[1] / "tools" / "prepare_review_bundle.py"
+SPEC = importlib.util.spec_from_file_location("prepare_review_bundle", SCRIPT)
+assert SPEC is not None and SPEC.loader is not None
+bundle = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(bundle)
 
 
 def _write_csv(path: Path, rows: list[dict]) -> None:
