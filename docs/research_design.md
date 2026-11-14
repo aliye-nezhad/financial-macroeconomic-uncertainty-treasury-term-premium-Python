@@ -1,7 +1,7 @@
 # Research Design
 
 ## Project identity
-**Title:** Financial and Macroeconomic Uncertainty and the U.S. Treasury Term Premium: A Pseudo-Out-of-Sample Forecasting Assessment  
+**Title:** Financial and Macroeconomic Uncertainty and the U.S. Treasury Term Premium  
 **Field:** Macro-finance, monetary economics, fixed-income markets, uncertainty, time-series econometrics.  
 **Scope:** The models, forecasts, and sensitivity exercises described here are implemented in the repository. The results are summarized in [empirical_results.md](empirical_results.md). The predictions use revised source vintages; they should not be interpreted as historical real-time forecasts.
 
