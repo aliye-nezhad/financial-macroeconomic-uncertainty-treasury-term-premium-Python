@@ -66,6 +66,44 @@ Do not use `--refresh` when verifying the archived numerical results. Check
 tracked outputs. A fresh-vintage run is a new analysis snapshot, not an exact
 replication of the historical outputs.
 
+## Verifying the primary numerical results against audited inputs
+
+The file [audited_source_hashes.json](audited_source_hashes.json) records the
+eleven source-file SHA-256 fingerprints and acquisition timestamps retained
+with the original reviewed results bundle. They are separate from the mutable
+local `data/raw/download_manifest.json`, and do not include source observations.
+
+After restoring the original eleven files **and** their matching manifest to
+`data/raw/`, use the following command from the repository root:
+
+```bash
+python -m tools.verify_primary_reproduction
+```
+
+This command checks every source file against its **audited fingerprint**,
+builds and validates the monthly panel, re-estimates the four baseline
+M0–M3 regressions with six-lag HAC inference, and checks the full-sample
+M3 LMN coefficient against the committed influence summary. It then
+regenerates the 482 expanding-window forecasts with a 120-month initial
+training sample and recomputes RMSE, MAE, forecast bias, out-of-sample
+\(R^2\), SSE, and the three one-sided Clark–West comparisons (HAC lag 3).
+The recomputed values are compared against the complete published CSV
+tables with relative tolerance `1e-7` and absolute tolerance `1e-8`.
+Forecast counts, model identifiers, estimation dates, and forecast dates
+must match exactly.
+
+**The verifier does not download sources or write result files.** It fails
+if a snapshot is missing, altered, or not one of the original eleven files.
+It is a primary-outcome numerical reproduction check, not a re-execution
+of every secondary outcome and robustness analysis.
+
+The normal GitHub Actions test run checks this verifier with source-free
+fixtures, but cannot run it against the actual archived inputs because
+those inputs are not distributed. Passing CI alone is not evidence that
+the full primary numerical reproduction was completed on another computer.
+Successful execution of the command above with the preserved inputs is
+required to claim that particular result.
+
 ## Full empirical execution
 
 After restoring the audited raw snapshots and their manifest, run the numbered programs from the repository root in order:
