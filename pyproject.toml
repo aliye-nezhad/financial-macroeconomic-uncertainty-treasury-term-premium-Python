@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "us-treasury-uncertainty"
 version = "0.1.0"
-description = "Python study of uncertainty and pseudo-out-of-sample Treasury term-premium forecasts."
+description = "Financial and Macroeconomic Uncertainty and the U.S. Treasury Term Premium"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
