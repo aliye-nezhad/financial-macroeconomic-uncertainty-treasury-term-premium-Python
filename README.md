@@ -63,7 +63,7 @@ Get-ChildItem scripts\*.py | Sort-Object Name | ForEach-Object {
 }
 ```
 
-The first script downloads inputs when they are absent and verifies cached inputs against their original SHA-256 manifest when present. It stops rather than silently adopting changed or unrecorded cached files. Use `python scripts/01_download_data.py --refresh` only to deliberately acquire a **new** snapshot, which may change the empirical results. Raw files, the snapshot manifest, and most generated results remain local; selected aggregate results from the audited snapshot are committed under `outputs/`. The complete [reproduction guide](docs/REPRODUCIBILITY.md) includes Linux, macOS, and Windows commands.
+The first script downloads inputs when they are absent and verifies cached inputs against their original SHA-256 manifest when present. It stops rather than silently adopting changed or unrecorded cached files. Use `python scripts/01_download_data.py --refresh` only to deliberately acquire a **new** snapshot, which may change the empirical results. Raw files, the snapshot manifest, and most generated results remain local; selected aggregate results from the audited snapshot are committed under `outputs/`. The complete [reproduction guide](docs/REPRODUCIBILITY.md) includes Linux, macOS, and Windows commands. The audited source fingerprints are provided in [`docs/audited_source_hashes.json`](docs/audited_source_hashes.json). When the original preserved raw files and their manifest are available locally, `python -m tools.verify_primary_reproduction` checks all eleven source hashes, re-estimates M0–M3, regenerates the 482 recursive forecasts, and compares the numerical results to the published tables without overwriting them. This source-dependent check is not run by GitHub Actions.
 
 **Reproduction limit:** The original 11 raw source snapshots are not redistributed. As a result, the public repository permits code execution and methodological inspection, but **does not by itself permit independent reproduction of the exact archived estimates**. Current downloads may differ because providers revise historical series. GitHub Actions runs the source-free test suite and validates selected archived outputs; it does not regenerate the full empirical analysis. The forecasting exercise is *pseudo-out-of-sample*, not a reconstruction of historical information vintages or publication calendars. The two-month uncertainty lag is an explicit timing convention. Source-data redistribution remains subject to provider terms.
 
@@ -86,7 +86,9 @@ The first script downloads inputs when they are absent and verifies cached input
 ├── scripts/                     # 01–12: download, build, estimate, forecast, check
 ├── src/term_premium/            # Source handling, models, and diagnostics
 ├── tests/                       # Data, timing, inference, and forecast tests
-├── tools/prepare_review_bundle.py
+├── tools/
+│   ├── prepare_review_bundle.py
+│   └── verify_primary_reproduction.py
 ├── requirements.txt
 ├── requirements-locked.txt
 ├── pyproject.toml
