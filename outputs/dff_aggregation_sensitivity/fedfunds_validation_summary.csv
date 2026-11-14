@@ -1,0 +1,2 @@
+n_matched_months,first_month,last_month,mean_absolute_difference,maximum_absolute_difference,correlation,n_within_0_01_percentage_points,n_outside_0_01_percentage_points,tolerance_percentage_points
+868,1954-07,2026-10,0.0024043623800663223,0.005000000000000782,0.9999996692259974,868,0,0.01
