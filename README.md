@@ -77,6 +77,16 @@ Use python scripts/01_download_data.py --refresh to request fresh source snapsho
 
 Exact reproduction of the reported results requires the preserved raw-data snapshots and matching source manifest used for the audited run. These files are not committed to Git. If they are unavailable, running the downloader obtains current source versions; because some source series are revised, regenerated values may differ from the documented results. Do not use `--refresh` when reproducing the archived run; it replaces cached source files and updates the manifest.
 
+## Reviewer output bundle
+
+After reproducing the analysis from the preserved, hash-verified source snapshots, a compact reviewer bundle can be exported with:
+
+    python tools/prepare_review_bundle.py
+
+This optional export validates the primary four-model forecast accuracy table against the reported baseline, checks the primary M2-versus-M3 Clark-West result, verifies all 11 cached source-file hashes against their local manifest, and packages selected existing tables, diagnostics, a forecast figure, and this project's empirical-results memo. It also records the Git commit and SHA-256 hashes for all included files. The command does **not** fetch fresh data, re-estimate a model, change source files, or silently replace an earlier bundle.
+
+The resulting `outputs_review_bundle.zip` contains no raw-data files or observation-level estimation samples. It is ignored by Git by default. Source snapshots are required for exact reproduction and are deliberately not redistributed in the bundle; a reviewer must acquire source data separately and should expect differences when the upstream series are revised. Sharing the bundle publicly is a separate release decision.
+
 ## Code map
 - src/term_premium/data.py: source downloads, caching, SHA-256 snapshot verification, source parsers, month-end alignment, ACM decomposition validation, and panel construction.
 - src/term_premium/analysis.py: model specifications, common-sample validation, HAC regressions, expanding-window forecasts, forecast metrics, and Clark-West tests.
