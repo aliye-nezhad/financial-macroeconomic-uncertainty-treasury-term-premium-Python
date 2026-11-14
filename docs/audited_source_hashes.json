@@ -1,0 +1,50 @@
+{
+  "description": "Audited source snapshot fingerprints for the published 1976–2026 research results. These identifiers are not the raw observations.",
+  "provenance": "Source hashes recorded in the reviewed results bundle on 2026-11-14; source timestamps recorded in the accompanying local manifest.",
+  "sources": {
+    "ACM": {
+      "sha256": "fbca2e8b5fa76d5fa34007ab22f9ddd94608e41e763a9f0817f0c2cd102856b9",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/DFF": {
+      "sha256": "7e535620974680fc59af8a856daae49122637a212adc71f531a591b3706c6af7",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/DGS10": {
+      "sha256": "0a19145416475025a3db81f1d24cddde626211cc098ccba2c22c4baf426c5bb4",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/DGS2": {
+      "sha256": "4d4ee579aa22639298cb3667a693b402b1c3e6e13869d9de9bbf3f71cf937128",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/FEDFUNDS": {
+      "sha256": "06ded1625e05391a1407f1d7d721e482e8b62916c6c5fe9491b76d74285ddd69",
+      "snapshot_retrieved_at_utc": "2026-11-13T08:00:56.880616+00:00"
+    },
+    "FRED/JLNUM12M": {
+      "sha256": "929a577c9e9ee8e0e3e24eaf8001b4a099ef64611660e5281017df404b62bda7",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/JLNUM1M": {
+      "sha256": "199e07cb8218d6312ab7ac93c1a867d6cdc9be383c6c1e99010331fdc0a24c9e",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/LMNUF12M": {
+      "sha256": "4d92de41b9696bf81fbf303f308977eb3284b13223d0d5a0193e268eacc14ecc",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/LMNUF1M": {
+      "sha256": "af8fa6ccc2555a756f483ad60e90efbb68c54893c98f7f859cdfbdbea41554af",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/THREEFYTP10": {
+      "sha256": "561d5474fb8d35f8410143b475fefd25e2bf1150efee31988a04110d51f34110",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    },
+    "FRED/VIXCLS": {
+      "sha256": "14eae91a8bce543f45598a668c015143ec0df68eb12a79d326aa636fdd9cf317",
+      "snapshot_retrieved_at_utc": "2026-11-12T13:34:51.386608+00:00"
+    }
+  }
+}
