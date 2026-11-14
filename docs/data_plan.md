@@ -48,6 +48,32 @@ For alignment with ACM month-end data, use the last valid observation in each ca
 
 FRED graph CSV endpoints can be used without a FRED API key for initial acquisition, subject to endpoint stability and series terms. The official FRED API may be added later with a key stored in an environment variable, never committed to the repository.
 
+## Source-data redistribution
+
+The raw snapshots are retained separately from the MIT-licensed source code.
+The [New York Fed's general terms](https://www.newyorkfed.org/privacy/termsofuse)
+permit copying and distribution of content subject to source attribution and
+applicable exceptions; any release of the ACM workbook must preserve the
+required notices and be checked for additional workbook-specific restrictions.
+
+FRED's [terms](https://fred.stlouisfed.org/legal/terms/) distinguish each
+series' underlying rights from its availability for download. As of this review,
+the FRED pages for [LMNUF1M](https://fred.stlouisfed.org/series/LMNUF1M)
+and [JLNUM1M](https://fred.stlouisfed.org/series/JLNUM1M) label them
+*Public Domain: Citation Requested*. The
+[VIXCLS](https://fred.stlouisfed.org/series/VIXCLS) page identifies Cboe
+copyright and labels the series *Copyrighted: Citation Required*. The other
+FRED series must also be evaluated individually before a complete redistribution
+package is released. Download availability does not grant the right to apply
+the repository's MIT License to any underlying third-party data.
+
+Consequently, the eleven original raw files are not placed in GitHub or a public
+release. Their independent SHA-256 fingerprints are documented in
+[audited_source_hashes.json](audited_source_hashes.json), so a lawful copy of
+the original snapshots can be matched exactly if available. Researchers without
+these original files can execute the pipeline using new downloads, but this is
+a new data vintage and may not reproduce the reported estimates.
+
 ## Potential extension outside the baseline
 
 The San Francisco Fed publishes a daily Market-Based Monetary Policy Uncertainty series based on money-market futures and options, following Bauer, Lakdawala, and Mueller (2022). It provides constant-maturity measures at 6, 12, 18, and 24 months, with history extending back to 1990. The underlying contracts are Eurodollar futures and options through September 2022 and SOFR futures and options from October 2022.
@@ -69,6 +95,30 @@ FRED metadata confirms that JLNUM1M and JLNUM12M are monthly JLN measures, while
 5. Construct changes only after monthly alignment.
 6. For the one-month-ahead forecast, predictors must be available at the forecast origin and the target must be the subsequent month's change.
 7. Because current uncertainty-index data may be revised and are not necessarily available at the historical forecast origin, label the exercise pseudo-out-of-sample.
+
+## Historical information-set audit
+
+For a forecast of the change in the term premium in month `t`, the
+regressors below are constructed from months strictly before `t`.
+This describes the **coded observation timing**, not verified historical
+release availability.
+
+| Series or component | Original frequency | Monthly construction | Information used for target month `t` | Vintage limitation |
+| --- | --- | --- | --- | --- |
+| ACM term premium | Monthly end-of-month model estimate | Change from previous month | `t−1` change for the AR(1) predictor; `t` change is the target only | Later-vintage, model-estimated outcome; historical releases not reconstructed |
+| ACM expected short rates | Monthly end-of-month model estimate | Change from previous month | Separate secondary target, not a primary regressor | Same model-estimation and revision limitations |
+| DFF | Daily | Last valid observation of each completed month; monthly change | Level and change for `t−1` | Snapshot includes revisions; exact historical availability is not verified |
+| DGS10 and DGS2 | Daily | Last valid observation of completed month; 10y minus 2y | Yield-curve slope for `t−1` | Revised snapshots rather than original forecast-date releases |
+| JLN and LMN (1m; 12m sensitivity) | Monthly | Preserve labeled observation month | Uncertainty-index observation for `t−2` | Two-month lag is a conservative convention; no dated publication calendar or historical vintages |
+| VIX | Daily | Last valid observation of completed month | `t−1`, separate M4 matched sample only | Later-vintage snapshot; source licensing differs from federal series |
+| Kim–Wright term premium | Daily | Last valid observation of completed month; monthly change | Separate alternative target, not a primary regressor | Later-vintage model estimate; alternative measurement, not a real-time outcome |
+| FEDFUNDS | Monthly average | Direct FRED monthly series | Validation only; never a model regressor | Revised snapshot; used to check DFF monthly-mean sensitivity |
+
+Recursive regressions use only observations preceding the target month, but
+this **does not** prove every displayed value was available to a forecaster
+on that date. In particular, revised uncertainty indexes and model-estimated
+term premia can incorporate information from later periods. The exercises
+must remain labeled *pseudo-out-of-sample*, not real-time forecasts.
 
 ## Validation checks
 - Unique, monotonic dates.
