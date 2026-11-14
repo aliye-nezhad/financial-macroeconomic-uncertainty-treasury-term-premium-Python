@@ -1,0 +1,15 @@
+# Portable text encoding and stable line endings for reproducible checkouts
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.csv text eol=lf
+.python-version text eol=lf
+
+# Binary research outputs
+*.png binary
+*.xls binary
+*.xlsx binary
+*.zip binary

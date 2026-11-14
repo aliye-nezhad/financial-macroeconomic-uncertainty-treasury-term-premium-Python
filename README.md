@@ -2,7 +2,7 @@
 
 This study evaluates whether financial-sector uncertainty improves one-month-ahead forecasts of changes in the U.S. 10-year Treasury term premium, conditional on macroeconomic uncertainty, monetary conditions, and the yield curve. It also examines the expected-short-rate component and an alternative term-premium measure.
 
-This is a **predictive macro-finance study**, not a causal analysis. The code covers source retrieval, monthly data construction, econometric estimation, forecast evaluation, and sensitivity checks in Python.
+This is a **predictive macro-finance study**, not a causal analysis. The code covers source retrieval, monthly data construction, econometric estimation, forecast evaluation, and sensitivity checks in Python. Monetary-policy rates enter as controls; the study does **not** estimate the effects of an option-implied monetary-policy uncertainty measure.
 
 ## Data and empirical design
 
