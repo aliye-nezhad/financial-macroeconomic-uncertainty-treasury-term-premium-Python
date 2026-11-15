@@ -70,29 +70,67 @@ The first script downloads inputs when they are absent and verifies cached input
 ## Repository structure
 
 ```text
-├── .github/workflows/tests.yml
-├── .python-version
+├── .github/
+│   └── workflows/
+│       └── tests.yml
 ├── docs/
-│   ├── REPRODUCIBILITY.md
+│   ├── audited_source_hashes.json
 │   ├── data_plan.md
 │   ├── empirical_results.md
 │   ├── literature_review.md
+│   ├── REPRODUCIBILITY.md
 │   └── research_design.md
 ├── outputs/
-│   ├── README.md
-│   ├── diagnostics/
 │   ├── dff_aggregation_sensitivity/
-│   └── forecasting/
-├── scripts/                     # 01–12: download, build, estimate, forecast, check
-├── src/term_premium/            # Source handling, models, and diagnostics
-├── tests/                       # Data, timing, inference, and forecast tests
+│   │   ├── fedfunds_validation_summary.csv
+│   │   └── forecast_accuracy.csv
+│   ├── diagnostics/
+│   │   └── m3_influence_summary.csv
+│   ├── forecasting/
+│   │   ├── clark_west_acm_term_premium_1m.csv
+│   │   ├── forecast_accuracy_acm_expected_short_rate_1m.csv
+│   │   ├── forecast_accuracy_acm_term_premium_1m.csv
+│   │   └── forecast_accuracy_kim_wright_term_premium_1m.csv
+│   └── README.md
+├── scripts/
+│   ├── 01_download_data.py
+│   ├── 02_build_dataset.py
+│   ├── 03_data_audit.py
+│   ├── 04_estimate_models.py
+│   ├── 05_forecast_evaluation.py
+│   ├── 06_residual_diagnostics.py
+│   ├── 07_hac_sensitivity.py
+│   ├── 08_forecast_test_sensitivity.py
+│   ├── 09_dynamic_specification_sensitivity.py
+│   ├── 10_stability_analysis.py
+│   ├── 11_influence_sensitivity.py
+│   └── 12_dff_aggregation_sensitivity.py
+├── src/
+│   └── term_premium/
+│       ├── __init__.py
+│       ├── analysis.py
+│       ├── data.py
+│       └── diagnostics.py
+├── tests/
+│   ├── test_analysis.py
+│   ├── test_data_audit.py
+│   ├── test_data.py
+│   ├── test_diagnostics.py
+│   ├── test_panel_timing.py
+│   ├── test_primary_reproduction.py
+│   ├── test_published_results.py
+│   └── test_review_bundle.py
 ├── tools/
 │   ├── prepare_review_bundle.py
 │   └── verify_primary_reproduction.py
-├── requirements.txt
-├── requirements-locked.txt
+├── .gitattributes
+├── .gitignore
+├── .python-version
+├── LICENSE
 ├── pyproject.toml
-└── LICENSE
+├── README.md
+├── requirements-locked.txt
+└── requirements.txt
 ```
 
 The `tools/prepare_review_bundle.py` command creates a local ZIP of selected existing outputs and their checksums after verifying the preserved raw-data manifest. The ZIP does not include source observations or estimation samples.
